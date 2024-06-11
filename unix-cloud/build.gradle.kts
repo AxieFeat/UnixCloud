@@ -8,13 +8,9 @@ plugins {
 group = "net.unix.cloud"
 version = "1.0"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation(kotlin("test"))
-    compileOnly(project(":unix-api"))
+    implementation(project(":unix-api"))
 }
 
 tasks.test {
@@ -23,6 +19,10 @@ tasks.test {
 
 tasks.withType<ShadowJar> {
     archiveFileName.set("unixcloud.jar")
+
+    manifest {
+        attributes["Main-Class"] = "net.unix.cloud.CloudInstanceKt"
+    }
 }
 
 kotlin {

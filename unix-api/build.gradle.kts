@@ -5,10 +5,6 @@ plugins {
 group = "net.unix.cloud"
 version = "1.0"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation(kotlin("test"))
 }
@@ -16,6 +12,7 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(8)
 }
