@@ -17,6 +17,7 @@ interface JLineTerminal {
     val terminalLine: String
 
     val terminal: Terminal
+
     val lineReader: LineReader
 
     /**

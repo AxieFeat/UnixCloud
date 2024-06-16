@@ -1,4 +1,4 @@
-package net.unix.cloud.terminal
+package net.unix.cloud.terminal.converter
 
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.config.Configuration
@@ -14,9 +14,8 @@ import java.util.regex.Pattern
 @Plugin(name = "colorFormatting", category = "Converter")
 @ConverterKeys("colorFormatting")
 @PerformanceSensitive("allocation")
-open class HexFormattingConverter protected constructor(private val formatters: List<PatternFormatter>, strip: Boolean) :
-    LogEventPatternConverter("paperMinecraftFormatting", null as String?) {
-    private val ansi = !strip
+open class HexFormattingConverter protected constructor(private val formatters: List<PatternFormatter>) :
+    LogEventPatternConverter("formatting", null as String?) {
 
     override fun format(event: LogEvent, toAppendTo: StringBuilder) {
         val start = toAppendTo.length
@@ -127,18 +126,18 @@ open class HexFormattingConverter protected constructor(private val formatters: 
         }
 
         fun newInstance(config: Configuration?, options: Array<String?>): HexFormattingConverter? {
-            if (options.size >= 1 && options.size <= 2) {
+            if (options.size in 1..2) {
                 if (options[0] == null) {
-                    LOGGER.error("No pattern supplied on paperMinecraftFormatting")
+                    LOGGER.error("No pattern supplied")
                     return null
                 } else {
                     val parser = PatternLayout.createPatternParser(config)
                     val formatters = parser.parse(options[0])
                     val strip = options.size > 1 && "strip" == options[1]
-                    return HexFormattingConverter(formatters, strip)
+                    return HexFormattingConverter(formatters)
                 }
             } else {
-                LOGGER.error("Incorrect number of options on paperMinecraftFormatting. Expected at least 1, max 2 received " + options.size)
+                LOGGER.error("Incorrect number of options. Expected at least 1, max 2 received " + options.size)
                 return null
             }
         }
