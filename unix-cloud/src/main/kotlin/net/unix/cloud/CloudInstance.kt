@@ -9,11 +9,29 @@ import net.unix.api.command.aether.argument.CloudServiceArgument
 import net.unix.api.module.CloudModuleManager
 import net.unix.api.service.ServiceManager
 import net.unix.api.terminal.JLineTerminal
+import net.unix.api.terminal.logger.Logger
+import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.cloud.command.CommandDispatcherImpl
 import net.unix.cloud.module.CloudModuleManagerImpl
 import net.unix.cloud.service.ServiceManagerImpl
 import net.unix.cloud.terminal.JLineTerminalImpl
-import java.util.logging.Logger
+import net.unix.cloud.terminal.logger.LoggerFactoryImpl
+import java.io.File
+
+val cloudCommandDispatcher: CommandDispatcher
+    get() = CloudInstance.commandDispatcher
+
+val cloudModuleManager: CloudModuleManager
+    get() = CloudInstance.moduleManager
+
+val cloudTerminal: JLineTerminal
+    get() = CloudInstance.terminal
+
+val cloudLogger: Logger
+    get() = CloudInstance.logger
+
+val cloudLoggerFactory: LoggerFactory
+    get() = CloudInstance.loggerFactory
 
 fun main() {
     CloudInstance
@@ -55,9 +73,23 @@ fun main() {
 }
 
 object CloudInstance : CloudAPI() {
+    override val loggerFactory: LoggerFactory = LoggerFactoryImpl()
+    override val logger: Logger = loggerFactory.getLogger()
     override val commandDispatcher: CommandDispatcher = CommandDispatcherImpl
     override val serviceManager: ServiceManager = ServiceManagerImpl
     override val moduleManager: CloudModuleManager = CloudModuleManagerImpl
-    override val terminal: JLineTerminal = JLineTerminalImpl("> ")
-    override lateinit var logger: Logger
+    override val terminal: JLineTerminal = JLineTerminalImpl(" &fUnix&7@&bcloud&7:~&8# &8")
+
+    override val mainDirectory: File
+        get() {
+            val path = System.getProperty("user.dir") + "/"
+
+            val file = File(path)
+
+            if (!file.exists()) {
+                file.mkdirs()
+            }
+
+            return file
+        }
 }

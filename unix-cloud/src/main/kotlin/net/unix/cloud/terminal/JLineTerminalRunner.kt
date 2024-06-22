@@ -1,6 +1,7 @@
 package net.unix.cloud.terminal
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
+import net.unix.api.parseColor
 import net.unix.api.terminal.JLineTerminal
 import net.unix.cloud.CloudInstance
 
@@ -22,7 +23,7 @@ class JLineTerminalRunner(
 
         while (!currentThread().isInterrupted) {
 
-            line = terminal.lineReader.readLine(terminal.terminalLine)
+            line = terminal.lineReader.readLine(terminal.terminalLine.parseColor())
 
             if (line.trim().isNotEmpty() && !line.startsWith("/")) {
 

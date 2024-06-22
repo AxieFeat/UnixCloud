@@ -20,6 +20,10 @@ allprojects {
         maven {
             url = URI("https://libraries.minecraft.net")
         }
+
+        maven {
+            url = URI("https://clojars.org/repo/")
+        }
     }
 
     dependencies {
@@ -30,6 +34,12 @@ allprojects {
         implementation("org.ow2.asm:asm-commons:9.0")
         implementation("org.ow2.asm:asm:9.0")
         implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+        implementation("org.apache.logging.log4j:log4j-api:2.23.1")
+        implementation("net.kyori:adventure-api:4.17.0")
+        implementation("kryonet:kryonet:2.21")
+        implementation("com.esotericsoftware:kryo:5.6.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+        implementation("org.fusesource.jansi:jansi:2.4.1")
     }
 }
 

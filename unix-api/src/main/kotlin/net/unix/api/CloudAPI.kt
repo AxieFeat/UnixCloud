@@ -4,7 +4,9 @@ import net.unix.api.command.CommandDispatcher
 import net.unix.api.module.CloudModuleManager
 import net.unix.api.service.ServiceManager
 import net.unix.api.terminal.JLineTerminal
-import java.util.logging.Logger
+import net.unix.api.terminal.logger.Logger
+import net.unix.api.terminal.logger.LoggerFactory
+import java.io.File
 
 /**
  * Класс, представляющий API UnixCloud
@@ -19,8 +21,10 @@ abstract class CloudAPI {
         instance = this
     }
 
+    abstract val mainDirectory: File
     abstract val terminal: JLineTerminal
-    abstract var logger: Logger
+    abstract val logger: Logger
+    abstract val loggerFactory: LoggerFactory
     abstract val commandDispatcher: CommandDispatcher
     abstract val serviceManager: ServiceManager
     abstract val moduleManager: CloudModuleManager
