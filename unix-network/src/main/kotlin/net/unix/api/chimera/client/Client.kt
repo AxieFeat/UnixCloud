@@ -18,6 +18,8 @@ class Client : com.esotericsoftware.kryonet.Client(), Network {
         Log.set(6)
     }
 
+    companion object
+
     fun registerClass(vararg clazz: Class<*>): Client {
         val kryo = super.getKryo()
 

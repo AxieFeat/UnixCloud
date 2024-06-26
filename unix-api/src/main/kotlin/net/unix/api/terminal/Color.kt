@@ -79,6 +79,13 @@ enum class Color(
             }
         }
 
+        /**
+         * Удаляет цвета из строки
+         *
+         * @param input Строка
+         *
+         * @return Изменённая строка или null, если input == null
+         */
         fun strip(input: String?): String? {
             var formattedText: String = input ?: return null
 

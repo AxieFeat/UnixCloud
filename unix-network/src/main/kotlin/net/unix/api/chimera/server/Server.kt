@@ -17,6 +17,8 @@ class Server : com.esotericsoftware.kryonet.Server(), Network {
         Log.set(6)
     }
 
+    companion object
+
     fun registerClass(vararg clazz: Class<*>): Server {
 
         val kryo = super.getKryo()

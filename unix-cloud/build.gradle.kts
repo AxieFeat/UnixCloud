@@ -11,6 +11,7 @@ version = "1.0"
 dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":unix-api"))
+    implementation(project(":unix-builder"))
     implementation(project(":unix-module-annotation-processor"))
     implementation(project(":unix-network"))
 }

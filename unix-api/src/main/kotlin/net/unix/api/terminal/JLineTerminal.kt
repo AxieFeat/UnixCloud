@@ -16,8 +16,14 @@ interface JLineTerminal {
      */
     val terminalLine: String
 
+    /**
+     * Объект [Terminal] JLine
+     */
     val terminal: Terminal
 
+    /**
+     * Объект [LineReader] JLine
+     */
     val lineReader: LineReader
 
     /**

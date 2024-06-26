@@ -1,5 +1,5 @@
 package net.unix.api.service
 
-interface ServiceManager {
+interface CloudServiceManager {
     fun getService(name: String): CloudService?
 }

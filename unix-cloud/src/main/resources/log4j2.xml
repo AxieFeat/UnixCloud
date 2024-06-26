@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
-<!--    <Appenders>-->
-<!--        <Console name="Console" target="SYSTEM_OUT">-->
-<!--            <PatternLayout pattern="%highlightError{[%d{HH:mm:ss} %level]: %msg%n%xEx{full}}"/>-->
-<!--        </Console>-->
-<!--        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">-->
-<!--            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %terminalColorFormatting{%msg}{strip}%n%xEx{full}"/>-->
-<!--            <Policies>-->
-<!--                <TimeBasedTriggeringPolicy/>-->
-<!--                <OnStartupTriggeringPolicy/>-->
-<!--            </Policies>-->
-<!--            <DefaultRolloverStrategy max="1000"/>-->
-<!--        </RollingRandomAccessFile>-->
-<!--    </Appenders>-->
-
     <Appenders>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="%msg%n%xEx{full}"/>

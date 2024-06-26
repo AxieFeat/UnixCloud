@@ -27,7 +27,7 @@ class CloudServiceArgument : ArgumentType<CloudService> {
     }
 
     override fun parse(reader: StringReader?): CloudService {
-        val service = CloudAPI.instance.serviceManager.getService(reader!!.readString())
+        val service = CloudAPI.instance.cloudServiceManager.getService(reader!!.readString())
             ?: throw CommandSyntaxException(dynamic2CommandExceptionType, LiteralMessage("CloudService not found!"))
 
         return service
