@@ -18,7 +18,7 @@ import java.util.function.Predicate
  *
  */
 // TODO Алиасы команд
-class AetherCommandBuilder(name: String) : LiteralArgumentBuilder<CommandSender>(name) {
+class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<CommandSender>(name) {
 
     private var aliases = mutableListOf<String>()
 
@@ -27,7 +27,7 @@ class AetherCommandBuilder(name: String) : LiteralArgumentBuilder<CommandSender>
     }
 
     constructor(name: String, vararg aliases: String): this(name) {
-     //   this.aliases = aliases.toMutableList()
+        this.aliases = aliases.toMutableList()
     }
 
     fun addAlias(name: String): AetherCommandBuilder {
