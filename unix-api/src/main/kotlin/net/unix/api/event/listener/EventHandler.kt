@@ -1,7 +1,7 @@
 package net.unix.api.event.listener
 
 /**
- * Эта аннотация отмечает методы, которые вызываются при возникновении события типа, указанного в аргументе метода.
+ * This annotation marks methods, that get called by the manager when an event of the method argument type rises.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(
@@ -9,10 +9,8 @@ package net.unix.api.event.listener
 )
 annotation class EventHandler(
     /**
-     * Приоритет метода слушателя. Слушатели с наивысшим приоритетом вызываются первыми, а с наименьшим - последними.
-     * По умолчанию приоритет установлен на normal.
-     *
-     * @return Приоритет ивента
+     * The priority of the listener method. The highest priority listeners are called first, while lowest priority are
+     * called last. By default, priority is set to normal.
      */
     val priority: ListenerPriority = ListenerPriority.NORMAL
 )

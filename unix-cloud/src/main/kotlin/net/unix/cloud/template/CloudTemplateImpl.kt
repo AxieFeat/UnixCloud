@@ -1,6 +1,6 @@
 package net.unix.cloud.template
 
-import net.unix.api.group.CloudFile
+import net.unix.api.template.CloudFile
 import net.unix.api.template.CloudTemplate
 import java.io.File
 

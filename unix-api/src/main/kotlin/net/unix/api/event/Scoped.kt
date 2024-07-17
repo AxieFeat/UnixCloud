@@ -1,14 +1,14 @@
 package net.unix.api.event
 
 /**
- * Скопированное событие отправляется только тем слушателям, которые прослушивают данную область или группу областей.
- * Чтобы организовать слушателей и не вызывать их, если данное событие им совсем не нужно, слушатель может
- * указать группу областей видимости, которую он слушает, так что если будет вызвано событие типа слушателя,
- * которое не входит в группу областей видимости, метод не будет вызван.
+ * A scoped event only gets send to listener methods that listen to a given scope or scope group. In order to organize
+ * listeners and don't invoke them, if they do not need the given event at all, a listener method can specify a scope
+ * group it listens to, so if an event of the listener methods type gets called, which is not part of the scope group,
+ * the method won't get called.
  */
 interface Scoped {
     /**
-     * @return Область действия события.
+     * The event's scope.
      */
     val scope: String
 }

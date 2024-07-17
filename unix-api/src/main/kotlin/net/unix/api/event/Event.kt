@@ -1,15 +1,17 @@
 package net.unix.api.event
 
 /**
- * Ивент, который может быть вызван и затем отправлен слушателям, чтобы они могли на него отреагировать.
+ * An event that can be called and will then be send to the listeners, so they can react to it.
  *
- * @param T Текущий класс ивента
+ * @param T Event class object type
  */
 @Suppress("UNCHECKED_CAST")
 abstract class Event<T> {
 
     /**
-     * Вызывает текущий ивент
+     * Call event
+     *
+     * @return Instance of [T]
      */
     fun callEvent(): T {
         EventManager.callEvent(this)

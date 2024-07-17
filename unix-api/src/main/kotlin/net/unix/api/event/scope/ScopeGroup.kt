@@ -40,12 +40,14 @@ class ScopeGroup(scope: String) {
      * A compiled scope group expression
      */
     private class Group
-    /**
-     * A scope group has a name and may have a sub group
-     *
-     * @param groupName name of the group or wildcard symbol *
-     * @param subGroup  sub group or null, if this is the deepest group already
-     */(private val groupName: String, private val subGroup: Group?) {
+
+        /**
+        * A scope group has a name and may have a sub group
+        *
+        * @param groupName name of the group or wildcard symbol *
+        * @param subGroup  sub group or null, if this is the deepest group already
+        */
+        (private val groupName: String, private val subGroup: Group?) {
         /**
          * Recursive check wether another scope (group) is contained in this group
          *

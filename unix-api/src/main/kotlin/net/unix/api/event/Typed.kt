@@ -1,13 +1,14 @@
 package net.unix.api.event
 
 /**
- * Typed ивент имеет разные версии (например, события до и после действия) и может прослушиваться отдельно.
+ * A typed event occurs in different versions (e.g. pre- and post-action events) and can be listened to seperatly.
  */
 interface Typed {
     /**
-     * Тип события предоставляется в виде целочисленного значения. Метод слушателя может указать, какой тип события он хочет прослушать
+     * The event type is provided as a integer value. A listener method can specify which type of event it want to
+     * listen to
      *
-     * @return Идентификатор типа события
+     * @return The event type identifier
      */
     val type: Int
 }

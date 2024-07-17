@@ -8,13 +8,14 @@ class LoggerFactoryImpl : LoggerFactory {
     private var systemLogger: Logger? = null
     private val loggers = mutableMapOf<String, Logger>()
 
-    override fun getLogger(): Logger {
-        if (systemLogger == null) {
-            this.systemLogger = LoggerImpl("")
-        }
+    override val logger: Logger
+        get() {
+            if (systemLogger == null) {
+                this.systemLogger = LoggerImpl("")
+            }
 
-        return systemLogger!!
-    }
+            return systemLogger!!
+        }
 
     override fun getLogger(name: String): Logger {
         val logger = loggers[name]

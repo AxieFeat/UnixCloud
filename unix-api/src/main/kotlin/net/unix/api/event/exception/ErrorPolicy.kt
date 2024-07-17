@@ -1,16 +1,16 @@
 package net.unix.api.event.exception
 
 /**
- * Эта "политика" задает поведение обработки ошибок в отправляемых событиях.
+ * This policy sets the error handling behaviour of dispatched events.
  */
 enum class ErrorPolicy {
     /**
-     * [EventDispatchException] При ошибках в обработке события
+     * Throw a [EventDispatchException] on errors in dispatched events
      */
     EXCEPTION,
 
     /**
-     * Вывод ошибок только в лог
+     * Output error only in log
      */
     LOG
 }

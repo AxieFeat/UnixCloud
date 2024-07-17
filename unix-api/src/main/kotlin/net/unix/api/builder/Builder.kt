@@ -1,15 +1,15 @@
 package net.unix.api.builder
 
 /**
- * Этот интерфейс представляет собой шаблон билдера для создания объектов типа [T].
+ * This interface represents a builder pattern for creating objects of type T.
  *
- * @param T Тип объекта, который будет создан.
+ * @param <T> The type of object to be built.
  */
 interface Builder<T> {
     /**
-     * Создаёт и возвращает экземпляр типа T.
+     * Builds and returns an instance of type T.
      *
-     * @return Экземпляр типа T.
+     * @return An instance of type T.
      */
     fun build(): T
 }

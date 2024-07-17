@@ -1,11 +1,15 @@
 package net.unix.api.event
 
 /**
- * Этот интерфейс следует использовать вместе с [Event], что создавать отменяемые события
+ * Use with [Event] for cancellable events
  */
 interface Cancellable {
     /**
-     * Отменён ли ивент
+     * Whether the event was cancelled
+     *
+     * If cancelled = true:
+     * A cancelled event will be handed to all listeners although it has been cancelled before. Other listeners can undo
+     * the cancel operation.
      */
     var cancelled: Boolean
 }

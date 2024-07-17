@@ -7,12 +7,12 @@ import com.mojang.brigadier.tree.ArgumentCommandNode
 import net.unix.api.command.sender.CommandSender
 
 /**
- * Класс для создания аргумента команды
+ * Command required argument builder
  *
- * @param T Тип данных
- * @param name Название аргумента
- * @param type Тип аргумента, который возвращает [T]
- * @param suggestionsProvider Предложения для заполнения команды
+ * @param T Object type
+ * @param name Argument name
+ * @param type [ArgumentType], which returns [T]
+ * @param suggestionsProvider Argument suggestions
  */
 class AetherArgumentBuilder<T>(
     val name: String,
@@ -25,13 +25,22 @@ class AetherArgumentBuilder<T>(
     }
 
     /**
-     * Установка предложений для заполнения команды
+     * Create argument suggestions
+     *
+     * @param provider Command suggestions
+     *
+     * @return Current [AetherArgumentBuilder] instance
      */
     fun suggests(provider: SuggestionProvider<CommandSender>?): AetherArgumentBuilder<T> {
         this.suggestionsProvider = provider
         return getThis()
     }
 
+    /**
+     * Build argument for future usage
+     *
+     * @return [ArgumentCommandNode] instance
+     */
     override fun build(): ArgumentCommandNode<CommandSender, T> {
         val result: ArgumentCommandNode<CommandSender, T> = ArgumentCommandNode(
             name, type,
@@ -46,6 +55,13 @@ class AetherArgumentBuilder<T>(
     }
 
     companion object {
+        /**
+         * Create instance of [AetherArgumentBuilder]
+         *
+         * @param T Object type
+         * @param name Argument name
+         * @param type [ArgumentType], which returns [T]
+         */
         fun <T> argument(name: String, type: ArgumentType<T>): AetherArgumentBuilder<T> {
             return AetherArgumentBuilder(name, type)
         }

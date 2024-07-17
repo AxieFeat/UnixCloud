@@ -1,24 +1,36 @@
 package net.unix.api.terminal.logger
 
+/**
+ * UnixCloud logger
+ */
 interface Logger {
 
     /**
-     * Префикс логгера
+     * Logger prefix
      */
     val prefix: String
 
     /**
-     * Отправка обычного сообщения в терминал
+     * Log info to terminal
+     *
+     * @param message Message
+     * @param format Message formatting
      */
     fun info(message: String, format: Boolean = true)
 
     /**
-     * Отправка ошибки в терминал
+     * Log error to terminal
+     *
+     * @param message Message
+     * @param format Message formatting
      */
     fun error(message: String, format: Boolean = true)
 
     /**
-     * Отправка предупреждения в терминал
+     * Lag warn to terminal
+     *
+     * @param message Message
+     * @param format Message formatting
      */
     fun warn(message: String, format: Boolean = true)
 }

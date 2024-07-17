@@ -2,6 +2,15 @@ package net.unix.api.terminal
 
 import org.fusesource.jansi.Ansi
 
+/**
+ * UnixCloud coloring for terminal
+ *
+ * @param red Red value
+ * @param green Green value
+ * @param blue Blue value
+ * @param code Color code
+ * @param function Translate color function
+ */
 enum class Color(
     red: Int,
     green: Int,
@@ -55,11 +64,11 @@ enum class Color(
         private const val HEX_PATTERN = "(&#[0-9a-fA-F]{6})"
 
         /**
-         * Форматирует цвет в строке
+         * Format text in string
          *
-         * @param input Строка
+         * @param input Input string
          *
-         * @return Изменённая строка или null, если input == null
+         * @return Changed string or null, if [input] == null
          */
         fun translate(input: String?): String? {
             var formattedText: String = input ?: return null
@@ -80,11 +89,11 @@ enum class Color(
         }
 
         /**
-         * Удаляет цвета из строки
+         * Strip colors in string
          *
-         * @param input Строка
+         * @param input Input string
          *
-         * @return Изменённая строка или null, если input == null
+         * @return Changed string or null, if [input] == null
          */
         fun strip(input: String?): String? {
             var formattedText: String = input ?: return null

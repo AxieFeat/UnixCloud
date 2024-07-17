@@ -4,35 +4,38 @@ import net.unix.api.command.sender.CommandSender
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 
+/**
+ * UnixCloud terminal
+ */
 interface JLineTerminal {
 
     /**
-     * Отправитель команды
+     * Terminal command sender
      */
     val sender: CommandSender
 
     /**
-     * Строка для терминала
+     * Terminal line
      */
     val terminalLine: String
 
     /**
-     * Объект [Terminal] JLine
+     * Instance of [Terminal] from JLine
      */
     val terminal: Terminal
 
     /**
-     * Объект [LineReader] JLine
+     * Instance of [LineReader] from JLine
      */
     val lineReader: LineReader
 
     /**
-     * Закрытие терминала
+     * Close terminal
      */
     fun close()
 
     /**
-     * Вывод текста в терминал
+     * Print text in terminal
      */
     fun print(input: String)
 }

@@ -1,14 +1,19 @@
 package net.unix.api.command.sender
 
+/**
+ * General representation of the command sender
+ */
 interface CommandSender {
 
     /**
-     * Имя отправителя
+     * Sender name
      */
     val name: String
 
     /**
-     * Отправка сообщения
+     * Send message to command sender
+     *
+     * @param message Message text
      */
     fun sendMessage(message: String)
 }

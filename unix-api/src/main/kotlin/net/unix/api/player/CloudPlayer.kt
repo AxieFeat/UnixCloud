@@ -1,96 +1,114 @@
 package net.unix.api.player
 
+import net.unix.api.service.CloudService
 import net.unix.api.command.sender.CloudCommandSender
 import net.unix.api.player.exception.PlayerValueNotExistException
+import net.unix.api.chimera.client.Client
+import net.unix.api.chimera.server.Server
 
+/**
+ * [CloudService] player
+ *
+ * If the documentation says that a function can only accept primitives or strings, that's not really true.
+ *
+ * You can specify your own object class that you want to receive in the [Server] or [Client] class or write your own adapter
+ */
 interface CloudPlayer : CloudCommandSender {
 
     /**
-     * Получает значение из поля объекта на сервисе
+     * Get field value from service player class
      *
-     * @param T тип объекта, который должен быть возвращён
-     * @param name Название поля
-     * @param methods Названия методов, который должны будут быть вызваны после получения результата на сервисе
+     * @param T Object type
+     * @param name Field name
+     * @param methods Call methods after field getting
      *
-     * @return Указанный объект
+     * @return Field value
      *
-     * @throws PlayerValueNotExistException Если поле не найдено
+     * @throws PlayerValueNotExistException If field not found or null
      */
     @Throws(PlayerValueNotExistException::class)
     fun <T> getField(name: String, vararg methods: String): T
 
     /**
-     * Получает значение из поля объекта на сервисе
+     * Get field value from service player class
      *
-     * @param field Объект поля
+     * @param field Built-in field
      *
-     * @return Указанный объект
+     * @return Field value
      *
-     * @throws PlayerValueNotExistException Если поле не найдено
+     * @throws PlayerValueNotExistException If field not found or null
      */
     @Throws(PlayerValueNotExistException::class)
     fun getField(field: Field): Any
 
     /**
-     * Изменяет значение поля у объекта на сервисе
+     * Change field value on service player class
      *
-     * @param name Название поля
-     * @param value Значение, которое будет установлено, только примитивные типы данных или строки!
+     * @param name Field name
+     * @param value Value, that will be setted. Only primitives and strings
      *
-     * @throws PlayerValueNotExistException Если поле не найдено
+     * @throws PlayerValueNotExistException If field not found
      */
     @Throws(PlayerValueNotExistException::class)
     fun setField(name: String, value: Any)
 
     /**
-     * Вызывает метод с указанным названием на сервисе
-     * (Только для методов без параметров)
+     * Call method from service player class
+     * (Only methods without params)
      *
-     * @param T тип объекта, который должен быть возвращён, возвращаемый объект должен быть примитивным типом данных или строкой!
-     * @param name Название метода
-     * @param methods Названия методов, который должны будут быть вызваны после получения результата на сервисе
+     * @param T Returns object type. Only primitives and strings
+     * @param name Method name
+     * @param methods Call methods after getting method call result
      *
-     * @return Указанный объект
+     * @return Method call result
      *
-     * @throws PlayerValueNotExistException Если метод не найден
+     * @throws PlayerValueNotExistException If method not found
      */
     @Throws(PlayerValueNotExistException::class)
     fun <T> callMethod(name: String, vararg methods: String): T
 
     /**
-     * Вызывает метод с указанным названием на сервисе
-     * (Только для методов без параметров)
+     * Call method from service player class
      *
-     * @param T тип объекта, который должен быть возвращён, возвращаемый объект должен быть примитивным типом данных или строкой!
-     * @param name Название метода
-     * @param params Параметры метода, только примитивы или строки!
-     * @param methods Названия методов, который должны будут быть вызваны после получения результата на сервисе
+     * @param T Returns object type. Only primitives and strings
+     * @param name Method name
+     * @param params Method params. Only primitives and strings
+     * @param methods Call methods after getting method call result
      *
-     * @return Указанный объект
+     * @return Method call result
      *
-     * @throws PlayerValueNotExistException Если метод не найден
+     * @throws PlayerValueNotExistException If method not found
      */
     @Throws(PlayerValueNotExistException::class)
-    fun <T> callMethod(name: String, params: List<String>, methods: List<String>): T
+    fun <T> callMethod(name: String, params: List<Any>, methods: List<String>): T
 
     /**
-     * Вызывает метод с указанным названием на сервисе
-     * (Только для методов без параметров)
+     * Call method from service player class
      *
-     * @param method Объект метода
+     * @param method Built-in method
      *
-     * @return Указанный объект
+     * @return Method result
      *
-     * @throws PlayerValueNotExistException Если метод не найден
+     * @throws PlayerValueNotExistException If method not found
      */
     @Throws(PlayerValueNotExistException::class)
     fun callMethod(method: Method): Any
 
     // TODO Дописать поля и методы спигота, велосити, банжикорда, нуккита
 
+    /**
+     * Player class field on service
+     */
     interface Field
+
+    /**
+     * Player class method on service
+     */
     interface Method
 
+    /**
+     * Spigot fields for CraftPlayer class
+     */
     enum class SpigotField(private val type: Class<*>, private val fieldName: String, vararg methods: String) : Field {
         FIRST_PLAYED(Long::class.java, "firstPlayed"),
         LAST_PLAYED(Long::class.java,"lastPlayed"),
@@ -107,6 +125,9 @@ interface CloudPlayer : CloudCommandSender {
         PLAYER_LIST_FOOTER(String::class.java, "playerListFooter", "toString")
     }
 
+    /**
+     * Spigot methods for CraftPlayer class
+     */
     enum class SpigotMethod(private val type: Class<*>, private val methodName: String, vararg methods: String) : Method
 
     enum class VelocityField(private val type: Class<*>, private val fieldName: String, vararg methods: String) : Field

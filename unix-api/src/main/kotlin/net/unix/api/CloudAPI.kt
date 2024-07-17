@@ -11,11 +11,14 @@ import net.unix.api.terminal.logger.LoggerFactory
 import java.io.File
 
 /**
- * Класс, представляющий API UnixCloud
+ * UnixCloud API
  */
 abstract class CloudAPI {
 
     companion object {
+        /**
+         * API instance
+         */
         lateinit var instance: CloudAPI
     }
 
@@ -23,16 +26,48 @@ abstract class CloudAPI {
         instance = this
     }
 
+    /**
+     * UnixCloud directory
+     */
     abstract val mainDirectory: File
+
+    /**
+     * UnixCloud terminal
+     */
     abstract val terminal: JLineTerminal
 
+    /**
+     * UnixCloud logger
+     */
     abstract val logger: Logger
+
+    /**
+     * UnixCloud logger factory
+     */
     abstract val loggerFactory: LoggerFactory
 
+    /**
+     * UnixCloud command dispatcher
+     */
     abstract val commandDispatcher: CommandDispatcher
 
+    /**
+     * UnixCloud cloud service manager
+     */
     abstract val cloudServiceManager: CloudServiceManager
+
+    /**
+     * UnixCloud cloud template manager
+     */
     abstract val cloudTemplateManager: CloudTemplateManager
+
+    /**
+     * UnixCloud cloud group manager
+     */
     abstract val cloudGroupManager: CloudGroupManager
+
+    /**
+     * UnixCloud module manager
+     */
     abstract val moduleManager: CloudModuleManager
 }

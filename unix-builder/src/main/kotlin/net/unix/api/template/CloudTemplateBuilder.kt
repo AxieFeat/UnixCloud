@@ -1,7 +1,6 @@
 package net.unix.api.template
 
 import net.unix.api.builder.Builder
-import net.unix.api.group.CloudFile
 import net.unix.api.group.CloudGroupBuilder
 import java.io.File
 

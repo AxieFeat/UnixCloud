@@ -12,11 +12,11 @@ import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Регистрирует и управляет слушателями и обрабатывает диспетчеризацию событий
+ * Registers and manages listeners and handles event dispatching
  */
 object EventManager {
     /**
-     * Политика ошибок определяет, как будут обрабатываться исключения из диспетчеризованных событий.
+     * The error policy determines how exceptions on dispatched events will be handled.
      */
     private var ERROR_POLICY: ErrorPolicy = ErrorPolicy.LOG
 
@@ -24,11 +24,11 @@ object EventManager {
     private const val GLOBAL_SCOPE = "*"
 
     /**
-     * Определяет и регистрирует все методы [EventHandler] в классе данного экземпляра.
-     * Экземпляр будет сохранен, поскольку он используется для вызова слушателей, поэтому слушатели не могут быть статическими,
-     * а объект не будет уничтожен сборкой мусора. Используйте эту функцию для отмены регистрации слушателей
+     * Identify and registers all [EventHandler] methods in the class of given Object instance. The
+     * instance will be saved, because it is used to invoke the listeners, thus the listeners cannot be static and the object won't get
+     * destroyed by garbage collection. Use it to unregister the listeners
      *
-     * @param listenerClassInstance Объект класса, содержащего обработчики событий
+     * @param listenerClassInstance An object of a class containing event handlers
      */
     fun registerListeners(listenerClassInstance: Any) {
         for (method: Method in listenerClassInstance.javaClass.methods) {
@@ -94,10 +94,10 @@ object EventManager {
     }
 
     /**
-     * Добавляет слушателя в мапу зарегистрированных слушателей
+     * Adds a listener to the map of registered listeners
      *
-     * @param eventType Тип события, которое должен обрабатывать слушатель
-     * @param listener Метод слушателя
+     * @param eventType the event type that listener should handle
+     * @param listener  the listener method
      */
     private fun addListener(eventType: Class<out Event<*>?>, listener: Listener) {
         if (!registeredListeners.containsKey(eventType)) registeredListeners[eventType] =
@@ -107,9 +107,9 @@ object EventManager {
     }
 
     /**
-     * Снимает с регистрации все обработчики событий, связанные с этим объектом
+     * Unregisters all event handlers associated with this object
      *
-     * @param listenerClassInstance Объект класса, содержащего обработчики событий, который был зарегистрирован в обработчике событий
+     * @param listenerClassInstance An object of a class containing even handlers that has been registered at the event handler
      */
     fun unregisterListeners(listenerClassInstance: Any) {
         for (listenerList: CopyOnWriteArrayList<Listener> in registeredListeners.values) {
@@ -125,18 +125,18 @@ object EventManager {
     }
 
     /**
-     * Снимает с регистрации все обработчики событий, связанные с данным типом ивента
+     * Unregisters all event handlers associated with given event type
      *
-     * @param eventClass Класс ивента
+     * @param eventClass class of the event
      */
     fun unregisterListenersOfEvent(eventClass: Class<out Event<*>?>) {
         registeredListeners[eventClass]!!.clear()
     }
 
     /**
-     * Отправляйте событие, вызывая любой слушатель, ответственный за данное событие
+     * Dispatch an event by calling any listener responsible for the given event
      *
-     * @param event Произвольный экземпляр любого подкласса [Event]
+     * @param event An arbitrary instance of any subclass of {@link Event}
      */
     fun callEvent(event: Event<*>) {
         var scoped = false
@@ -163,14 +163,14 @@ object EventManager {
     }
 
     /**
-     * Проверяет для всех слушателей класса события, должны ли они получить событие с заданными параметрами
+     * Checks for all listeners of an event class, whether they shall receive the event with given parameters
      *
-     * @param scoped   whether the event is scoped
-     * @param scope    the event's scope
-     * @param typed    whether the event is typed
-     * @param type     the event's type
-     * @param event    the event
-     * @param priority the current dispatched priority
+     * @param scoped Whether the event is scoped
+     * @param scope The event's scope
+     * @param typed Whether the event is typed
+     * @param type The event's type
+     * @param event The event
+     * @param priority The current dispatched priority
      */
     private fun dispatchEvent(
         scoped: Boolean, scope: String, typed: Boolean, type: Int,
@@ -214,29 +214,16 @@ object EventManager {
     }
 
     /**
-     * Контейнер для методов слушателей
+     * A container for listener methods
+     *
+     * @param listenerClassInstance Instance of the listener class
+     * @param listenerMethod The event handler method
+     * @param scopeGroup The handler scope (group)
+     * @param priority The listener priority
+     * @param listenedEventType The event type for typed events
      */
     private class Listener(
-        val listenerClassInstance: Any, val listenerMethod: Method, scopeGroup: ScopeGroup,
-        priority: ListenerPriority, listenedEventType: Int
-    ) {
-        val scopeGroup: ScopeGroup
-        val priority: ListenerPriority
-        val listenedEventType: Int
-
-        /**
-         * Создайте контейнер для методов слушателей со всеми необходимыми метаданными
-         *
-         * @param listenerClassInstance instance of the listener class
-         * @param listenerMethod        the event handler method
-         * @param scopeGroup            the handler scope (group)
-         * @param priority              the listener priority
-         * @param listenedEventType     the event type for typed events
-         */
-        init {
-            this.scopeGroup = scopeGroup
-            this.priority = priority
-            this.listenedEventType = listenedEventType
-        }
-    }
+        val listenerClassInstance: Any, val listenerMethod: Method, val scopeGroup: ScopeGroup,
+        val priority: ListenerPriority, val listenedEventType: Int
+    )
 }

@@ -9,49 +9,51 @@ import net.unix.api.command.aether.AetherLiteralBuilder
 import net.unix.api.command.sender.CommandSender
 
 /**
- * Класс для выполнения команд
+ * Console command dispatcher
  */
 interface CommandDispatcher {
 
     /**
-     * Выполнить команду
+     * Dispatch command
      *
-     * @param sender Отправитель команды
-     * @param command Команда в виде строки
+     * @param sender Command sender
+     * @param command Command line. Example: mycommand hello world
      *
-     * @return 1, если команда успешно выполнена, иначе 0
+     * @return 1, if command dispatched success, else 0
      *
-     * @throws CommandSyntaxException Если при выполнении команды была замечена синтаксическая ошибка
+     * @throws CommandSyntaxException If command has syntax error
      */
     @Throws(CommandSyntaxException::class)
     fun dispatchCommand(sender: CommandSender, command: String): Int
 
     /**
-     * Выполнить команду
+     * Dispatch command with already parsed result
      *
-     * @param results Результат парсинга команда, например от метода [parseCommand]
+     * @param results Parsed result, can be obtained with [parseCommand]
      *
-     * @return 1, если команда успешно выполнена, иначе 0
+     * @return 1, if command dispatched success, else 0
      *
-     * @throws CommandSyntaxException Если при выполнении команды была замечена синтаксическая ошибка
+     * @throws CommandSyntaxException If command has syntax error
      */
     @Throws(CommandSyntaxException::class)
     fun dispatchCommand(results: ParseResults<CommandSender>): Int
 
     /**
-     * Парсит команду
+     * Parse command
      *
-     * @param sender Отправитель команды
-     * @param command Команда в виде строки
+     * @param sender Command sender
+     * @param command Command line. Example: mycommand hello world
      *
-     * @return Результат парсинга команды
+     * @return Command parse result
      */
     fun parseCommand(sender: CommandSender, command: String): ParseResults<CommandSender>
 
     /**
-     * Объект [CommandDispatcher] от библиотеки Brigadier
+     * Instance of [CommandDispatcher] from Brigadier
      *
-     * Если вы хотите создать команду, то используйте классы:
+     * TIP:
+     *
+     * If you want to create command you can use:
      *
      * [AetherCommandBuilder],
      * [AetherArgumentBuilder],

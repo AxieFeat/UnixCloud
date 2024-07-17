@@ -4,42 +4,41 @@ import net.kyori.adventure.text.Component
 import net.unix.api.service.CloudService
 
 /**
- * Класс отправителя команды на сервисах
+ * Command sender on [CloudService]
  */
 interface CloudCommandSender : CommandSender {
 
     /**
-     * На каком сервисе игрок находится на данный момент
+     * Current [CloudService]
      */
     val service: CloudService
 
     /**
-     * Лист названий сервисов, на которых игрок бывал ранее,
-     * отсортирован по убыванию
+     * Names of latest [CloudService]'s
      */
     val serviceHistory: List<String>
 
     /**
-     * Отправляет [Component] отправителю команды в чат
+     * Send [Component] to command sender
      *
-     * @param component Компонент для отправки
+     * @param component [Component] instance
      */
     fun sendMessage(component: Component)
 
     /**
-     * Отправляет [Component] отправителю команды в actionbar
+     * Send [Component] to command sender in actionbar
      *
-     * @param component Компонент для отправки
+     * @param component [Component] instance
      */
     fun sendActionbar(component: Component)
 
     /**
-     * Отправляет [Component] отправителю команды в title
+     * Send [Component] to command sender in title
      *
-     * @param title Тайтл
-     * @param subtitle Сабтайтл
-     * @param fadeIn Сколько времени тайтл должен появляться
-     * @param fadeOut Сколько времени тайтл должен исчезать
+     * @param title Main title, [Component] instance
+     * @param subtitle Subtitle, [Component] instance
+     * @param fadeIn Fade in time
+     * @param fadeOut Fade out time
      */
     fun sendTitle(title: Component, subtitle: Component, fadeIn: Double = 1.0, fadeOut: Double = 1.0)
 }

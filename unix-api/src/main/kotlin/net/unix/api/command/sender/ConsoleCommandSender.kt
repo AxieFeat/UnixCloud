@@ -1,6 +1,6 @@
 package net.unix.api.command.sender
 
 /**
- * Класс отправителя UnixCloud
+ * Console [CommandSender]
  */
 interface ConsoleCommandSender : CommandSender

@@ -4,9 +4,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import net.unix.api.command.sender.CommandSender
 
 /**
- * Класс для создания аргумента команды
+ * Command literal builder
  *
- * @param literal Название литерала
+ * @param literal Literal name
  */
 class AetherLiteralBuilder(
     literal: String
@@ -14,9 +14,9 @@ class AetherLiteralBuilder(
 
     companion object {
         /**
-         * Функция для создания аргумента команды
+         * Create instance of [AetherLiteralBuilder]
          *
-         * @param literal Название литерала
+         * @param literal Literal name
          */
         fun literal(literal: String): AetherLiteralBuilder {
             return AetherLiteralBuilder(literal)

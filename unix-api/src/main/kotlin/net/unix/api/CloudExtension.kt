@@ -1,31 +1,42 @@
 package net.unix.api
 
+/**
+ * UnixCloud extensions
+ */
 interface CloudExtension {
 
     /**
-     * Парсит аргументы в строке.
-     * функция заменяет {ЧИСЛО} на элемемент
-     * из массива по его номеру начиная с единицы
+     * Parse args in string.
      *
-     * Например "Сейчас {1}".parse("солнечно")
+     * Function replace {NUM} to element from [args] by that index.
+     * But index starts from 1
      *
-     * @param args Элементы для замены
-     * @return Изменённая строка
+     * Example "Now {1}".parse("sunny")
+     *
+     * @param args Elements for replacing
+     *
+     * @return Changed string
      */
     fun String.parse(vararg args: Any): String
 
     /**
-     * Парсит цвета в строке
+     * Parse color in string
+     *
+     * @return Changed string
      */
     fun String.parseColor(): String
 
     /**
-     * Удаляет цвета из строки
+     * Strip colors in string
+     *
+     * @return Changed string
      */
     fun String.stripColor(): String
 
     /**
-     * Выводит объект в терминал
+     * Print object to terminal
+     *
+     * @return Current instance of [T]
      */
     fun <T> T.print(): T
 }
