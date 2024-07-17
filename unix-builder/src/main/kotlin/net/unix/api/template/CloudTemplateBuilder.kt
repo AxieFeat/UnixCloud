@@ -9,8 +9,4 @@ interface CloudTemplateBuilder : Builder<CloudTemplate> {
 
     fun folder(folder: File): CloudGroupBuilder
     fun file(vararg file: CloudFile)
-
-    override fun build(): CloudTemplate {
-        TODO("Not yet implemented")
-    }
 }

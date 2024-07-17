@@ -38,7 +38,7 @@ val cloudLoggerFactory: LoggerFactory
 fun main() {
     CloudInstance
 
-    AetherCommandBuilder("screen", "scr") // <- название команды
+    AetherCommandBuilder("screen") // <- название команды
         .then( // <- указываем какой-то аргумент
             literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
                 .executes { // <- если команда выполнена с аргументом "toggle", то выводим в консоль сообщение

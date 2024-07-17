@@ -4,6 +4,9 @@ import com.esotericsoftware.kryonet.Connection
 import net.unix.api.chimera.universe.Packet
 
 interface PacketListener {
+
+    companion object
+
     fun connected(connection: Connection)
     fun disconnected(connection: Connection)
     fun idle(connection: Connection)

@@ -1,23 +1,43 @@
 package net.unix.cloud
 
+import net.unix.api.CloudAPI
 import net.unix.api.CloudExtension
-import net.unix.api.group.CloudGroup
-import net.unix.api.group.CloudGroupBuilder
-import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceBuilder
-import net.unix.api.template.CloudTemplate
-import net.unix.api.template.CloudTemplateBuilder
+import net.unix.api.terminal.Color
+import java.util.regex.Pattern
 
 object CloudExtension : CloudExtension {
-    override fun CloudGroup.Companion.builder(): CloudGroupBuilder {
-        TODO("Not yet implemented")
+    override fun String.parse(vararg args: Any): String {
+        val sb = StringBuilder()
+
+        val pattern = Pattern.compile("\\{(\\d+)}")
+        val matcher = pattern.matcher(this)
+
+        var pos = 0
+
+        while (matcher.find()) {
+            sb.append(this.substring(pos, matcher.start()))
+
+            val index = matcher.group(1).toInt()
+
+            if (index > 0 && index <= args.size) {
+                sb.append(args[index - 1])
+            }
+
+            pos = matcher.end()
+        }
+
+        sb.append(this.substring(pos))
+
+        return sb.toString()
     }
 
-    override fun CloudService.Companion.builder(): CloudServiceBuilder {
-        TODO("Not yet implemented")
-    }
+    override fun String.parseColor(): String = Color.translate(this)!!
 
-    override fun CloudTemplate.Companion.builder(): CloudTemplateBuilder {
-        TODO("Not yet implemented")
+   override  fun String.stripColor(): String = Color.strip(this)!!
+
+    override fun <T> T.print(): T {
+        CloudAPI.instance.logger.info(this.toString())
+
+        return this
     }
 }

@@ -2,17 +2,19 @@ package net.unix.api.command.aether.argument
 
 import com.mojang.brigadier.LiteralMessage
 import com.mojang.brigadier.StringReader
-import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.CloudAPI
+import net.unix.api.command.aether.AetherArgument
 import net.unix.api.service.CloudService
 import java.util.concurrent.CompletableFuture
 
-class CloudServiceArgument : ArgumentType<CloudService> {
+class CloudServiceArgument : AetherArgument<CloudService>() {
+
+    private var notFoundMessage = "CloudService not found!"
 
     private val dynamic2CommandExceptionType = Dynamic2CommandExceptionType { _: Any?, _: Any? ->
         LiteralMessage(
@@ -26,21 +28,27 @@ class CloudServiceArgument : ArgumentType<CloudService> {
         }
     }
 
-    override fun parse(reader: StringReader?): CloudService {
-        val service = CloudAPI.instance.cloudServiceManager.getService(reader!!.readString())
-            ?: throw CommandSyntaxException(dynamic2CommandExceptionType, LiteralMessage("CloudService not found!"))
+    override fun parse(reader: StringReader): CloudService {
+        val service = CloudAPI.instance.cloudServiceManager.getService(reader.readString())
+            ?: throw CommandSyntaxException(dynamic2CommandExceptionType, LiteralMessage(notFoundMessage))
 
         return service
     }
 
-    override fun <S : Any?> listSuggestions(
-        context: CommandContext<S>?,
-        builder: SuggestionsBuilder?
-    ): CompletableFuture<Suggestions> {
-        builder?.suggest("Lobby-1")
-        builder?.suggest("Lobby-2")
-        builder?.suggest("Proxy-1")
+    fun notFound(message: String): CloudServiceArgument {
+        this.notFoundMessage = message
 
-        return builder!!.buildFuture()
+        return this
+    }
+
+    override fun <S : Any?> listSuggestions(
+        context: CommandContext<S>,
+        builder: SuggestionsBuilder
+    ): CompletableFuture<Suggestions> {
+      //  CloudAPI.instance.cloudServiceManager.services.forEach {
+         //   builder.suggest(it.name)
+      //  }
+
+        return builder.buildFuture()
     }
 }

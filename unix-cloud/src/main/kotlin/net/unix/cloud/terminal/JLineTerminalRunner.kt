@@ -1,8 +1,8 @@
 package net.unix.cloud.terminal
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.unix.api.parseColor
 import net.unix.api.terminal.JLineTerminal
+import net.unix.cloud.CloudExtension.parseColor
 import net.unix.cloud.CloudInstance
 
 class JLineTerminalRunner(
@@ -15,7 +15,6 @@ class JLineTerminalRunner(
         priority = 1
         start()
     }
-
 
     override fun run() {
 

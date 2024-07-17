@@ -10,8 +10,4 @@ interface CloudGroupBuilder : Builder<CloudGroup> {
     fun host(host: String): CloudGroupBuilder
     fun ports(vararg ports: Int): CloudGroupBuilder
     fun withTemplates(vararg templates: CloudTemplate):CloudGroupBuilder
-
-    override fun build(): CloudGroup {
-        TODO("Not yet implemented")
-    }
 }

@@ -2,7 +2,11 @@ package net.unix.cloud.terminal.logger
 
 import net.unix.api.*
 import net.unix.api.event.impl.cloud.CloudTerminalLoggerEvent
+import net.unix.api.terminal.logger.LogType
 import net.unix.api.terminal.logger.Logger
+import net.unix.cloud.CloudExtension.parse
+import net.unix.cloud.CloudExtension.parseColor
+import net.unix.cloud.CloudExtension.stripColor
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.text.SimpleDateFormat
@@ -73,7 +77,7 @@ class LoggerImpl(
         if (loggerPrefix != "") {
             val formatted = FORMAT_WITH_NAME
                 .parse(
-                    formatTime(), logType.logName, loggerPrefix, "$message&r"
+                    formatTime(), logType, loggerPrefix, "$message&r"
                 )
 
             terminal.print(formatted.parseColor())
@@ -85,7 +89,7 @@ class LoggerImpl(
 
         val formatted = FORMAT_WITHOUT_NAME
             .parse(
-                formatTime(), logType.logName, loggerPrefix, "$message&r"
+                formatTime(), logType, loggerPrefix, "$message&r"
             )
 
         terminal.print(formatted.parseColor())

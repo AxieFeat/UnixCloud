@@ -4,6 +4,7 @@ import net.unix.api.group.CloudGroup
 import java.io.File
 
 interface CloudService {
+    val name: String
     val group: CloudGroup
     val dataFolder: File
     val core: File

@@ -17,7 +17,6 @@ import java.util.function.Predicate
  * @param name Название команды, без префикса "/"
  *
  */
-// TODO Алиасы команд
 class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<CommandSender>(name) {
 
     private var aliases = mutableListOf<String>()
@@ -30,26 +29,33 @@ class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<Co
         this.aliases = aliases.toMutableList()
     }
 
-    fun addAlias(name: String): AetherCommandBuilder {
-        aliases.add(name)
+    fun addAlias(vararg name: String): AetherCommandBuilder {
+        name.forEach { aliases.add(it) }
+
         return this
     }
 
-    fun removeAlias(name: String): AetherCommandBuilder {
-        aliases.remove(name)
+    fun removeAlias(vararg name: String): AetherCommandBuilder {
+        name.forEach { aliases.remove(it) }
+
         return this
     }
 
     fun register(): LiteralCommandNode<CommandSender> {
+        val command = dispatcher.register(this)
 
-        aliases.forEach {
-            AetherCommandBuilder(it)
-                .redirect(
-                    this.build()
-                )
+        aliases.forEach { alias ->
+            val builder = AetherCommandBuilder(alias)
+                .requires(command.requirement)
+
+            command.children.forEach {
+                builder.then(it)
+            }
+
+            builder.register()
         }
 
-        return dispatcher.register(this)
+        return command
     }
 
 
