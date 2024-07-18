@@ -4,10 +4,9 @@ import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
 
 object CloudServiceManagerImpl : CloudServiceManager {
-    override val services: List<CloudService>
-        get() = TODO("Not yet implemented")
+    override val services: List<CloudService> = listOf()
 
-    override fun getService(name: String): CloudService? {
+    override operator fun get(name: String): CloudService? {
         return null
     }
 

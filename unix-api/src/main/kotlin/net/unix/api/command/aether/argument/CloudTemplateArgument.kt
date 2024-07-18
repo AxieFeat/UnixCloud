@@ -7,35 +7,33 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.CloudAPI
 import net.unix.api.command.aether.AetherArgument
 import net.unix.api.command.aether.SyntaxExceptionBuilder
-import net.unix.api.service.CloudService
+import net.unix.api.template.CloudTemplate
 import java.util.concurrent.CompletableFuture
-import kotlin.jvm.Throws
 
 /**
- * Command argument for [CloudService]
+ * Command argument for [CloudTemplate]
  */
-class CloudServiceArgument : AetherArgument<CloudService>() {
+class CloudTemplateArgument : AetherArgument<CloudTemplate>() {
 
-    private var notFoundMessage = "CloudService not found"
+    private var notFoundMessage = "CloudTemplate not found"
 
     companion object {
         /**
-         * Get [CloudService] from command context by argument name
+         * Get [CloudTemplate] from command context by argument name
          *
          * @param name Argument name
          *
-         * @return Instance of [CloudService]
+         * @return Instance of [CloudTemplate]
          *
-         * @throws IllegalArgumentException If argument not found or is not [CloudService]
+         * @throws IllegalArgumentException If argument not found or is not [CloudTemplate]
          */
-        @Throws(IllegalArgumentException::class)
-        fun CommandContext<*>.getCloudService(name: String): CloudService {
-            return this.getArgument(name, CloudService::class.java)
+        fun CommandContext<*>.getCloudTemplate(name: String): CloudTemplate {
+            return this.getArgument(name, CloudTemplate::class.java)
         }
     }
 
-    override fun parse(reader: StringReader): CloudService {
-        val service = CloudAPI.instance.cloudServiceManager[reader.readString()]
+    override fun parse(reader: StringReader): CloudTemplate {
+        val service = CloudAPI.instance.cloudTemplateManager[reader.readString()]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return service
@@ -46,9 +44,9 @@ class CloudServiceArgument : AetherArgument<CloudService>() {
      *
      * @param message Message text
      *
-     * @return Current instance of [CloudServiceArgument]
+     * @return Current instance of [CloudTemplateArgument]
      */
-    fun notFound(message: String): CloudServiceArgument {
+    fun notFound(message: String): CloudTemplateArgument {
         this.notFoundMessage = message
 
         return this

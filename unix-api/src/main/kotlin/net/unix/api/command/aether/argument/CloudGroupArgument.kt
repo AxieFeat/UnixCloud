@@ -7,35 +7,33 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.CloudAPI
 import net.unix.api.command.aether.AetherArgument
 import net.unix.api.command.aether.SyntaxExceptionBuilder
-import net.unix.api.service.CloudService
+import net.unix.api.group.CloudGroup
 import java.util.concurrent.CompletableFuture
-import kotlin.jvm.Throws
 
 /**
- * Command argument for [CloudService]
+ * Command argument for [CloudGroup]
  */
-class CloudServiceArgument : AetherArgument<CloudService>() {
+class CloudGroupArgument : AetherArgument<CloudGroup>() {
 
-    private var notFoundMessage = "CloudService not found"
+    private var notFoundMessage = "CloudGroup not found"
 
     companion object {
         /**
-         * Get [CloudService] from command context by argument name
+         * Get [CloudGroup] from command context by argument name
          *
          * @param name Argument name
          *
-         * @return Instance of [CloudService]
+         * @return Instance of [CloudGroup]
          *
-         * @throws IllegalArgumentException If argument not found or is not [CloudService]
+         * @throws IllegalArgumentException If argument not found or is not [CloudGroup]
          */
-        @Throws(IllegalArgumentException::class)
-        fun CommandContext<*>.getCloudService(name: String): CloudService {
-            return this.getArgument(name, CloudService::class.java)
+        fun CommandContext<*>.getCloudGroup(name: String): CloudGroup {
+            return this.getArgument(name, CloudGroup::class.java)
         }
     }
 
-    override fun parse(reader: StringReader): CloudService {
-        val service = CloudAPI.instance.cloudServiceManager[reader.readString()]
+    override fun parse(reader: StringReader): CloudGroup {
+        val service = CloudAPI.instance.cloudGroupManager[reader.readString()]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return service
@@ -46,23 +44,23 @@ class CloudServiceArgument : AetherArgument<CloudService>() {
      *
      * @param message Message text
      *
-     * @return Current instance of [CloudServiceArgument]
+     * @return Current instance of [CloudGroupArgument]
      */
-    fun notFound(message: String): CloudServiceArgument {
+    fun notFound(message: String): CloudGroupArgument {
         this.notFoundMessage = message
 
         return this
     }
 
     override fun getExamples(): List<String> {
-        return CloudAPI.instance.cloudServiceManager.services.map { it.name }
+        return CloudAPI.instance.cloudGroupManager.groups.map { it.name }
     }
 
     override fun <S> listSuggestions(
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        CloudAPI.instance.cloudServiceManager.services.forEach {
+        CloudAPI.instance.cloudGroupManager.groups.forEach {
             builder.suggest(it.name)
         }
 

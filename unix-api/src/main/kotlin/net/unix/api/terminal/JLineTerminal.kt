@@ -36,6 +36,8 @@ interface JLineTerminal {
 
     /**
      * Print text in terminal
+     *
+     * @param input Text to print
      */
     fun print(input: String)
 }

@@ -2,6 +2,7 @@ package net.unix.cloud.terminal.logger
 
 import net.unix.api.*
 import net.unix.api.event.impl.cloud.CloudTerminalLoggerEvent
+import net.unix.api.scheduler.Scheduler.scheduler
 import net.unix.api.terminal.logger.LogType
 import net.unix.api.terminal.logger.Logger
 import net.unix.cloud.CloudExtension.parse
@@ -23,8 +24,8 @@ class LoggerImpl(
         private fun formatTime(): String = dateFormat.format(System.currentTimeMillis())
     }
 
-    override fun info(message: String, format: Boolean) {
-        val event = CloudTerminalLoggerEvent(this.prefix, format, message).callEvent()
+    override fun info(vararg message: String, format: Boolean) {
+        val event = CloudTerminalLoggerEvent(this.prefix, format, *message).callEvent()
 
         if (event.cancelled) {
             return
@@ -34,11 +35,11 @@ class LoggerImpl(
         val finalMessage = event.message
         val finalPrefix = event.format
 
-        printMessage(finalMessage, finalPrefix, finalLoggerName, LogType.INFO)
+        printMessage(finalMessage.toList(), finalPrefix, finalLoggerName, LogType.INFO)
     }
 
-    override fun error(message: String, format: Boolean) {
-        val event = CloudTerminalLoggerEvent(this.prefix, format, message).callEvent()
+    override fun error(vararg message: String, format: Boolean) {
+        val event = CloudTerminalLoggerEvent(this.prefix, format, *message).callEvent()
 
         if (event.cancelled) {
             return
@@ -48,11 +49,11 @@ class LoggerImpl(
         val finalMessage = event.message
         val finalPrefix = event.format
 
-        printMessage(finalMessage, finalPrefix, finalLoggerName, LogType.ERROR)
+        printMessage(finalMessage.toList(), finalPrefix, finalLoggerName, LogType.ERROR)
     }
 
-    override fun warn(message: String, format: Boolean) {
-        val event = CloudTerminalLoggerEvent(this.prefix, format, message).callEvent()
+    override fun warn(vararg message: String, format: Boolean) {
+        val event = CloudTerminalLoggerEvent(this.prefix, format, *message).callEvent()
 
         if (event.cancelled) {
             return
@@ -62,39 +63,56 @@ class LoggerImpl(
         val finalMessage = event.message
         val finalPrefix = event.format
 
-        printMessage(finalMessage, finalPrefix, finalLoggerName, LogType.WARN)
+        printMessage(finalMessage.toList(), finalPrefix, finalLoggerName, LogType.WARN)
     }
 
-    private fun printMessage(message: String, format: Boolean, loggerPrefix: String, logType: LogType) {
-        val terminal = CloudAPI.instance.terminal
+    private fun printMessage(message: List<String>, format: Boolean, loggerPrefix: String, logType: LogType) {
+        scheduler {
+            execute {
+                val terminal = CloudAPI.instance.terminal
 
-        if (!format) {
-            terminal.print(message.parseColor())
+                if (!format) {
+                    val parsed = message.map { it.parseColor() }
 
-            return
+                    parsed.forEach {
+                        terminal.print(it)
+                    }
+
+                    return@execute
+                }
+
+                val formatted = mutableListOf<String>()
+                val withoutColors = mutableListOf<String>()
+
+                message.forEach { text ->
+                    val result = if (loggerPrefix != "") {
+                        FORMAT_WITH_NAME.parse(
+                            formatTime(), logType, loggerPrefix, "$text&r"
+                        )
+                    } else {
+                        FORMAT_WITHOUT_NAME
+                            .parse(
+                                formatTime(), logType, loggerPrefix, "$text&r"
+                            )
+                    }
+
+                    formatted.add(result.parseColor())
+                    withoutColors.add(result.stripColor())
+                }
+
+                execute {
+                    formatted.forEach {
+                        terminal.print(it)
+                    }
+                }
+
+                execute {
+                    withoutColors.forEach {
+                        LogManager.getLogger("info").log(Level.getLevel(logType.name), it)
+                    }
+                }
+            }
         }
-
-        if (loggerPrefix != "") {
-            val formatted = FORMAT_WITH_NAME
-                .parse(
-                    formatTime(), logType, loggerPrefix, "$message&r"
-                )
-
-            terminal.print(formatted.parseColor())
-
-            LogManager.getLogger("info").log(Level.getLevel(logType.name), formatted.stripColor())
-
-            return
-        }
-
-        val formatted = FORMAT_WITHOUT_NAME
-            .parse(
-                formatTime(), logType, loggerPrefix, "$message&r"
-            )
-
-        terminal.print(formatted.parseColor())
-
-        LogManager.getLogger("info").log(Level.getLevel(logType.name), formatted.stripColor())
     }
 
 

@@ -10,11 +10,11 @@ interface CloudServiceManager {
     val services: List<CloudService>
 
     /**
-     * Get service by name
+     * Get [CloudService] by name
      *
      * @param name Service name
      *
      * @return [CloudService] instance or null, if not founded
      */
-    fun getService(name: String): CloudService?
+     operator fun get(name: String): CloudService?
 }

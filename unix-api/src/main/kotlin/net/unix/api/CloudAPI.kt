@@ -1,5 +1,6 @@
 package net.unix.api
 
+import net.unix.api.chimera.server.Server
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.module.CloudModuleManager
@@ -70,4 +71,14 @@ abstract class CloudAPI {
      * UnixCloud module manager
      */
     abstract val moduleManager: CloudModuleManager
+
+    /**
+     * Websocket server on port 9191
+     */
+    abstract val server: Server
+
+    /**
+     * Shutdown UnixCloud
+     */
+    abstract fun shutdown()
 }

@@ -5,11 +5,28 @@ import com.mojang.brigadier.RedirectModifier
 import com.mojang.brigadier.SingleRedirectModifier
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.unix.api.CloudAPI
 import net.unix.api.command.sender.CommandSender
 import java.util.function.Predicate
+
+/**
+ * Get argument from command context by name
+ *
+ * @param T Object type
+ * @param name Argument name
+ *
+ * @return Argument of type [T]
+ *
+ * @throws IllegalArgumentException If argument not found or is not type of [T]
+ */
+@Throws(IllegalArgumentException::class)
+inline operator fun <reified T> CommandContext<*>.get(name: String): T {
+    return this.getArgument(name, T::class.java)
+}
 
 /**
  * Command builder class
@@ -107,11 +124,26 @@ class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<Co
     /**
      * Command executor
      *
-     * @param command Command result
+     * @param command The result of the command execution. Return 1 if the command was executed successfully, else 0
      *
      * @return Current instance of [AetherCommandBuilder]
      */
     override fun executes(command: Command<CommandSender>?): AetherCommandBuilder {
+        return super.executes(command) as AetherCommandBuilder
+    }
+
+    /**
+     * Command executor
+     *
+     * @param aetherCommand The result of the command execution. Always return 1
+     *
+     * @return Current instance of [AetherCommandBuilder]
+     */
+    fun execute(aetherCommand: AetherCommand<CommandSender>?): AetherCommandBuilder {
+        val command = Command { context ->
+            aetherCommand?.run(context)
+            1
+        }
         return super.executes(command) as AetherCommandBuilder
     }
 
@@ -182,4 +214,9 @@ class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<Co
     ): AetherCommandBuilder {
         return super.forward(target, modifier, fork) as AetherCommandBuilder
     }
+}
+
+fun interface AetherCommand<S> {
+    @Throws(CommandSyntaxException::class)
+    fun run(context: CommandContext<S>)
 }

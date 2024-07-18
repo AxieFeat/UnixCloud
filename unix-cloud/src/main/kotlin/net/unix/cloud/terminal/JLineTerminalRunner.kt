@@ -1,9 +1,11 @@
 package net.unix.cloud.terminal
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
+import net.unix.api.command.aether.SyntaxExceptionBuilder
 import net.unix.api.terminal.JLineTerminal
 import net.unix.cloud.CloudExtension.parseColor
 import net.unix.cloud.CloudInstance
+import net.unix.cloud.cloudLogger
 
 class JLineTerminalRunner(
     private val terminal: JLineTerminal
@@ -40,9 +42,7 @@ class JLineTerminalRunner(
                     )
 
                 } catch (e: CommandSyntaxException) {
-                    terminal.print(
-                        e.message!!
-                    )
+                    SyntaxExceptionBuilder.print(e)
                 }
 
             }

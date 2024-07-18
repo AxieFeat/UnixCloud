@@ -8,6 +8,8 @@ import net.unix.api.template.CloudTemplate
  */
 interface CloudGroupManager {
 
+    val groups: List<CloudGroup>
+
     /**
      * Create instance of [CloudGroup]
      *
@@ -17,6 +19,8 @@ interface CloudGroupManager {
      * @param availablePorts Ports, which [CloudService] can be started
      * @param startupCount Count of [CloudService]'s that will start with UnixCloud
      * @param templates [CloudTemplate]'s of group
+     *
+     * @return Instance of [CloudGroup]
      */
     fun createGroup(
         name: String,
@@ -26,4 +30,13 @@ interface CloudGroupManager {
         startupCount: Int,
         templates: MutableList<CloudTemplate>
     ): CloudGroup
+
+    /**
+     * Get [CloudGroup] by name
+     *
+     * @param name Group name
+     *
+     * @return [CloudGroup] instance or null, if not founded
+     */
+    operator fun get(name: String): CloudGroup?
 }

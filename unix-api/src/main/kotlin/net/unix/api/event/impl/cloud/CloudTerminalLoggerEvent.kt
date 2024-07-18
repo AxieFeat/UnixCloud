@@ -14,7 +14,7 @@ import net.unix.api.terminal.logger.Logger
 class CloudTerminalLoggerEvent(
     var loggerName: String,
     var format: Boolean,
-    var message: String
+    vararg val message: String
 ) : Event<CloudTerminalLoggerEvent>(), Cancellable {
 
     /**

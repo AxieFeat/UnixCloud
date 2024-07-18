@@ -11,7 +11,7 @@ interface CloudExtension {
      * Function replace {NUM} to element from [args] by that index.
      * But index starts from 1
      *
-     * Example "Now {1}".parse("sunny")
+     * Example: "Now {1}".parse("sunny")
      *
      * @param args Elements for replacing
      *

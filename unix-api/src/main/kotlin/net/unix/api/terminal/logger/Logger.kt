@@ -16,7 +16,7 @@ interface Logger {
      * @param message Message
      * @param format Message formatting
      */
-    fun info(message: String, format: Boolean = true)
+    fun info(vararg message: String, format: Boolean = true)
 
     /**
      * Log error to terminal
@@ -24,7 +24,7 @@ interface Logger {
      * @param message Message
      * @param format Message formatting
      */
-    fun error(message: String, format: Boolean = true)
+    fun error(vararg message: String, format: Boolean = true)
 
     /**
      * Lag warn to terminal
@@ -32,5 +32,5 @@ interface Logger {
      * @param message Message
      * @param format Message formatting
      */
-    fun warn(message: String, format: Boolean = true)
+    fun warn(vararg message: String, format: Boolean = true)
 }

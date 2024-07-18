@@ -1,5 +1,6 @@
 package net.unix.api.command.aether
 
+import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.suggestion.SuggestionProvider
@@ -52,6 +53,21 @@ class AetherArgumentBuilder<T>(
         }
 
         return result
+    }
+
+    /**
+     * Command executor
+     *
+     * @param aetherCommand The result of the command execution. Always return 1
+     *
+     * @return Current instance of [AetherArgumentBuilder]
+     */
+    fun execute(aetherCommand: AetherCommand<CommandSender>?): AetherArgumentBuilder<T> {
+        val command = Command { context ->
+            aetherCommand?.run(context)
+            1
+        }
+        return super.executes(command) as AetherArgumentBuilder<T>
     }
 
     companion object {
