@@ -1,4 +1,4 @@
-package net.unix.api.module.annotation
+package net.unix.api.modification.module.annotation
 
 /**
  * Annotation for creation modules

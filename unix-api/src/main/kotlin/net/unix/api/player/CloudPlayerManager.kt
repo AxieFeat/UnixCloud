@@ -1,4 +1,4 @@
-package net.unix.api.player
-
-interface CloudPlayerManager {
-}
+//package net.unix.api.player
+//
+//interface CloudPlayerManager {
+//}

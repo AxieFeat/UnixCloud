@@ -1,7 +1,6 @@
-package net.unix.api.module.annotation
+package net.unix.api.modification.module.annotation
 
-import net.unix.api.module.CloudModule
-import net.unix.api.module.ModuleData
+import net.unix.api.modification.module.CloudModule
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -92,7 +91,7 @@ class ModuleAnnotationProcessor : AbstractProcessor() {
                             this.javaClass.name
                         ).append("\n\n")
 
-                        writer.append(ModuleData.createByAnnotation(mainName, annotation).toString())
+                        writer.append(net.unix.api.modification.module.ModuleInfo.createByAnnotation(mainName, annotation).toString())
                         writer.flush()
 
                         writer.close()

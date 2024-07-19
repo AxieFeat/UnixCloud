@@ -1,12 +1,15 @@
 package net.unix.api.service
 
+import net.unix.api.Serializable
 import net.unix.api.group.CloudGroup
+import net.unix.api.persistence.PersistentDataHolder
 import java.io.File
 
 /**
  * [CloudService]'s allow to start instances of [CloudGroup]
  */
-interface CloudService {
+interface CloudService : PersistentDataHolder, Serializable {
+
     /**
      * Service name
      */

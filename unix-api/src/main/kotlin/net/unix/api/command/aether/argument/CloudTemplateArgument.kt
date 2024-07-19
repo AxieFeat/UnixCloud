@@ -9,6 +9,7 @@ import net.unix.api.command.aether.AetherArgument
 import net.unix.api.command.aether.SyntaxExceptionBuilder
 import net.unix.api.template.CloudTemplate
 import java.util.concurrent.CompletableFuture
+import kotlin.jvm.Throws
 
 /**
  * Command argument for [CloudTemplate]
@@ -27,6 +28,7 @@ class CloudTemplateArgument : AetherArgument<CloudTemplate>() {
          *
          * @throws IllegalArgumentException If argument not found or is not [CloudTemplate]
          */
+        @Throws(IllegalArgumentException::class)
         fun CommandContext<*>.getCloudTemplate(name: String): CloudTemplate {
             return this.getArgument(name, CloudTemplate::class.java)
         }

@@ -1,28 +1,24 @@
-package net.unix.cloud.group
+package net.unix.cloud.service
 
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
-import net.unix.api.template.CloudTemplate
+import net.unix.api.service.CloudService
 import net.unix.cloud.persistence.PersistentDataContainerImpl
-import net.unix.cloud.template.CloudTemplateImpl
+import java.io.File
 
-class CloudGroupImpl : CloudGroup, CloudTemplateImpl() {
-
-    override var name: String
+class CloudServiceImpl : CloudService {
+    override val name: String
         get() = TODO("Not yet implemented")
-        set(value) {}
-
-    override val static: Boolean
+    override val group: CloudGroup
         get() = TODO("Not yet implemented")
-    override val host: String
+    override val dataFolder: File
         get() = TODO("Not yet implemented")
-    override val availablePorts: MutableList<Int>
-        get() = TODO("Not yet implemented")
-    override val startupCount: Int
+    override val core: File
         get() = TODO("Not yet implemented")
 
-    override val templates: MutableList<CloudTemplate>
-        get() = TODO("Not yet implemented")
+    override fun sendCommand(command: String): String {
+        TODO("Not yet implemented")
+    }
 
     override val persistentDataContainer: PersistentDataContainer = PersistentDataContainerImpl()
 

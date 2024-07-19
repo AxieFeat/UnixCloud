@@ -1,12 +1,15 @@
 package net.unix.api.template
 
+import net.unix.api.Serializable
+import net.unix.api.persistence.PersistentDataHolder
 import java.io.File
 import net.unix.api.service.CloudService
 
 /**
  * [CloudTemplate] allow control creation instance of [CloudService]'s
  */
-interface CloudTemplate {
+interface CloudTemplate : PersistentDataHolder, Serializable {
+
     /**
      * Template location
      */
@@ -18,4 +21,5 @@ interface CloudTemplate {
     val files: MutableList<CloudFile>
 
     companion object
+
 }

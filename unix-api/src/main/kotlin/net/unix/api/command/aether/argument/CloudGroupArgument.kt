@@ -9,6 +9,7 @@ import net.unix.api.command.aether.AetherArgument
 import net.unix.api.command.aether.SyntaxExceptionBuilder
 import net.unix.api.group.CloudGroup
 import java.util.concurrent.CompletableFuture
+import kotlin.jvm.Throws
 
 /**
  * Command argument for [CloudGroup]
@@ -27,6 +28,7 @@ class CloudGroupArgument : AetherArgument<CloudGroup>() {
          *
          * @throws IllegalArgumentException If argument not found or is not [CloudGroup]
          */
+        @Throws(IllegalArgumentException::class)
         fun CommandContext<*>.getCloudGroup(name: String): CloudGroup {
             return this.getArgument(name, CloudGroup::class.java)
         }

@@ -1,12 +1,14 @@
 package net.unix.api.group
 
+import net.unix.api.Serializable
+import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.template.CloudTemplate
 import net.unix.api.service.CloudService
 
 /**
  * Generic template for starting instances of [CloudService]
  */
-interface CloudGroup {
+interface CloudGroup : PersistentDataHolder, Serializable {
     /**
      * Cloud group name
      */

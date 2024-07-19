@@ -3,7 +3,7 @@ package net.unix.api
 import net.unix.api.chimera.server.Server
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.CloudGroupManager
-import net.unix.api.module.CloudModuleManager
+import net.unix.api.modification.module.CloudModuleManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.JLineTerminal

@@ -1,13 +1,13 @@
 package net.unix.cloud.terminal.logger
 
 import net.unix.api.*
+import net.unix.api.CloudExtension.parse
+import net.unix.api.CloudExtension.parseColor
+import net.unix.api.CloudExtension.stripColor
 import net.unix.api.event.impl.cloud.CloudTerminalLoggerEvent
 import net.unix.api.scheduler.Scheduler.scheduler
 import net.unix.api.terminal.logger.LogType
 import net.unix.api.terminal.logger.Logger
-import net.unix.cloud.CloudExtension.parse
-import net.unix.cloud.CloudExtension.parseColor
-import net.unix.cloud.CloudExtension.stripColor
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.text.SimpleDateFormat

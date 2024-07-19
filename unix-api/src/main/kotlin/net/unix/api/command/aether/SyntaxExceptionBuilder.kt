@@ -5,6 +5,7 @@ import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
 import net.unix.api.CloudAPI
+import net.unix.api.CloudExtension.print
 import net.unix.api.scheduler.Scheduler.scheduler
 import kotlin.math.max
 import kotlin.math.min
@@ -59,23 +60,23 @@ object SyntaxExceptionBuilder {
             }
 
             val builder = StringBuilder()
-            val cursor = min(input.length.toDouble(), cursor.toDouble()).toInt()
+            val length = input.length
 
-            if (cursor > CommandSyntaxException.CONTEXT_AMOUNT) {
+            if (length > CommandSyntaxException.CONTEXT_AMOUNT) {
                 builder.append("...")
             }
 
             val context = input.substring(
-                max(0.0, (cursor - CommandSyntaxException.CONTEXT_AMOUNT).toDouble())
-                    .toInt(), cursor
+                max(0.0, (length - CommandSyntaxException.CONTEXT_AMOUNT).toDouble()).toInt(),
+                length
             ).split(" ")
 
-            if (context.size == 1) {
-                builder.append("&c&n${context[0]}&r")
-            } else {
-                builder
-                    .append(context[0] + " ")
-                    .append("&c&n${context[1]}&r")
+            context.forEachIndexed { index, str ->
+                if ((index + 1) != context.size) {
+                    builder.append("$str ")
+                } else {
+                    builder.append("&c&n$str&r")
+                }
             }
 
             builder.append("&r&c&o<--[HERE]")

@@ -1,5 +1,6 @@
-package net.unix.api.module
+package net.unix.api.modification.module
 
+import net.unix.api.modification.Modification
 import java.io.File
 
 /**
@@ -8,29 +9,36 @@ import java.io.File
  * Also don't forget that to create a module, you must create a module.json file
  * or use the @ModuleInfo annotation for inheritor class to create a module
  */
-abstract class CloudModule {
+abstract class CloudModule : Modification {
+
+    private val internalFolder: File? = null
+    private val internalExecutable: File? = null
+    private val internalInfo: ModuleInfo? = null
 
     /**
      * Module folder
      */
-    lateinit var dataFolder: File
+    override val folder: File
+        get() = internalFolder!!
 
     /**
      * Module executable file location
      */
-    lateinit var moduleFile: File
+    override val executable: File
+        get() = internalExecutable!!
 
     /**
      * Module info
      *
      * name, version, authors and etc
      */
-    lateinit var moduleData: ModuleData
+    override val info: ModuleInfo
+        get() = internalInfo!!
 
     /**
      * Call when module loaded
      */
-    open fun onLoad() {}
+    override fun onLoad() {}
 
     /**
      * Call when module reload
