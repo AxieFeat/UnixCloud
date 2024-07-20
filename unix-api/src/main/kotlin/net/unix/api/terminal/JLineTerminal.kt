@@ -15,9 +15,9 @@ interface JLineTerminal {
     val sender: CommandSender
 
     /**
-     * Terminal line
+     * Default terminal prompt
      */
-    val terminalLine: String
+    val defaultPrompt: String
 
     /**
      * Instance of [Terminal] from JLine

@@ -1,13 +1,11 @@
 package net.unix.cloud.terminal
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.unix.api.CloudExtension.parseColor
 import net.unix.api.CloudExtension.stripColor
 import net.unix.api.command.aether.SyntaxExceptionBuilder
-import net.unix.api.scheduler.Scheduler.scheduler
+import net.unix.api.scheduler.scheduler
 import net.unix.api.terminal.JLineTerminal
 import net.unix.cloud.CloudInstance
-import net.unix.cloud.cloudLogger
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 
@@ -29,10 +27,10 @@ class JLineTerminalRunner(
 
             while (!currentThread().isInterrupted) {
 
-                line = terminal.lineReader.readLine(terminal.terminalLine.parseColor())
+                line = terminal.lineReader.readLine(terminal.defaultPrompt)
 
                 execute {
-                    LogManager.getLogger("info").log(Level.getLevel("INFO"),  "${terminal.terminalLine.stripColor()}$line")
+                    LogManager.getLogger("info").log(Level.getLevel("INFO"),  "${terminal.defaultPrompt.stripColor()}$line")
                 }
 
                 if (line.trim().isNotEmpty() && !line.startsWith("/")) {

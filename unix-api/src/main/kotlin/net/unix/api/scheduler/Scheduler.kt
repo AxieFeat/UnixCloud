@@ -11,23 +11,17 @@ import java.util.concurrent.TimeUnit
 annotation class SimpleDsl3
 
 /**
- * Scheduler object
+ * New instance of [CloudScheduler]
+ *
+ * @param param Scheduler params
+ *
+ * @return Instance of [CloudScheduler]
  */
-object Scheduler {
-
-    /**
-     * New instance of [CloudScheduler]
-     *
-     * @param param Scheduler params
-     *
-     * @return Instance of [CloudScheduler]
-     */
-    @SimpleDsl3
-    fun scheduler(param: CloudScheduler.() -> Unit): CloudScheduler {
-        val cloudScheduler = CloudScheduler()
-        param.invoke(cloudScheduler)
-        return cloudScheduler
-    }
+@SimpleDsl3
+fun scheduler(param: CloudScheduler.() -> Unit): CloudScheduler {
+    val cloudScheduler = CloudScheduler()
+    param.invoke(cloudScheduler)
+    return cloudScheduler
 }
 
 class CloudScheduler {

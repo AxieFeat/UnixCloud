@@ -5,10 +5,7 @@ import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
 import net.unix.api.CloudAPI
-import net.unix.api.CloudExtension.print
-import net.unix.api.scheduler.Scheduler.scheduler
 import kotlin.math.max
-import kotlin.math.min
 
 object SyntaxExceptionBuilder {
 

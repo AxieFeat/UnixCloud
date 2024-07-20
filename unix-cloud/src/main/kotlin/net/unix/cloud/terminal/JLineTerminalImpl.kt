@@ -1,5 +1,6 @@
 package net.unix.cloud.terminal
 
+import net.unix.api.CloudExtension.parseColor
 import net.unix.api.command.sender.CommandSender
 import net.unix.api.terminal.JLineTerminal
 import net.unix.cloud.command.brigadier.BrigadierCommandCompleter
@@ -12,7 +13,11 @@ import org.jline.terminal.TerminalBuilder
 import org.jline.utils.InfoCmp
 import java.nio.charset.StandardCharsets
 
-class JLineTerminalImpl(override val terminalLine: String) : JLineTerminal {
+class JLineTerminalImpl(
+    prompt: String
+) : JLineTerminal {
+
+    override val defaultPrompt = prompt.parseColor()
 
     override val sender: CommandSender = ConsoleCommandSenderImpl()
 
