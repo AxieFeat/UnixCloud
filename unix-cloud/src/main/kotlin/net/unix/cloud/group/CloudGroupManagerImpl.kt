@@ -4,9 +4,9 @@ import net.unix.api.group.CloudGroup
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.template.CloudTemplate
 
-class CloudGroupManagerImpl : CloudGroupManager {
+object CloudGroupManagerImpl : CloudGroupManager {
 
-    override val groups: List<CloudGroup> = listOf()
+    override val groups: Set<CloudGroup> = setOf()
 
     override fun createGroup(
         name: String,

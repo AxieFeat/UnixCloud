@@ -7,11 +7,14 @@ import net.unix.cloud.persistence.PersistentDataContainerImpl
 import java.io.File
 
 open class CloudTemplateImpl : CloudTemplate {
-    override var templateFolder: File
+    override var name: String
         get() = TODO("Not yet implemented")
         set(value) {}
-    override val files: MutableList<CloudFile>
+    override val templateFolder: File
         get() = TODO("Not yet implemented")
+    override var files: MutableList<CloudFile>
+        get() = TODO("Not yet implemented")
+        set(value) {}
 
     override val persistentDataContainer: PersistentDataContainer = PersistentDataContainerImpl()
 

@@ -3,7 +3,10 @@ package net.unix.api.service
 import net.unix.api.Serializable
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataHolder
+import net.unix.api.service.exception.CloudServiceModificationException
 import java.io.File
+import java.util.UUID
+import kotlin.jvm.Throws
 
 /**
  * [CloudService]'s allow to start instances of [CloudGroup]
@@ -16,8 +19,16 @@ interface CloudService : PersistentDataHolder, Serializable {
     val name: String
 
     /**
-     * Service group
+     * Service uuid
      */
+    val uuid: UUID
+
+    /**
+     * Service group
+     *
+     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED]
+     */
+    @get:Throws(CloudServiceModificationException::class)
     val group: CloudGroup
 
     /**
@@ -26,18 +37,41 @@ interface CloudService : PersistentDataHolder, Serializable {
     val dataFolder: File
 
     /**
-     * Service executable file location
+     * Service status
+     *
+     * Change value only if you KNOW, what a doing
      */
-    val core: File
+    var status: CloudServiceStatus
 
     /**
-     * Send command to service
+     * Start [CloudService] with some executable properties
      *
-     * @param command Command line
+     * @param executable Executable properties
      *
-     * @return Command execution result
+     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED]
+     * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.PREPARED]
      */
-    fun sendCommand(command: String): String
+    @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
+    fun start(executable: CloudExecutable)
+
+    /**
+     * Stop [CloudService]
+     *
+     * @param delete Delete [CloudService] files after stop?
+     *
+     * @throws [CloudServiceModificationException] If [status] is [CloudServiceStatus.DELETED]
+     * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.STARTED]
+     */
+    @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
+    fun stop(delete: Boolean = true)
+
+    /**
+     * Delete [CloudService]
+     *
+     * @throws CloudServiceModificationException If [status] is not [CloudServiceStatus.PREPARED]
+     */
+    @Throws(CloudServiceModificationException::class)
+    fun delete()
 
     companion object
 }

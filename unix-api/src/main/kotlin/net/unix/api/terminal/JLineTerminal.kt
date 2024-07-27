@@ -1,13 +1,15 @@
 package net.unix.api.terminal
 
+import net.kyori.adventure.text.Component
 import net.unix.api.command.sender.CommandSender
+import net.unix.api.persistence.PersistentDataHolder
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 
 /**
  * UnixCloud terminal
  */
-interface JLineTerminal {
+interface JLineTerminal : PersistentDataHolder {
 
     /**
      * Terminal command sender
@@ -17,7 +19,7 @@ interface JLineTerminal {
     /**
      * Default terminal prompt
      */
-    val defaultPrompt: String
+    val defaultPrompt: Component
 
     /**
      * Instance of [Terminal] from JLine
@@ -30,14 +32,23 @@ interface JLineTerminal {
     val lineReader: LineReader
 
     /**
+     * Set prompt for terminal
+     *
+     * @param component Prompt. Null for reset to [defaultPrompt]
+     */
+    fun setPrompt(component: Component?)
+
+    /**
      * Close terminal
      */
     fun close()
 
     /**
-     * Print text in terminal
+     * Print [Component] in terminal
      *
-     * @param input Text to print
+     * @param component [Component] to print
      */
-    fun print(input: String)
+    fun print(component: Component)
+
+    companion object
 }

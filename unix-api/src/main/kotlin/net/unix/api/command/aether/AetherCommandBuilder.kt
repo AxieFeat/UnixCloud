@@ -106,7 +106,7 @@ class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<Co
      *
      * @return Current instance of [AetherCommandBuilder]
      */
-    override fun then(argument: ArgumentBuilder<CommandSender, *>?): AetherCommandBuilder {
+    override fun then(argument: ArgumentBuilder<CommandSender, *>): AetherCommandBuilder {
         return super.then(argument) as AetherCommandBuilder
     }
 
@@ -117,7 +117,7 @@ class AetherCommandBuilder(private val name: String) : LiteralArgumentBuilder<Co
      *
      * @return Current instance of [AetherCommandBuilder]
      */
-    override fun then(argument: CommandNode<CommandSender>?): AetherCommandBuilder {
+    override fun then(argument: CommandNode<CommandSender>): AetherCommandBuilder {
         return super.then(argument) as AetherCommandBuilder
     }
 

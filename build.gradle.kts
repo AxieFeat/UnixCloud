@@ -1,7 +1,7 @@
 import java.net.URI
 
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.0.0"
 }
 
 group = "net.unix.cloud"
@@ -38,6 +38,7 @@ allprojects {
         implementation("net.kyori:adventure-api:4.17.0")
         implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
         implementation("net.kyori:adventure-text-minimessage:4.17.0")
+        implementation("net.kyori:adventure-text-serializer-ansi:4.17.0")
         implementation("kryonet:kryonet:2.21")
         implementation("com.esotericsoftware:kryo:5.6.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")

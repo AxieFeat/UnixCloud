@@ -5,6 +5,11 @@ import java.io.File
 interface CloudTemplateManager {
 
     /**
+     * All [CloudTemplate]'s
+     */
+    val templates: Set<CloudTemplate>
+
+    /**
      * Get [CloudTemplate] by name
      *
      * @param name Template name
@@ -22,4 +27,6 @@ interface CloudTemplateManager {
      * @return Instance of [CloudTemplate]
      */
     fun createTemplate(folder: File, vararg file: CloudFile): CloudTemplate
+
+    companion object
 }

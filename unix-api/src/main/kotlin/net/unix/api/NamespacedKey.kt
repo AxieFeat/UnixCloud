@@ -1,6 +1,7 @@
 package net.unix.api
 
 import com.google.common.base.Preconditions
+import net.kyori.adventure.key.Key
 import net.unix.api.modification.Modification
 import java.util.*
 import java.util.regex.Pattern
@@ -15,7 +16,7 @@ import java.util.regex.Pattern
  * Keys may only contain lowercase alphanumeric characters, periods,
  * underscores, hyphens, and forward slashes.
  */
-class NamespacedKey {
+class NamespacedKey : Key {
 
     val namespace: String
     val key: String
@@ -75,9 +76,10 @@ class NamespacedKey {
         Preconditions.checkArgument(string.length < 256, "NamespacedKey must be less than 256 characters (%s)", string)
     }
 
-    override fun toString(): String {
-        return "${this.namespace}:${this.key}"
-    }
+    override fun toString(): String = "${this.namespace}:${this.key}"
+    override fun namespace(): String = namespace
+    override fun value(): String = key
+    override fun asString(): String = toString()
 
     companion object {
 

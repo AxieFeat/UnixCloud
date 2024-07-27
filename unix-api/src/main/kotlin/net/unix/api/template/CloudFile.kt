@@ -8,4 +8,6 @@ import java.nio.file.Path
 data class CloudFile(
     val from: Path,
     val to: Path
-)
+) {
+    companion object
+}

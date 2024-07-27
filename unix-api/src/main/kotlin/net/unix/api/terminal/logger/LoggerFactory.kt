@@ -18,4 +18,6 @@ interface LoggerFactory {
      * @return Instance of [Logger]
      */
     fun getLogger(name: String): Logger
+
+    companion object
 }

@@ -33,4 +33,6 @@ interface ModificationInfo {
      * Modification authors
      */
     val authors: List<String>
+
+    companion object
 }

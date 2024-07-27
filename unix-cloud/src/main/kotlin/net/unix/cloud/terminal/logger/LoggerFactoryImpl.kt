@@ -9,13 +9,12 @@ class LoggerFactoryImpl : LoggerFactory {
     private val loggers = mutableMapOf<String, Logger>()
 
     override val logger: Logger
-        get() {
-            if (systemLogger == null) {
+        get() = systemLogger ?: run {
                 this.systemLogger = LoggerImpl("")
+
+                return@run systemLogger!!
             }
 
-            return systemLogger!!
-        }
 
     override fun getLogger(name: String): Logger {
         val logger = loggers[name]

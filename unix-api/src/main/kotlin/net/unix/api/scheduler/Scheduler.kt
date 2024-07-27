@@ -1,71 +1,56 @@
 package net.unix.api.scheduler
 
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.ScheduledExecutorService
 
 /**
- * Dsl marker
- */
-@DslMarker
-annotation class SimpleDsl3
-
-/**
- * New instance of [CloudScheduler]
+ * The scheduler interface is used to run tasks in different thread pools.
  *
- * @param param Scheduler params
+ * There are several implementations of this interface, such as
+ * - Coroutine scheduler - runs tasks in the kotlin coroutines context
+ * - Executor scheduler - runs tasks using the java [ScheduledExecutorService]
  *
- * @return Instance of [CloudScheduler]
+ * You can select type of scheduler by [SchedulerType]
+ *
+ * Different implementations can be used depending on the requirements of the project.
+ * For example, Coroutine scheduler allows to run very big number of tasks in a single thread pool,
+ * while Executor scheduler is precise in millisecond's timings (while coroutines are not).
  */
-@SimpleDsl3
-fun scheduler(param: CloudScheduler.() -> Unit): CloudScheduler {
-    val cloudScheduler = CloudScheduler()
-    param.invoke(cloudScheduler)
-    return cloudScheduler
-}
-
-class CloudScheduler {
-
-    companion object {
-        private val executorService = Executors.newScheduledThreadPool(5)
-    }
+interface Scheduler {
 
     /**
      * Delay executing
      */
-    var delay = -1L
+    var delay: Long
 
     /**
      * Period executing
      */
-    var period = -1L
+    var period: Long
+
 
     /**
-     * Time unit
-     */
-    var unit = TimeUnit.MILLISECONDS
-
-    /**
-     * Run task in scheduler
+     * Starts a task with a specified parameters
      *
-     * @param delay Delay executing
-     * @param period Period executing
+     * @param delay If set - task will be executed with delay
+     * @param period If set - task will be executed with period
      * @param unit Time unit
-     * @param task Task
+     *
+     * @return Instance of [SchedulerTask]
      */
-    fun CloudScheduler.execute(delay: Long = this.delay, period: Long = this.period, unit: TimeUnit = this.unit, task: Callable<Unit>) {
-        val runnable = Runnable { task.call() }
+    fun Scheduler.execute(delay: Long = this.delay, period: Long = this.period, task: suspend () -> Unit): SchedulerTask
 
-        if (delay != -1L && period != -1L) {
-            executorService.scheduleAtFixedRate(runnable, delay, period, unit)
-            return
-        }
+    /**
+     * Gets the task by its id.
+     *
+     * @param id The task id.
+     * @return The task object or null if the task is not found.
+     */
+    operator fun get(id: Int): SchedulerTask?
 
-        if (delay != -1L) {
-            executorService.schedule(runnable, delay, unit)
-            return
-        }
+    /**
+     * Cancels all running tasks.
+     */
+    fun cancelAllTasks()
 
-        executorService.execute(runnable)
-    }
+    companion object
 }

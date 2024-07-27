@@ -62,7 +62,7 @@ class CloudTemplateArgument : AetherArgument<CloudTemplate>() {
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        CloudAPI.instance.cloudServiceManager.services.forEach {
+        CloudAPI.instance.cloudTemplateManager.templates.forEach {
             builder.suggest(it.name)
         }
 

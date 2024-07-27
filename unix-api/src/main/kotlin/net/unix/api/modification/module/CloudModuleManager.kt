@@ -54,4 +54,6 @@ interface CloudModuleManager : ModificationManager {
      * @return True if success, else false
      */
     fun reload(module: CloudModule): Boolean
+
+    companion object
 }

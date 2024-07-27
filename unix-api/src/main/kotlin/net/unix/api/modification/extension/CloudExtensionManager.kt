@@ -36,4 +36,6 @@ interface CloudExtensionManager : ModificationManager {
      */
     @Throws(ModificationLoadException::class, ModificationExistException::class)
     override fun load(file: File): CloudExtension
+
+    companion object
 }

@@ -1,11 +1,14 @@
 package net.unix.cloud.terminal
 
-import net.unix.api.CloudExtension.parseColor
+import net.kyori.adventure.text.Component
+import net.unix.api.CloudExtension.deserializeComponent
+import net.unix.api.CloudExtension.serializeAnsi
 import net.unix.api.command.sender.CommandSender
 import net.unix.api.terminal.JLineTerminal
 import net.unix.cloud.command.brigadier.BrigadierCommandCompleter
 import net.unix.cloud.command.brigadier.BrigadierCommandHighlighter
 import net.unix.cloud.command.sender.ConsoleCommandSenderImpl
+import net.unix.cloud.persistence.PersistentDataContainerImpl
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.Terminal
@@ -17,7 +20,7 @@ class JLineTerminalImpl(
     prompt: String
 ) : JLineTerminal {
 
-    override val defaultPrompt = prompt.parseColor()
+    override val defaultPrompt = prompt.deserializeComponent()
 
     override val sender: CommandSender = ConsoleCommandSenderImpl()
 
@@ -38,12 +41,17 @@ class JLineTerminalImpl(
         .option(LineReader.Option.INSERT_TAB, false)
         .build()
 
-    private val runner: JLineTerminalRunner
-
     init {
         lineReader.autosuggestion = LineReader.SuggestionType.COMPLETER
+    }
 
-        runner = JLineTerminalRunner(this)
+    var currentPrompt = defaultPrompt
+
+    private val runner: JLineTerminalRunner = JLineTerminalRunner(this)
+
+    override fun setPrompt(component: Component?) {
+        currentPrompt = component ?: defaultPrompt
+        runner.updatePrompt()
     }
 
     override fun close() {
@@ -51,11 +59,13 @@ class JLineTerminalImpl(
         terminal.close()
     }
 
-    override fun print(input: String) {
+    override fun print(component: Component) {
         terminal.puts(InfoCmp.Capability.carriage_return)
-        terminal.writer().println(input)
+        terminal.writer().println(component.serializeAnsi())
         redraw()
     }
+
+    override val persistentDataContainer = PersistentDataContainerImpl()
 
     private fun redraw() {
         if (lineReader.isReading) {

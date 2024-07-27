@@ -4,6 +4,7 @@ import net.unix.api.chimera.server.Server
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.module.CloudModuleManager
+import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.JLineTerminal
@@ -71,6 +72,13 @@ abstract class CloudAPI {
      * UnixCloud module manager
      */
     abstract val moduleManager: CloudModuleManager
+
+    /**
+     * Manager for scheduler
+     *
+     * For INTERNAL usage only!
+     */
+    abstract val schedulerManager: SchedulerManager
 
     /**
      * Websocket server on port 9191

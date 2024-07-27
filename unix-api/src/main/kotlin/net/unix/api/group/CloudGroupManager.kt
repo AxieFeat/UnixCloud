@@ -8,7 +8,10 @@ import net.unix.api.template.CloudTemplate
  */
 interface CloudGroupManager {
 
-    val groups: List<CloudGroup>
+    /**
+     * All [CloudGroup]'s
+     */
+    val groups: Set<CloudGroup>
 
     /**
      * Create instance of [CloudGroup]

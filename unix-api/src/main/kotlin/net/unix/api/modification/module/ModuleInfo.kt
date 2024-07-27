@@ -7,8 +7,6 @@ import net.unix.api.modification.ModificationInfo
  */
 interface ModuleInfo : ModificationInfo {
 
-    companion object
-
     /**
      * Required dependencies
      */
@@ -18,4 +16,6 @@ interface ModuleInfo : ModificationInfo {
      * Optional dependencies
      */
     val soft: List<String>
+
+    companion object
 }

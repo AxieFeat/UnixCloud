@@ -1,7 +1,7 @@
 package net.unix.api.persistence
 
 import net.unix.api.NamespacedKey
-import net.unix.api.Serializable
+import kotlin.jvm.Throws
 
 /**
  * This interface represents a map like object, capable of storing custom tags
@@ -23,11 +23,9 @@ interface PersistentDataContainer {
      * @param T The generic java type of the tag value
      * @param Z The generic type of the object to store
      *
-     * @throws NullPointerException If the key is null
-     * @throws NullPointerException If the type is null
-     * @throws NullPointerException If the value is null. Removing a tag should be done using [.remove]
      * @throws IllegalArgumentException If no suitable adapter will be found for the [PersistentDataType.primitiveType]
      */
+    @Throws(IllegalArgumentException::class)
     operator fun <T, Z> set(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z)
 
     /**
@@ -56,10 +54,7 @@ interface PersistentDataContainer {
      * @param T The generic type of the stored primitive
      * @param Z The generic type of the eventually created complex object
      *
-     * @return If a value
-     *
-     * @throws NullPointerException If the key to look up is null
-     * @throws NullPointerException If the type to cast the found object to is null
+     * @return If a value found
      */
     fun <T, Z> has(key: NamespacedKey, type: PersistentDataType<T, Z>): Boolean
 
@@ -74,13 +69,12 @@ interface PersistentDataContainer {
      *
      * @return the value or `null` if no value was mapped under the given value
      *
-     * @throws NullPointerException If the key to look up is null
-     * @throws NullPointerException If the type to cast the found object to is null
      * @throws IllegalArgumentException If the value exists under the given key,
      * but cannot be access using the given type
      * @throws IllegalArgumentException If no suitable adapter will be found for
      * the [PersistentDataType.primitiveType]
      */
+    @Throws(IllegalArgumentException::class)
     operator fun <T, Z> get(key: NamespacedKey, type: PersistentDataType<T, Z>): Z?
 
     /**
@@ -98,14 +92,12 @@ interface PersistentDataContainer {
      * @return The value or the default value if no value was mapped under the
      * given value
      *
-     * @throws NullPointerException If the key to look up is null
-     * @throws NullPointerException If the type to cast the found object to is
-     * null
      * @throws IllegalArgumentException If the value exists under the given key,
      * but cannot be access using the given type
      * @throws IllegalArgumentException If no suitable adapter will be found for
      * the [PersistentDataType.primitiveType]
      */
+    @Throws(IllegalArgumentException::class)
     fun <T, Z> getOrDefault(key: NamespacedKey, type: PersistentDataType<T, Z>, defaultValue: Z): Z
 
     /**
@@ -123,8 +115,6 @@ interface PersistentDataContainer {
      * Removes a custom key from the [PersistentDataHolder] instance.
      *
      * @param key The key
-     *
-     * @throws NullPointerException If the provided key is null
      */
     fun remove(key: NamespacedKey)
 
@@ -142,4 +132,6 @@ interface PersistentDataContainer {
      * @return The tag context
      */
     val adapterContext: PersistentDataAdapterContext
+
+    companion object
 }

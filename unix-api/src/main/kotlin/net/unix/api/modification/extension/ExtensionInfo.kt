@@ -5,4 +5,6 @@ import net.unix.api.modification.ModificationInfo
 /**
  * Info about [CloudExtension]
  */
-interface ExtensionInfo : ModificationInfo
+interface ExtensionInfo : ModificationInfo {
+    companion object
+}

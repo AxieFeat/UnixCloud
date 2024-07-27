@@ -11,15 +11,19 @@ import net.unix.api.service.CloudService
 interface CloudTemplate : PersistentDataHolder, Serializable {
 
     /**
+     * Template name
+     */
+    var name: String
+
+    /**
      * Template location
      */
-    var templateFolder: File
+    val templateFolder: File
 
     /**
      * Files, that will be copied on creation [CloudService]
      */
-    val files: MutableList<CloudFile>
+    var files: MutableList<CloudFile>
 
     companion object
-
 }

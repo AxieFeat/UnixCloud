@@ -3,7 +3,7 @@ package net.unix.api.terminal
 import org.fusesource.jansi.Ansi
 
 /**
- * UnixCloud coloring for terminal
+ * UnixCloud coloring
  *
  * @param red Red value
  * @param green Green value
@@ -11,6 +11,7 @@ import org.fusesource.jansi.Ansi
  * @param code Color code
  * @param function Translate color function
  */
+@Deprecated("Use it only if you know, what a doing, else use Adventure Components")
 enum class Color(
     red: Int,
     green: Int,
@@ -109,6 +110,20 @@ enum class Color(
                 return@replace hexColor.replace(hexColor, "")
             }
         }
+
+        /**
+         * Parse color in string
+         *
+         * @return Changed string
+         */
+        fun String.parseColor(): String = Color.translate(this)!!
+
+        /**
+         * Strip colors in string
+         *
+         * @return Changed string
+         */
+        fun String.stripColor(): String = Color.strip(this)!!
     }
 
     private fun interface ColorExecutable {

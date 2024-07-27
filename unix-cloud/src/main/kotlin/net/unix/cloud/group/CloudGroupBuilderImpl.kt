@@ -4,7 +4,7 @@ import net.unix.api.group.CloudGroup
 import net.unix.api.group.CloudGroupBuilder
 import net.unix.api.template.CloudTemplate
 
-class CloudGroupBuilderImpl : CloudGroupBuilder {
+object CloudGroupBuilderImpl : CloudGroupBuilder {
     override fun name(name: String): CloudGroupBuilder {
         TODO("Not yet implemented")
     }

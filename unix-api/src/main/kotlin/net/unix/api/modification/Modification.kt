@@ -26,4 +26,20 @@ interface Modification {
      * Call when modification loaded
      */
     fun onLoad()
+
+    /**
+     * Register listener for modification
+     *
+     * @param listener Listener instance
+     */
+    fun registerListener(listener: Any)
+
+    /**
+     * Unregister listener for modification
+     *
+     * @param listener Listener instance
+     */
+    fun unregisterListener(listener: Any)
+
+    companion object
 }

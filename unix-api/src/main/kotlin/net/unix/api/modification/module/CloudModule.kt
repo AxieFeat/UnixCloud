@@ -1,5 +1,6 @@
 package net.unix.api.modification.module
 
+import net.unix.api.event.EventManager
 import net.unix.api.modification.Modification
 import java.io.File
 
@@ -10,6 +11,8 @@ import java.io.File
  * or use the @ModuleInfo annotation for inheritor class to create a module
  */
 abstract class CloudModule : Modification {
+
+    private val listeners = mutableListOf<Any>()
 
     private val internalFolder: File? = null
     private val internalExecutable: File? = null
@@ -49,4 +52,26 @@ abstract class CloudModule : Modification {
      * Call when module unloaded
      */
     open fun onUnload() {}
+
+    /**
+     * Register listener for module
+     *
+     * @param listener Listener instance
+     */
+    override fun registerListener(listener: Any) {
+        EventManager.registerListeners(listener)
+        listeners.add(listener)
+    }
+
+    /**
+     * Unregister listener for module
+     *
+     * @param listener Listener instance
+     */
+    override fun unregisterListener(listener: Any) {
+        EventManager.unregisterListeners(listener)
+        listeners.remove(listener)
+    }
+
+    companion object
 }

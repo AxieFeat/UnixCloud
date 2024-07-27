@@ -1,5 +1,6 @@
 package net.unix.api.event.impl.cloud
 
+import net.kyori.adventure.text.Component
 import net.unix.api.event.Cancellable
 import net.unix.api.event.Event
 import net.unix.api.terminal.logger.Logger
@@ -14,7 +15,7 @@ import net.unix.api.terminal.logger.Logger
 class CloudTerminalLoggerEvent(
     var loggerName: String,
     var format: Boolean,
-    vararg val message: String
+    vararg val message: Component
 ) : Event<CloudTerminalLoggerEvent>(), Cancellable {
 
     /**

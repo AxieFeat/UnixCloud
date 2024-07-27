@@ -12,4 +12,6 @@ interface PersistentDataAdapterContext {
      * @return the fresh container instance
      */
     fun newPersistentDataContainer(): PersistentDataContainer
+
+    companion object
 }

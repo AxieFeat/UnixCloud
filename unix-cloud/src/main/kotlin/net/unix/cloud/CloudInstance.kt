@@ -3,14 +3,13 @@ package net.unix.cloud
 import net.unix.api.CloudAPI
 import net.unix.api.chimera.server.Server
 import net.unix.api.command.CommandDispatcher
-import net.unix.api.command.aether.AetherArgumentBuilder.Companion.argument
-import net.unix.api.command.aether.AetherCommandBuilder
-import net.unix.api.command.aether.AetherLiteralBuilder.Companion.literal
 import net.unix.api.command.aether.argument.CloudServiceArgument
+import net.unix.api.command.aether.dsl.command
 import net.unix.api.command.aether.get
 import net.unix.api.event.impl.cloud.CloudStartEvent
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.module.CloudModuleManager
+import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
@@ -18,7 +17,10 @@ import net.unix.api.terminal.JLineTerminal
 import net.unix.api.terminal.logger.Logger
 import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.cloud.command.CommandDispatcherImpl
+import net.unix.cloud.group.CloudGroupManagerImpl
+import net.unix.cloud.scheduler.SchedulerManagerImpl
 import net.unix.cloud.service.CloudServiceManagerImpl
+import net.unix.cloud.template.CloudTemplateManagerImpl
 import net.unix.cloud.terminal.JLineTerminalImpl
 import net.unix.cloud.terminal.logger.LoggerFactoryImpl
 import java.io.File
@@ -43,30 +45,50 @@ fun main() {
     val instance = CloudInstance
     instance.started = true
 
-    AetherCommandBuilder("screen") // <- название команды
-        .then( // <- указываем какой-то аргумент
-            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
-                .then( // <- ещё один аргумент, который следует за "toggle"
-                    argument("service", CloudServiceArgument()) // <- CloudServiceArgument фильтрует ввод пользователя и 100% возвращает существующий объект
-                        .execute {
-                            val service: CloudService = it["service"]
+    command("screen") {
+        literal("toggle") {
+            argument("service", CloudServiceArgument()) {
+                execute {
+                    val service: CloudService = it["service"]
 
-                            println("Screen toggled to ${service.name}")
-                        }
-                )
-        )
-        .then( // <- указываем ещё какой-то аргумент
-            literal("switch")
-                .then(
-                    argument("service", CloudServiceArgument())
-                        .execute {
-                            val service: CloudService = it["service"]
+                    println("Screen toggled to ${service.name}")
+                }
+            }
+        }
+        literal("switch") {
+            argument("service", CloudServiceArgument()) {
+                execute {
+                    val service: CloudService = it["service"]
 
-                            println("Screen switched to ${service.name}")
-                        }
-                )
-        )
-        .register() // <- регистрируем команду
+                    println("Screen switched to ${service.name}")
+                }
+            }
+        }
+    }.register()
+//    AetherCommandBuilder("screen") // <- название команды
+//        .then( // <- указываем какой-то аргумент
+//            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
+//                .then( // <- ещё один аргумент, который следует за "toggle"
+//                    argument("service", CloudServiceArgument()) // <- CloudServiceArgument фильтрует ввод пользователя и 100% возвращает существующий объект
+//                        .execute {
+//                            val service: CloudService = it["service"]
+//
+//                            println("Screen toggled to ${service.name}")
+//                        }
+//                )
+//        )
+//        .then( // <- указываем ещё какой-то аргумент
+//            literal("switch")
+//                .then(
+//                    argument("service", CloudServiceArgument())
+//                        .execute {
+//                            val service: CloudService = it["service"]
+//
+//                            println("Screen switched to ${service.name}")
+//                        }
+//                )
+//        )
+//        .register() // <- регистрируем команду
 }
 
 object CloudInstance : CloudAPI() {
@@ -82,19 +104,14 @@ object CloudInstance : CloudAPI() {
 
     override val loggerFactory: LoggerFactory = LoggerFactoryImpl()
     override val logger: Logger = loggerFactory.logger
-
     override val commandDispatcher: CommandDispatcher = CommandDispatcherImpl
-
     override val cloudServiceManager: CloudServiceManager = CloudServiceManagerImpl
-    override val cloudTemplateManager: CloudTemplateManager
-        get() = TODO("Not yet implemented")
-    override val cloudGroupManager: CloudGroupManager
-        get() = TODO("Not yet implemented")
+    override val cloudTemplateManager: CloudTemplateManager = CloudTemplateManagerImpl
+    override val cloudGroupManager: CloudGroupManager = CloudGroupManagerImpl
     override val moduleManager: CloudModuleManager
         get() = TODO("Not yet implemented")
-
-
-    override val terminal: JLineTerminal = JLineTerminalImpl(" &fUnix&7@&bcloud&7:~&8# &8")
+    override val schedulerManager: SchedulerManager = SchedulerManagerImpl()
+    override val terminal: JLineTerminal = JLineTerminalImpl(" <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ")
 
     override val mainDirectory: File
         get() {

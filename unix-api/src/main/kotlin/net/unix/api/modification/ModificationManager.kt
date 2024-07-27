@@ -28,4 +28,6 @@ interface ModificationManager {
      */
     @Throws(ModificationLoadException::class, ModificationExistException::class)
     fun load(file: File): Modification?
+
+    companion object
 }

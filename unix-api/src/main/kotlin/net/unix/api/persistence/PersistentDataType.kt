@@ -93,8 +93,7 @@ interface PersistentDataType<T, Z> {
         /**
          * Complex Arrays.
          */
-        val TAG_CONTAINER_ARRAY =
-            PrimitivePersistentDataType(Array<PersistentDataContainer>::class.java)
+        val TAG_CONTAINER_ARRAY = PrimitivePersistentDataType(Array<PersistentDataContainer>::class.java)
 
         /**
          * Nested PersistentDataContainer.

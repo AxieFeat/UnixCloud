@@ -4,11 +4,13 @@ import net.unix.api.NamespacedKey
 import net.unix.api.persistence.PersistentDataAdapterContext
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.persistence.PersistentDataType
+import kotlin.jvm.Throws
 
 class PersistentDataContainerImpl : PersistentDataContainer {
 
     private val data = mutableMapOf<String, MutableMap<PersistentDataType<*, *>, Any>>()
 
+    @Throws(IllegalArgumentException::class)
     override operator fun <T, Z> set(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z) {
         val stringKey = key.toString()
 
@@ -27,12 +29,14 @@ class PersistentDataContainerImpl : PersistentDataContainer {
         return result.isNotEmpty()
     }
 
+    @Throws(IllegalArgumentException::class)
     override operator fun <T, Z> get(key: NamespacedKey, type: PersistentDataType<T, Z>): Z? {
         val result = data[key.toString()]?.get(type) ?: return null
 
         return result as Z
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun <T, Z> getOrDefault(key: NamespacedKey, type: PersistentDataType<T, Z>, defaultValue: Z): Z {
         val z = this[key, type]
 

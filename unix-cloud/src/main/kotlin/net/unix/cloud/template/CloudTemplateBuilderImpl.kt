@@ -6,7 +6,7 @@ import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateBuilder
 import java.io.File
 
-class CloudTemplateBuilderImpl : CloudTemplateBuilder {
+object CloudTemplateBuilderImpl : CloudTemplateBuilder {
     override fun folder(folder: File): CloudGroupBuilder {
         TODO("Not yet implemented")
     }
