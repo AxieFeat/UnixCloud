@@ -1,19 +1,23 @@
 package net.unix.api
 
-import net.unix.api.chimera.server.Server
+import net.unix.api.network.server.Server
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.CloudGroupManager
-import net.unix.api.modification.module.CloudModuleManager
+import net.unix.api.modification.extension.ExtensionManager
+import net.unix.api.modification.module.ModuleManager
 import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
-import net.unix.api.terminal.JLineTerminal
+import net.unix.api.terminal.Terminal
 import net.unix.api.terminal.logger.Logger
 import net.unix.api.terminal.logger.LoggerFactory
-import java.io.File
+import net.unix.api.service.CloudService
+import net.unix.api.group.CloudGroup
+import net.unix.api.template.CloudTemplate
+import net.unix.api.modification.module.CloudModule
 
 /**
- * UnixCloud API
+ * Unix API
  */
 abstract class CloudAPI {
 
@@ -29,49 +33,54 @@ abstract class CloudAPI {
     }
 
     /**
-     * UnixCloud directory
+     * Location space, that's contains some files
      */
-    abstract val mainDirectory: File
+    abstract val locationSpace: LocationSpace
 
     /**
-     * UnixCloud terminal
+     * Terminal, just a terminal
      */
-    abstract val terminal: JLineTerminal
+    abstract val terminal: Terminal
 
     /**
-     * UnixCloud logger
+     * Terminal logger
      */
     abstract val logger: Logger
 
     /**
-     * UnixCloud logger factory
+     * Factory for creation loggers
      */
     abstract val loggerFactory: LoggerFactory
 
     /**
-     * UnixCloud command dispatcher
+     * Command dispatcher
      */
     abstract val commandDispatcher: CommandDispatcher
 
     /**
-     * UnixCloud cloud service manager
+     * Manager to control [CloudService]'s
      */
     abstract val cloudServiceManager: CloudServiceManager
 
     /**
-     * UnixCloud cloud template manager
+     * Manager to control [CloudTemplate]'s
      */
     abstract val cloudTemplateManager: CloudTemplateManager
 
     /**
-     * UnixCloud cloud group manager
+     * Manager to control [CloudGroup]'s
      */
     abstract val cloudGroupManager: CloudGroupManager
 
     /**
-     * UnixCloud module manager
+     * Manager to control [CloudModule]'s
      */
-    abstract val moduleManager: CloudModuleManager
+    abstract val moduleManager: ModuleManager
+
+    /**
+     * Manager to control [CloudExtension]'s
+     */
+    abstract val extensionManager: ExtensionManager
 
     /**
      * Manager for scheduler
@@ -86,7 +95,7 @@ abstract class CloudAPI {
     abstract val server: Server
 
     /**
-     * Shutdown UnixCloud
+     * Shutdown
      */
     abstract fun shutdown()
 }

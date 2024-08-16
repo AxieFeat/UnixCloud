@@ -1,12 +1,13 @@
 package net.unix.api
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.unix.api.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
-import java.util.concurrent.Callable
+import java.security.MessageDigest
+import java.util.Base64
 import java.util.regex.Pattern
 
 /**
@@ -14,6 +15,8 @@ import java.util.regex.Pattern
  */
 object CloudExtension {
 
+    private val sha256 = MessageDigest.getInstance("SHA-256")
+    private val md5 = MessageDigest.getInstance("MD5")
     private val miniMessage = MiniMessage.builder().build()
     private val ansiSerializer = ANSIComponentSerializer.builder().build()
     private val legacySerializer = LegacyComponentSerializer.builder().character('&').hexColors().build()
@@ -139,14 +142,34 @@ object CloudExtension {
     }
 
     /**
+     * Hash of string
+     *
+     * SHA-256 -> MD5 -> Base64 -> SHA-256
+     *
+     * @return Hash result
+     */
+    fun String.hash(): String {
+        val bytes = this.toByteArray()
+
+        val first = sha256.digest(bytes).fold("") { str, it -> str + "%02x".format(it) }.toByteArray()
+        val second = md5.digest(first).fold("") { str, it -> str + "%02x".format(it) }.toByteArray()
+        
+        return Base64.getEncoder().encode(second).fold("") { str, it -> str + "%02x".format(it) }
+    }
+
+    /**
      * Abbreviation of the if statement for Boolean
      *
      * Example:
      *
      * val result = true % "312" or "123"
      */
-    infix operator fun <T> Boolean.rem(any: T): BoolFunction<T> {
-        val boolFunction = BoolFunction.create(this, result = any)
+    inline infix operator fun <reified T> Boolean.rem(any: T): BoolInterface<T> {
+        val boolFunction = object : BoolInterface<T> {
+            override val from: Boolean = this@rem
+            override val result: T = any
+
+        }
 
         return boolFunction
     }
@@ -154,26 +177,19 @@ object CloudExtension {
     /**
      * @see [rem]
      */
-    infix fun <T> BoolFunction<T>.or(any: T): T {
+    inline infix fun <reified T> BoolInterface<T>.or(any: T): T {
         val result = this.from!!
 
-        val boolFunction = BoolFunction.create(result = any)
-
-        return if (result) this.run() else boolFunction.run()
-    }
-
-    abstract class BoolFunction<T>(val from: Boolean? = null) {
-
-        companion object {
-            fun <T> create(from: Boolean? = null, result: T): BoolFunction<T> {
-                return object : BoolFunction<T>(from) {
-                    override fun run(): T {
-                        return result
-                    }
-                }
-            }
+        val boolFunction = object : BoolInterface<T> {
+            override val from: Boolean? = null
+            override val result: T = any
         }
 
-        abstract fun run(): T
+        return if (result) this.result else boolFunction.result
+    }
+
+    interface BoolInterface<T> {
+        val from: Boolean?
+        val result: T
     }
 }

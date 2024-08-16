@@ -2,6 +2,7 @@ import java.net.URI
 
 plugins {
     kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 group = "net.unix.cloud"
@@ -10,6 +11,7 @@ version = "1.0"
 allprojects {
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
     repositories {
         mavenCentral()
@@ -43,6 +45,7 @@ allprojects {
         implementation("com.esotericsoftware:kryo:5.6.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
         implementation("org.fusesource.jansi:jansi:2.4.1")
+        implementation("org.yaml:snakeyaml:2.2")
     }
 }
 

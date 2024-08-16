@@ -6,7 +6,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import net.unix.api.CloudAPI
 import net.unix.api.command.sender.CommandSender
 import net.unix.api.event.impl.cloud.CloudTerminalHighlightEvent
-import net.unix.cloud.CloudInstance
 import org.jline.reader.Highlighter
 import org.jline.reader.LineReader
 import org.jline.utils.AttributedString
@@ -15,10 +14,10 @@ import org.jline.utils.AttributedStyle
 import java.util.regex.Pattern
 import kotlin.math.min
 
-object BrigadierCommandHighlighter : Highlighter {
-
+@Suppress("UNCHECKED_CAST")
+open class BrigadierCommandHighlighter(
     private val sender: CommandSender
-        get() = CloudInstance.terminal.sender
+) : Highlighter {
 
     override fun highlight(reader: LineReader, buffer: String): AttributedString {
 

@@ -2,8 +2,8 @@ package net.unix.api.template
 
 import net.unix.api.Serializable
 import net.unix.api.persistence.PersistentDataHolder
-import java.io.File
 import net.unix.api.service.CloudService
+import java.io.File
 
 /**
  * [CloudTemplate] allow control creation instance of [CloudService]'s

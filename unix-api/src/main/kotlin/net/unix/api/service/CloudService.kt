@@ -1,17 +1,16 @@
 package net.unix.api.service
 
-import net.unix.api.Serializable
+import net.unix.api.CloudAPI
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.exception.CloudServiceModificationException
 import java.io.File
-import java.util.UUID
-import kotlin.jvm.Throws
+import java.util.*
 
 /**
  * [CloudService]'s allow to start instances of [CloudGroup]
  */
-interface CloudService : PersistentDataHolder, Serializable {
+interface CloudService : PersistentDataHolder {
 
     /**
      * Service name
@@ -39,7 +38,7 @@ interface CloudService : PersistentDataHolder, Serializable {
     /**
      * Service status
      *
-     * Change value only if you KNOW, what a doing
+     * Change variable only if you KNOW, what a doing
      */
     var status: CloudServiceStatus
 
@@ -68,10 +67,28 @@ interface CloudService : PersistentDataHolder, Serializable {
     /**
      * Delete [CloudService]
      *
-     * @throws CloudServiceModificationException If [status] is not [CloudServiceStatus.PREPARED]
+     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED]
+     * @throws IllegalArgumentException If [status] is [CloudServiceStatus.STARTED]
      */
-    @Throws(CloudServiceModificationException::class)
+    @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     fun delete()
 
-    companion object
+    companion object {
+
+        private val current
+            get() = CloudAPI.instance.cloudServiceManager.services.map { it.uuid }
+
+        /**
+         * Generate unique UUID for [CloudService]. It'll be unique by current session.
+         *
+         * @return Unique UUID
+         */
+        fun uniqueUUID(): UUID {
+            val random = UUID.randomUUID()
+
+            if (current.contains(random)) return uniqueUUID()
+
+            return random
+        }
+    }
 }

@@ -6,25 +6,25 @@ import com.mojang.brigadier.StringReader
 import net.unix.api.CloudAPI
 import net.unix.api.command.sender.CommandSender
 import net.unix.api.event.impl.cloud.CloudTerminalCompleteEvent
-import net.unix.cloud.CloudInstance
 import org.jline.reader.Candidate
 import org.jline.reader.Completer
 import org.jline.reader.LineReader
 import org.jline.reader.ParsedLine
 
-object BrigadierCommandCompleter : Completer {
-
+open class BrigadierCommandCompleter(
     private val sender: CommandSender
-        get() = CloudInstance.terminal.sender
+) : Completer {
 
-    fun prepareStringReader(line: String): StringReader {
-        val stringReader = StringReader(line)
+    companion object {
+        fun prepareStringReader(line: String): StringReader {
+            val stringReader = StringReader(line)
 
-        if (stringReader.canRead() && stringReader.peek() == '/') {
-            stringReader.skip()
+            if (stringReader.canRead() && stringReader.peek() == '/') {
+                stringReader.skip()
+            }
+
+            return stringReader
         }
-
-        return stringReader
     }
 
     override fun complete(reader: LineReader, line: ParsedLine, candidates: MutableList<Candidate>) {

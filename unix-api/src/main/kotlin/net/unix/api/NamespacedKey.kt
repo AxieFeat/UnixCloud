@@ -16,6 +16,7 @@ import java.util.regex.Pattern
  * Keys may only contain lowercase alphanumeric characters, periods,
  * underscores, hyphens, and forward slashes.
  */
+@Suppress("DEPRECATION")
 class NamespacedKey : Key {
 
     val namespace: String
@@ -48,7 +49,7 @@ class NamespacedKey : Key {
     }
 
     /**
-     * Create a key in the module's namespace.
+     * Create a key in the modification's namespace.
      *
      * Namespaces may only contain lowercase alphanumeric characters, periods,
      * underscores, and hyphens.
@@ -96,7 +97,12 @@ class NamespacedKey : Key {
          *
          * @return New key
          */
-        @Deprecated("should never be used by modules, for internal use only!!")
+        @Deprecated("should never be used by modifications, for internal use only!!", ReplaceWith(
+            "NamespacedKey.unix(UUID.randomUUID().toString())",
+            "net.unix.api.NamespacedKey",
+            "java.util.UUID"
+        )
+        )
         fun randomKey(): NamespacedKey {
             return NamespacedKey(UNIX, UUID.randomUUID().toString())
         }
@@ -124,7 +130,7 @@ class NamespacedKey : Key {
          *
          * @return The created NamespacedKey. Null if invalid key
          */
-        fun fromString(string: String, defaultNamespace: Modification?): NamespacedKey? {
+        fun fromString(string: String, defaultNamespace: Modification? = null): NamespacedKey? {
             val components = string.split(":".toRegex(), limit = 3).toTypedArray()
             if (components.size > 2) {
                 return null
@@ -152,19 +158,6 @@ class NamespacedKey : Key {
             }
 
             return NamespacedKey(namespace, key)
-        }
-
-        /**
-         * Get a NamespacedKey from the supplied string.
-         *
-         * The default namespace will be Unix's
-         *
-         * @param key The key to convert to a NamespacedKey
-         *
-         * @return The created NamespacedKey. Null if invalid
-         */
-        fun fromString(key: String): NamespacedKey? {
-            return fromString(key, null)
         }
     }
 }

@@ -4,6 +4,5 @@ plugins {
 rootProject.name = "UnixCloud"
 include("unix-api")
 include("unix-cloud")
-include("unix-module-annotation-processor")
+include("unix-annotation-processor")
 include("unix-network")
-include("unix-builder")

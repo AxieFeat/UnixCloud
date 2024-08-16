@@ -7,7 +7,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-class ExecutorScheduler : AbstractScheduler() {
+open class ExecutorScheduler : AbstractScheduler() {
 
     private val executor = Executors.newScheduledThreadPool(8)
 

@@ -11,6 +11,8 @@ import kotlin.math.max
 
 object SyntaxExceptionBuilder {
 
+    private val hereMessage: Component = "<reset><red><i><--[HERE]</i></red>".deserializeComponent()
+
     private val dynamic2CommandExceptionType = Dynamic2CommandExceptionType { _: Any?, _: Any? ->
         LiteralMessage(
             ""
@@ -78,8 +80,7 @@ object SyntaxExceptionBuilder {
                 }
             }
 
-            builder.append("<reset><red><i><--[HERE]</i></red>".deserializeComponent())
-
+            builder.append(hereMessage)
 
             return listOf("<red>${this.rawMessage.string}</red>".deserializeComponent(), builder.build())
         }

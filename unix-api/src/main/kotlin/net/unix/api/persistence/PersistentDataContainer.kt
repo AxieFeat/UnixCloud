@@ -1,13 +1,13 @@
 package net.unix.api.persistence
 
 import net.unix.api.NamespacedKey
-import kotlin.jvm.Throws
+import net.unix.api.Serializable
 
 /**
  * This interface represents a map like object, capable of storing custom tags
  * in it.
  */
-interface PersistentDataContainer {
+interface PersistentDataContainer : Serializable {
     /**
      * Stores a metadata value on the [PersistentDataHolder] instance.
      *

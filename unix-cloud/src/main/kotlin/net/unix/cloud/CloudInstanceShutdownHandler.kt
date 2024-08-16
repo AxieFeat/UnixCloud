@@ -2,10 +2,12 @@ package net.unix.cloud
 
 import net.unix.api.event.impl.cloud.CloudShutdownEvent
 
-object CloudInstanceShutdownHandler {
+class CloudInstanceShutdownHandler(
+    private val instance: CloudInstance
+) {
     fun run() {
         CloudShutdownEvent().callEvent()
-        CloudInstance.server.close()
-        CloudInstance.terminal.close()
+        instance.server.close()
+        instance.terminal.close()
     }
 }

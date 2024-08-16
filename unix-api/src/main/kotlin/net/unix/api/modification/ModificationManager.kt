@@ -3,7 +3,6 @@ package net.unix.api.modification
 import net.unix.api.modification.exception.ModificationExistException
 import net.unix.api.modification.exception.ModificationLoadException
 import java.io.File
-import kotlin.jvm.Throws
 
 interface ModificationManager {
 

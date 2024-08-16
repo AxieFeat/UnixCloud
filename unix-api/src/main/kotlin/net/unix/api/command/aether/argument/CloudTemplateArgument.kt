@@ -9,7 +9,6 @@ import net.unix.api.command.aether.AetherArgument
 import net.unix.api.command.aether.SyntaxExceptionBuilder
 import net.unix.api.template.CloudTemplate
 import java.util.concurrent.CompletableFuture
-import kotlin.jvm.Throws
 
 /**
  * Command argument for [CloudTemplate]

@@ -1,12 +1,11 @@
 package net.unix.api.group
 
 import net.unix.api.Serializable
-import net.unix.api.persistence.PersistentDataHolder
-import net.unix.api.template.CloudTemplate
-import net.unix.api.service.CloudService
 import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.persistence.PersistentDataHolder
+import net.unix.api.service.CloudService
+import net.unix.api.template.CloudTemplate
 import org.jetbrains.annotations.Range
-import kotlin.jvm.Throws
 
 /**
  * Generic template for starting instances of [CloudService]

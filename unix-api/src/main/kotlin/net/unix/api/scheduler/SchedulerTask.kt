@@ -19,7 +19,7 @@ interface SchedulerTask {
      *
      * If the task has already been cancelled, the method does nothing.
      *
-     * @see isCancelled
+     * @see [cancelled]
      */
     fun cancel()
 

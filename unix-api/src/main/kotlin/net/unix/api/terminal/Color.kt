@@ -1,9 +1,10 @@
 package net.unix.api.terminal
 
+import net.unix.api.terminal.Color.ColorExecutable
 import org.fusesource.jansi.Ansi
 
 /**
- * UnixCloud coloring
+ * Coloring text like minecraft legacy colors
  *
  * @param red Red value
  * @param green Green value

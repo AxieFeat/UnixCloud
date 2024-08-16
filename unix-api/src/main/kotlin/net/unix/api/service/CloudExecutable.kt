@@ -1,23 +1,31 @@
 package net.unix.api.service
 
 import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
 
 /**
- * Allow to start [CloudService] with own parameters
+ * Allow to start [CloudService]
  */
 interface CloudExecutable {
 
     /**
-     * Path to executable file
+     * A [CloudService] that is managed
+     */
+    val service: CloudService
+
+    /**
+     * Executable file
      */
     val executableFile: File
 
     /**
-     * Run start process
+     * Is [CloudExecutable] run
      */
-    fun run()
+    var started: Boolean
+
+    /**
+     * Start [CloudService]
+     */
+    fun start()
 
     /**
      * Stop process
@@ -28,6 +36,11 @@ interface CloudExecutable {
      * Kill process
      */
     fun kill()
+
+    /**
+     * Create a copy of current [CloudExecutable] for other [CloudService]
+     */
+    fun copy(service: CloudService): CloudExecutable
 
     companion object
 }
