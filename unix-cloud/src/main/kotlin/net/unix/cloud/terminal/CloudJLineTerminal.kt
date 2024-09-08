@@ -1,11 +1,11 @@
 package net.unix.cloud.terminal
 
 import net.kyori.adventure.text.Component
-import net.unix.api.CloudExtension.deserializeComponent
-import net.unix.api.CloudExtension.serializeAnsi
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.command.sender.CommandSender
 import net.unix.api.terminal.logger.Logger
+import net.unix.cloud.CloudExtension.deserializeComponent
+import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.command.brigadier.BrigadierCommandCompleter
 import net.unix.cloud.command.brigadier.BrigadierCommandHighlighter
 import net.unix.cloud.command.sender.CloudConsoleCommandSender

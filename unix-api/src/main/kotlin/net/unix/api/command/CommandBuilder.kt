@@ -3,6 +3,11 @@ package net.unix.api.command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 
+/**
+ * Builder for commands.
+ *
+ * @param name Command name.
+ */
 @Suppress("LeakingThis")
 abstract class CommandBuilder<T>(
     val name: String

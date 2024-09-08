@@ -3,10 +3,10 @@ package net.unix.api.command
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
-@Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class CommandLiteralBuilder<T>(
-    val literal: String
-) : LiteralArgumentBuilder<T>(literal) {
+    val name: String
+) : LiteralArgumentBuilder<T>(name) {
 
     /**
      * Command executor

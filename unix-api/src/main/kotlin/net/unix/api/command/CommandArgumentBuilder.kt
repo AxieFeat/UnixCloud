@@ -3,6 +3,9 @@ package net.unix.api.command
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.suggestion.SuggestionProvider
 
+/**
+ * Builder for command arguments.
+ */
 abstract class CommandArgumentBuilder<T, S> : ArgumentBuilder<T, CommandArgumentBuilder<T, S>>() {
 
     /**

@@ -25,4 +25,5 @@ interface CommandSender {
      * @param message Component to sent.
      */
     fun sendMessage(message: Component)
+
 }

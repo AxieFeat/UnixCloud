@@ -13,6 +13,14 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class CommandArgument<T> : ArgumentType<T> {
 
+    /**
+     * List of suggestions.
+     *
+     * @param context Command context.
+     * @param builder Suggestion builder.
+     *
+     * @return Completable future of suggestions.
+     */
     override fun <S> listSuggestions(context: CommandContext<S>, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
         return Suggestions.empty()
     }

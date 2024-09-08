@@ -1,6 +1,5 @@
 package net.unix.api.service
 
-import net.unix.api.CloudAPI
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.exception.CloudServiceModificationException

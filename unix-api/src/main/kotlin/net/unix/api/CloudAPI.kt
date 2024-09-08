@@ -67,7 +67,7 @@ abstract class CloudAPI {
     abstract val moduleManager: ModuleManager
 
     /**
-     * Manager to control [CloudExtension]'s.
+     * Manager to control [ExtensionManager]'s.
      */
     abstract val extensionManager: ExtensionManager
 

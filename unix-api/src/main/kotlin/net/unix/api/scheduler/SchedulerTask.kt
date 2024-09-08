@@ -1,5 +1,8 @@
 package net.unix.api.scheduler
 
+/**
+ * Task of scheduler.
+ */
 interface SchedulerTask {
 
     /**
