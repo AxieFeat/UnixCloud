@@ -2,8 +2,8 @@ plugins {
     kotlin("jvm")
 }
 
-group = "net.unix.cloud"
-version = "1.0"
+group = rootProject.group
+version = rootProject.version
 
 dependencies {
     testImplementation(kotlin("test"))

@@ -10,7 +10,7 @@ import java.io.File
  * Extensions are loaded BEFORE UnixCloud is initialized, keep this in mind!
  *
  * Also don't forget that to create extension, you must create extension.json file
- * or use the @ExtensionInfo annotation for inheritor class to create a module
+ * or use the [ExtensionInfo] annotation for inheritor class to create a module.
  */
 abstract class CloudExtension : Modification {
 
@@ -21,34 +21,34 @@ abstract class CloudExtension : Modification {
     private val internalInfo: ExtensionInfo? = null
 
     /**
-     * Extension folder
+     * Extension folder.
      */
     override val folder: File
         get() = internalFolder!!
 
     /**
-     * Extension executable file location
+     * Extension executable file location.
      */
     override val executable: File
         get() = internalExecutable!!
 
     /**
-     * Extension info
+     * Extension info.
      *
-     * name, version, authors and etc
+     * name, version, authors etc.
      */
     override val info: ExtensionInfo
         get() = internalInfo!!
 
     /**
-     * Call when extension loaded
+     * Call when extension loaded.
      */
     override fun onLoad() {}
 
     /**
-     * Register listener for module
+     * Register listener for module.
      *
-     * @param listener Listener instance
+     * @param listener Listener instance.
      */
     override fun registerListener(listener: Any) {
         EventManager.registerListeners(listener)
@@ -56,9 +56,9 @@ abstract class CloudExtension : Modification {
     }
 
     /**
-     * Unregister listener for module
+     * Unregister listener for module.
      *
-     * @param listener Listener instance
+     * @param listener Listener instance.
      */
     override fun unregisterListener(listener: Any) {
         EventManager.unregisterListeners(listener)

@@ -13,7 +13,7 @@ import net.unix.api.event.scope.ScopeGroup
 )
 annotation class ListenerScope(
     /**
-     * The handler's scope or scope group
+     * The handler's scope or scope group.
      */
     val value: String
 )

@@ -1,13 +1,15 @@
 package net.unix.api
 
 /**
- * Mark object as serializable
+ * Mark object as serializable.
  */
 interface Serializable {
+
     /**
-     * Serialize object
+     * Serialize object.
      *
-     * @return Serialize result
+     * @return Serialize result.
      */
     fun serialize(): Map<String, Any>
+
 }

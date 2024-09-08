@@ -3,7 +3,7 @@ package net.unix.api.scheduler
 interface SchedulerTask {
 
     /**
-     * Task id
+     * Task id.
      */
     val id: Int
 

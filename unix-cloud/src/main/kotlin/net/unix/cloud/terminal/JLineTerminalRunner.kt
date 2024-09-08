@@ -1,12 +1,11 @@
 package net.unix.cloud.terminal
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.unix.api.CloudExtension.serializeAnsi
-import net.unix.api.CloudExtension.strip
 import net.unix.api.command.CommandDispatcher
-import net.unix.api.command.aether.SyntaxExceptionBuilder
-import net.unix.api.scheduler.scheduler
-import net.unix.api.terminal.Terminal
+import net.unix.cloud.CloudExtension.serializeAnsi
+import net.unix.cloud.CloudExtension.strip
+import net.unix.cloud.command.aether.SyntaxExceptionBuilder
+import net.unix.cloud.scheduler.scheduler
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.jline.reader.EndOfFileException

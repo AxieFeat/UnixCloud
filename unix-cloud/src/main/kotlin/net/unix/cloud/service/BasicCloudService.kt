@@ -15,7 +15,7 @@ import kotlin.jvm.Throws
 open class BasicCloudService(
     override val group: CloudGroup,
     override val name: String,
-    override val uuid: UUID = CloudService.uniqueUUID()
+    override val uuid: UUID = uniqueUUID()
 ) : CloudService {
 
     private lateinit var executable: CloudExecutable
@@ -56,5 +56,24 @@ open class BasicCloudService(
         if (status == CloudServiceStatus.STARTED) throw IllegalArgumentException("Could not delete CloudService, at first stop it!")
 
         dataFolder.deleteRecursively()
+    }
+
+    companion object {
+
+        private val current
+            get() = CloudInstance.instance.cloudServiceManager.services.map { it.uuid }
+
+        /**
+         * Generate unique UUID for [CloudService]. It'll be unique by current session.
+         *
+         * @return Unique UUID.
+         */
+        fun uniqueUUID(): UUID {
+            val random = UUID.randomUUID()
+
+            if (current.contains(random)) return uniqueUUID()
+
+            return random
+        }
     }
 }

@@ -1,12 +1,14 @@
-package net.unix.api.command.aether
+@file:Suppress("MemberVisibilityCanBePrivate")
+
+package net.unix.cloud.command.aether
 
 import com.mojang.brigadier.LiteralMessage
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
 import net.kyori.adventure.text.Component
-import net.unix.api.CloudAPI
-import net.unix.api.CloudExtension.deserializeComponent
+import net.unix.cloud.CloudExtension.deserializeComponent
+import net.unix.cloud.CloudInstance
 import kotlin.math.max
 
 object SyntaxExceptionBuilder {
@@ -20,39 +22,39 @@ object SyntaxExceptionBuilder {
     }
 
     /**
-     * Create instance of [CommandSyntaxException]
+     * Create instance of [CommandSyntaxException].
      *
-     * @param message Error message
-     * @param reader String reader from parser
+     * @param message Error message.
+     * @param reader String reader from parser.
      *
-     * @return Instance of [CommandSyntaxException]
+     * @return Instance of [CommandSyntaxException].
      */
     fun exception(message: String, reader: StringReader): CommandSyntaxException {
         return CommandSyntaxException(dynamic2CommandExceptionType, LiteralMessage(message), reader.string, reader.cursor)
     }
 
     /**
-     * Create instance of [CommandSyntaxException]
+     * Create instance of [CommandSyntaxException].
      *
-     * @param message Error message
+     * @param message Error message.
      *
-     * @return Instance of [CommandSyntaxException]
+     * @return Instance of [CommandSyntaxException].
      */
     fun exception(message: String): CommandSyntaxException {
         return CommandSyntaxException(dynamic2CommandExceptionType, LiteralMessage(message))
     }
 
     /**
-     * Print syntax exception to terminal
+     * Print syntax exception to terminal.
      *
-     * @param ex Instance of [CommandSyntaxException]
+     * @param ex Instance of [CommandSyntaxException].
      */
     fun print(ex: CommandSyntaxException) {
-        CloudAPI.instance.logger.error(*ex.formatted.toTypedArray())
+        CloudInstance.instance.logger.error(*ex.formatted.toTypedArray())
     }
 
     /**
-     * Get colored and formatted error for printing
+     * Get colored and formatted error for printing.
      */
     val CommandSyntaxException.formatted: List<Component>
         get() {

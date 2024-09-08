@@ -5,7 +5,8 @@ import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.StringReader
 import net.unix.api.CloudAPI
 import net.unix.api.command.sender.CommandSender
-import net.unix.api.event.impl.cloud.CloudTerminalCompleteEvent
+import net.unix.cloud.CloudInstance
+import net.unix.cloud.event.cloud.CloudTerminalCompleteEvent
 import org.jline.reader.Candidate
 import org.jline.reader.Completer
 import org.jline.reader.LineReader
@@ -35,7 +36,7 @@ open class BrigadierCommandCompleter(
             return
         }
 
-        val dispatcher: CommandDispatcher<CommandSender> = CloudAPI.instance.commandDispatcher.dispatcher
+        val dispatcher: CommandDispatcher<CommandSender> = CloudInstance.instance.commandDispatcher.dispatcher
 
         val stringLine = line.line()
 

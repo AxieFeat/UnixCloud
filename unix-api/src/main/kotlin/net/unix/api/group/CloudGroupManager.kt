@@ -4,26 +4,26 @@ import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
 
 /**
- * Manager for [CloudGroup]'s
+ * Manager for [CloudGroup]'s.
  */
 interface CloudGroupManager {
 
     /**
-     * All [CloudGroup]'s
+     * All [CloudGroup]'s.
      */
     val groups: Set<CloudGroup>
 
     /**
-     * Create instance of [CloudGroup]
+     * Create instance of [CloudGroup].
      *
-     * @param name Group name
-     * @param static Is group static
-     * @param host Group host
-     * @param availablePorts Ports, which [CloudService] can be started
-     * @param startupCount Count of [CloudService]'s that will start with UnixCloud
-     * @param templates [CloudTemplate]'s of group
+     * @param name Group name.
+     * @param static Is group static.
+     * @param host Group host.
+     * @param availablePorts Ports, which [CloudService] can be started.
+     * @param startupCount Count of [CloudService]'s that will start with UnixCloud.
+     * @param templates [CloudTemplate]'s of group.
      *
-     * @return Instance of [CloudGroup]
+     * @return Instance of [CloudGroup].
      */
     fun createGroup(
         name: String,
@@ -35,11 +35,11 @@ interface CloudGroupManager {
     ): CloudGroup
 
     /**
-     * Get [CloudGroup] by name
+     * Get [CloudGroup] by name.
      *
-     * @param name Group name
+     * @param name Group name.
      *
-     * @return [CloudGroup] instance or null, if not founded
+     * @return [CloudGroup] instance or null, if not founded.
      */
     operator fun get(name: String): CloudGroup?
 }

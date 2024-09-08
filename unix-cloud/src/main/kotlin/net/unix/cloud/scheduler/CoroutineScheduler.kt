@@ -7,8 +7,11 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import net.unix.api.scheduler.Scheduler
 import net.unix.api.scheduler.SchedulerTask
+import net.unix.api.terminal.logger.Logger
 
-open class CoroutineScheduler: AbstractScheduler() {
+open class CoroutineScheduler(
+    private val logger: Logger
+) : AbstractScheduler() {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -29,7 +32,11 @@ open class CoroutineScheduler: AbstractScheduler() {
             }
                 .onEach {
                     scope.launch {
-                        task()
+                        try {
+                            task()
+                        } catch (throwable: Throwable) {
+                            logger.error("", throwable = throwable)
+                        }
                     }
                 }
                 .onCompletion { unregisterTask(taskId) }
@@ -41,7 +48,11 @@ open class CoroutineScheduler: AbstractScheduler() {
         if (delay != -1L) {
             val job = scope.launch {
                 delay(delay)
-                task()
+                try {
+                    task()
+                } catch (throwable: Throwable) {
+                    logger.error("", throwable = throwable)
+                }
             }.also {
                 it.invokeOnCompletion {
                     unregisterTask(taskId)
@@ -52,7 +63,11 @@ open class CoroutineScheduler: AbstractScheduler() {
         }
 
         val job = scope.launch {
-            task()
+            try {
+                task()
+            } catch (throwable: Throwable) {
+                logger.error("", throwable = throwable)
+            }
             unregisterTask(taskId)
         }
 

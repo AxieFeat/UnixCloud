@@ -5,12 +5,12 @@ package net.unix.api.event.exception
  */
 enum class ErrorPolicy {
     /**
-     * Throw a [EventDispatchException] on errors in dispatched events
+     * Throw a [EventDispatchException] on errors in dispatched events.
      */
     EXCEPTION,
 
     /**
-     * Output error only in log
+     * Output error only in log.
      */
     LOG
 }

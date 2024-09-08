@@ -6,51 +6,51 @@ import net.unix.api.modification.exception.ModificationLoadException
 import java.io.File
 
 /**
- * Manager for [CloudModule]'s
+ * Manager for [CloudModule]'s.
  */
 interface ModuleManager : ModificationManager {
     /**
-     * List of all [CloudModule]'s
+     * List of all [CloudModule]'s.
      */
     val modules: List<CloudModule>
 
     /**
-     * Get [CloudModule] by name
+     * Get [CloudModule] by name.
      *
-     * @param name Module name
+     * @param name Module name.
      *
-     * @return Instance of [CloudModule] or null, if not founded
+     * @return Instance of [CloudModule] or null, if not founded.
      */
     override fun get(name: String): CloudModule?
 
     /**
-     * Load [CloudModule] from file
+     * Load [CloudModule] from file.
      *
-     * @param file Module file
+     * @param file Module file.
      *
-     * @return Loaded module
+     * @return Loaded module.
      *
      * @throws ModificationLoadException Generic exception, may be corrupted file?
-     * @throws ModificationExistException If module with this name already loaded
+     * @throws ModificationExistException If module with this name already loaded.
      */
     @Throws(ModificationLoadException::class, ModificationExistException::class)
     override fun load(file: File): CloudModule
 
     /**
-     * Unload specific [CloudModule]
+     * Unload specific [CloudModule].
      *
-     * @param module Module to unload
+     * @param module Module to unload.
      *
-     * @return True if success, else false
+     * @return True if success, else false.
      */
     fun unload(module: CloudModule): Boolean
 
     /**
-     * Reload specific [CloudModule]
+     * Reload specific [CloudModule].
      *
-     * @param module Module to reload
+     * @param module Module to reload.
      *
-     * @return True if success, else false
+     * @return True if success, else false.
      */
     fun reload(module: CloudModule): Boolean
 

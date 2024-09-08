@@ -8,56 +8,54 @@ import net.unix.api.template.CloudTemplate
 import org.jetbrains.annotations.Range
 
 /**
- * Generic template for starting instances of [CloudService]
+ * Generic template for starting instances of [CloudService].
  */
 interface CloudGroup : PersistentDataHolder, Serializable {
 
     /**
-     * Cloud group name
+     * Cloud group name.
      */
     var name: String
 
     /**
      * [CloudTemplate]'s of group.
      *
-     * If you change list elements, that will be applied only for new [CloudService]'s
+     * If you change list elements, that will be applied only for new [CloudService]'s.
      */
     val templates: MutableList<CloudTemplate>
 
     /**
-     * Count of all [CloudService]'s of this group
+     * Count of all [CloudService]'s of this group.
      */
     val servicesCount: Int
 
     /**
-     * Max [CloudService]'s count of this group
+     * Max [CloudService]'s count of this group.
      *
-     * Default set to 10
-     *
-     * @throws CloudGroupLimitException If value less than [servicesCount]
+     * @throws CloudGroupLimitException If value less than [servicesCount].
      */
     @set:Throws(CloudGroupLimitException::class)
     var serviceLimit: Int
 
     /**
-     * Create some [CloudService]'s count
+     * Create some [CloudService]'s count.
      *
      * @param count Services count, above zero!
      *
-     * @return List with created [CloudService]'s
+     * @return List with created [CloudService]'s.
      *
-     * @throws IllegalArgumentException If [count] < 1
-     * @throws CloudGroupLimitException If [CloudService]'s count more, then [serviceLimit]
+     * @throws IllegalArgumentException If [count] < 1.
+     * @throws CloudGroupLimitException If [CloudService]'s count more, then [serviceLimit].
      */
     @Throws(IllegalArgumentException::class, CloudGroupLimitException::class)
     fun create(count: @Range(from = 1L, to = Int.MAX_VALUE.toLong()) Int): List<CloudService>
 
     /**
-     * Create one [CloudService]
+     * Create one [CloudService].
      *
-     * @return Created instance of [CloudService]
+     * @return Created instance of [CloudService].
      *
-     * @throws CloudGroupLimitException If [CloudService]'s count more, then [serviceLimit]
+     * @throws CloudGroupLimitException If [CloudService]'s count more, then [serviceLimit].
      */
     @Throws(CloudGroupLimitException::class)
     fun create(): CloudService

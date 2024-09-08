@@ -8,87 +8,70 @@ import java.io.File
 import java.util.*
 
 /**
- * [CloudService]'s allow to start instances of [CloudGroup]
+ * [CloudService]'s allow to start instances of [CloudGroup].
  */
 interface CloudService : PersistentDataHolder {
 
     /**
-     * Service name
+     * Service name.
      */
     val name: String
 
     /**
-     * Service uuid
+     * Service uuid.
      */
     val uuid: UUID
 
     /**
-     * Service group
+     * Service group.
      *
-     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED]
+     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
      */
     @get:Throws(CloudServiceModificationException::class)
     val group: CloudGroup
 
     /**
-     * Service folder
+     * Service folder.
      */
     val dataFolder: File
 
     /**
-     * Service status
+     * Service status.
      *
-     * Change variable only if you KNOW, what a doing
+     * Change variable only if you KNOW, what a doing.
      */
     var status: CloudServiceStatus
 
     /**
-     * Start [CloudService] with some executable properties
+     * Start [CloudService] with some executable properties.
      *
-     * @param executable Executable properties
+     * @param executable Executable properties.
      *
-     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED]
-     * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.PREPARED]
+     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
+     * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.PREPARED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     fun start(executable: CloudExecutable)
 
     /**
-     * Stop [CloudService]
+     * Stop [CloudService].
      *
      * @param delete Delete [CloudService] files after stop?
      *
-     * @throws [CloudServiceModificationException] If [status] is [CloudServiceStatus.DELETED]
-     * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.STARTED]
+     * @throws [CloudServiceModificationException] If [status] is [CloudServiceStatus.DELETED].
+     * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.STARTED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     fun stop(delete: Boolean = true)
 
     /**
-     * Delete [CloudService]
+     * Delete [CloudService].
      *
-     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED]
-     * @throws IllegalArgumentException If [status] is [CloudServiceStatus.STARTED]
+     * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
+     * @throws IllegalArgumentException If [status] is [CloudServiceStatus.STARTED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     fun delete()
 
-    companion object {
-
-        private val current
-            get() = CloudAPI.instance.cloudServiceManager.services.map { it.uuid }
-
-        /**
-         * Generate unique UUID for [CloudService]. It'll be unique by current session.
-         *
-         * @return Unique UUID
-         */
-        fun uniqueUUID(): UUID {
-            val random = UUID.randomUUID()
-
-            if (current.contains(random)) return uniqueUUID()
-
-            return random
-        }
-    }
+    companion object
 }

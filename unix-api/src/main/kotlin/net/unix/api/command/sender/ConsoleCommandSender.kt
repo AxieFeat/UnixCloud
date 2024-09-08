@@ -1,6 +1,6 @@
 package net.unix.api.command.sender
 
 /**
- * Console [CommandSender]
+ * Console [CommandSender].
  */
 interface ConsoleCommandSender : CommandSender

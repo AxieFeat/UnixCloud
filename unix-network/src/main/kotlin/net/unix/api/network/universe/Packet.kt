@@ -31,6 +31,7 @@ import java.util.*
  * @param namedDouble Named double in packet
  * @param namedFloat Named float in packet
  */
+@Suppress("unused")
 data class Packet(
     var uuid: String? = null,
     var date: Long? = null,

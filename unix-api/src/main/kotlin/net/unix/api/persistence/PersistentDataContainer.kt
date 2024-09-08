@@ -17,13 +17,13 @@ interface PersistentDataContainer : Serializable {
      * value the [PersistentDataHolder] may have stored under the provided
      * key.
      *
-     * @param key The key this value will be stored under
-     * @param type The type this tag uses
-     * @param value The value stored in the tag
-     * @param T The generic java type of the tag value
-     * @param Z The generic type of the object to store
+     * @param key The key this value will be stored under.
+     * @param type The type this tag uses.
+     * @param value The value stored in the tag.
+     * @param T The generic java type of the tag value.
+     * @param Z The generic type of the object to store.
      *
-     * @throws IllegalArgumentException If no suitable adapter will be found for the [PersistentDataType.primitiveType]
+     * @throws IllegalArgumentException If no suitable adapter will be found for the [PersistentDataType.primitiveType].
      */
     @Throws(IllegalArgumentException::class)
     operator fun <T, Z> set(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z)
@@ -49,12 +49,12 @@ interface PersistentDataContainer : Serializable {
      * tags, like the the display name, will not work as the values are stored
      * using your namespace.
      *
-     * @param key The key the value is stored under
-     * @param type The type which primitive storage type has to match the value
-     * @param T The generic type of the stored primitive
-     * @param Z The generic type of the eventually created complex object
+     * @param key The key the value is stored under.
+     * @param type The type which primitive storage type has to match the value.
+     * @param T The generic type of the stored primitive.
+     * @param Z The generic type of the eventually created complex object.
      *
-     * @return If a value found
+     * @return If a value found.
      */
     fun <T, Z> has(key: NamespacedKey, type: PersistentDataType<T, Z>): Boolean
 
@@ -62,17 +62,17 @@ interface PersistentDataContainer : Serializable {
      * Returns the metadata value that is stored on the
      * [PersistentDataHolder] instance.
      *
-     * @param key The key to look up in the custom tag map
-     * @param type The type the value must have and will be casted to
-     * @param T The generic type of the stored primitive
-     * @param Z The generic type of the eventually created complex object
+     * @param key The key to look up in the custom tag map.
+     * @param type The type the value must have and will be casted to.
+     * @param T The generic type of the stored primitive.
+     * @param Z The generic type of the eventually created complex object.
      *
-     * @return the value or `null` if no value was mapped under the given value
+     * @return the value or `null` if no value was mapped under the given value.
      *
      * @throws IllegalArgumentException If the value exists under the given key,
-     * but cannot be access using the given type
+     * but cannot be access using the given type.
      * @throws IllegalArgumentException If no suitable adapter will be found for
-     * the [PersistentDataType.primitiveType]
+     * the [PersistentDataType.primitiveType].
      */
     @Throws(IllegalArgumentException::class)
     operator fun <T, Z> get(key: NamespacedKey, type: PersistentDataType<T, Z>): Z?
@@ -82,39 +82,39 @@ interface PersistentDataContainer : Serializable {
      * [PersistentDataHolder] instance. If the value does not exist in the
      * container, the default value provided is returned.
      *
-     * @param key The key to look up in the custom tag map
-     * @param type The type the value must have and will be casted to
+     * @param key The key to look up in the custom tag map.
+     * @param type The type the value must have and will be casted to.
      * @param defaultValue The default value to return if no value was found for
-     * the provided key
-     * @param T The generic type of the stored primitive
-     * @param Z The generic type of the eventually created complex object
+     * the provided key.
+     * @param T The generic type of the stored primitive.
+     * @param Z The generic type of the eventually created complex object.
      *
      * @return The value or the default value if no value was mapped under the
-     * given value
+     * given value.
      *
      * @throws IllegalArgumentException If the value exists under the given key,
-     * but cannot be access using the given type
+     * but cannot be access using the given type.
      * @throws IllegalArgumentException If no suitable adapter will be found for
-     * the [PersistentDataType.primitiveType]
+     * the [PersistentDataType.primitiveType].
      */
     @Throws(IllegalArgumentException::class)
     fun <T, Z> getOrDefault(key: NamespacedKey, type: PersistentDataType<T, Z>, defaultValue: Z): Z
 
     /**
-     * Get a set of keys present on this [PersistentDataContainer]
+     * Get a set of keys present on this [PersistentDataContainer].
      * instance.
      *
      * Any changes made to the returned set will not be reflected on the
      * instance.
      *
-     * @return The key set
+     * @return The key set.
      */
     val keys: Set<NamespacedKey?>
 
     /**
      * Removes a custom key from the [PersistentDataHolder] instance.
      *
-     * @param key The key
+     * @param key The key.
      */
     fun remove(key: NamespacedKey)
 
@@ -122,14 +122,14 @@ interface PersistentDataContainer : Serializable {
      * Returns if the container instance is empty, therefore has no entries
      * inside it.
      *
-     * @return The boolean
+     * @return The boolean.
      */
     val isEmpty: Boolean
 
     /**
      * Returns the adapter context this tag container uses.
      *
-     * @return The tag context
+     * @return The tag context.
      */
     val adapterContext: PersistentDataAdapterContext
 

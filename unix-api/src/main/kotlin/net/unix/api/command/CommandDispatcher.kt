@@ -1,63 +1,62 @@
+@file:Suppress("SpellCheckingInspection")
+
 package net.unix.api.command
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.unix.api.command.aether.AetherArgumentBuilder
-import net.unix.api.command.aether.AetherCommandBuilder
-import net.unix.api.command.aether.AetherLiteralBuilder
 import net.unix.api.command.sender.CommandSender
 
 /**
- * Console command dispatcher
+ * Console command dispatcher.
  */
 interface CommandDispatcher {
 
     /**
-     * Dispatch command
+     * Dispatch command.
      *
-     * @param sender Command sender
-     * @param command Command line. Example: mycommand hello world
+     * @param sender Command sender.
+     * @param command Command line. Example: "mycommand hello world".
      *
-     * @return 1, if command dispatched success, else 0
+     * @return 1, if command dispatched success, else 0.
      *
-     * @throws CommandSyntaxException If command has syntax error
+     * @throws CommandSyntaxException If command has syntax error.
      */
     @Throws(CommandSyntaxException::class)
     fun dispatchCommand(sender: CommandSender, command: String): Int
 
     /**
-     * Dispatch command with already parsed result
+     * Dispatch command with already parsed result.
      *
-     * @param results Parsed result, can be obtained with [parseCommand]
+     * @param results Parsed result, can be obtained with [parseCommand].
      *
-     * @return 1, if command dispatched success, else 0
+     * @return 1, if command dispatched success, else 0.
      *
-     * @throws CommandSyntaxException If command has syntax error
+     * @throws CommandSyntaxException If command has syntax error.
      */
     @Throws(CommandSyntaxException::class)
     fun dispatchCommand(results: ParseResults<CommandSender>): Int
 
     /**
-     * Parse command
+     * Parse command.
      *
-     * @param sender Command sender
-     * @param command Command line. Example: mycommand hello world
+     * @param sender Command sender.
+     * @param command Command line. Example: "mycommand hello world".
      *
-     * @return Command parse result
+     * @return Command parse result.
      */
     fun parseCommand(sender: CommandSender, command: String): ParseResults<CommandSender>
 
     /**
-     * Instance of [CommandDispatcher] from Brigadier
+     * Instance of [CommandDispatcher] from Brigadier.
      *
      * TIP:
      *
      * If you want to create command you can use:
      *
-     * [AetherCommandBuilder],
-     * [AetherArgumentBuilder],
-     * [AetherLiteralBuilder]
+     * [CommandBuilder],
+     * [CommandArgumentBuilder],
+     * [CommandLiteralBuilder]
      *
      */
     val dispatcher: CommandDispatcher<CommandSender>

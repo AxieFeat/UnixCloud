@@ -6,32 +6,32 @@ import net.unix.api.modification.exception.ModificationLoadException
 import java.io.File
 
 /**
- * Manager for [CloudExtension]'s
+ * Manager for [CloudExtension]'s.
  */
 interface ExtensionManager : ModificationManager {
     /**
-     * List of all [CloudExtension]'s
+     * List of all [CloudExtension]'s.
      */
     val modules: List<CloudExtension>
 
     /**
-     * Get [CloudExtension] by name
+     * Get [CloudExtension] by name.
      *
-     * @param name Module name
+     * @param name Module name.
      *
-     * @return Instance of [CloudExtension] or null, if not founded
+     * @return Instance of [CloudExtension] or null, if not founded.
      */
     override operator fun get(name: String): CloudExtension?
 
     /**
-     * Load [CloudExtension] from file
+     * Load [CloudExtension] from file.
      *
-     * @param file Module file
+     * @param file Module file.
      *
-     * @return Loaded module
+     * @return Loaded module.
      *
      * @throws ModificationLoadException Generic exception, may be corrupted file?
-     * @throws ModificationExistException If extension with this name already loaded
+     * @throws ModificationExistException If extension with this name already loaded.
      */
     @Throws(ModificationLoadException::class, ModificationExistException::class)
     override fun load(file: File): CloudExtension

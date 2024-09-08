@@ -1,16 +1,17 @@
 package net.unix.cloud.terminal.logger
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.unix.api.CloudAPI
-import net.unix.api.CloudExtension.deserializeComponent
-import net.unix.api.CloudExtension.format
-import net.unix.api.CloudExtension.or
-import net.unix.api.CloudExtension.rem
-import net.unix.api.CloudExtension.strip
-import net.unix.api.event.impl.cloud.CloudTerminalLoggerEvent
-import net.unix.api.scheduler.scheduler
+import net.unix.cloud.event.cloud.CloudTerminalLoggerEvent
 import net.unix.api.terminal.logger.LogType
 import net.unix.api.terminal.logger.Logger
+import net.unix.cloud.CloudExtension.deserializeComponent
+import net.unix.cloud.CloudExtension.or
+import net.unix.cloud.CloudExtension.rem
+import net.unix.cloud.CloudExtension.strip
+import net.unix.cloud.CloudInstance
+import net.unix.cloud.scheduler.scheduler
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.text.SimpleDateFormat
@@ -32,49 +33,50 @@ open class CloudLogger(
     }
 
 
-    override fun info(vararg message: String, format: Boolean) {
+    override fun info(vararg message: String, format: Boolean, throwable: Throwable?) {
         val components = message.map { it.deserializeComponent() }.toTypedArray()
 
-        printMessage(components, format, LogType.INFO)
+        printMessage(components, format, LogType.INFO, throwable)
     }
 
-    override fun info(vararg message: Component, format: Boolean) {
-        printMessage(message, format, LogType.INFO)
+    override fun info(vararg message: Component, format: Boolean, throwable: Throwable?) {
+        printMessage(message, format, LogType.INFO, throwable)
     }
 
 
-    override fun error(vararg message: String, format: Boolean) {
+    override fun error(vararg message: String, format: Boolean, throwable: Throwable?) {
         val components = message.map { it.deserializeComponent() }.toTypedArray()
 
-        printMessage(components, format, LogType.ERROR)
+        printMessage(components, format, LogType.ERROR, throwable)
     }
 
-    override fun error(vararg message: Component, format: Boolean) {
-        printMessage(message, format, LogType.ERROR)
+    override fun error(vararg message: Component, format: Boolean, throwable: Throwable?) {
+        printMessage(message, format, LogType.ERROR, throwable)
     }
 
-    override fun warn(vararg message: String, format: Boolean) {
+    override fun warn(vararg message: String, format: Boolean, throwable: Throwable?) {
         val components = message.map { it.deserializeComponent() }.toTypedArray()
 
-        printMessage(components, format, LogType.WARN)
+        printMessage(components, format, LogType.WARN, throwable)
     }
 
-    override fun warn(vararg message: Component, format: Boolean) {
-        printMessage(message, format, LogType.WARN)
+    override fun warn(vararg message: Component, format: Boolean, throwable: Throwable?) {
+        printMessage(message, format, LogType.WARN, throwable)
     }
 
-    private fun printMessage(message: Array<out Component>, format: Boolean, logType: LogType) {
+    private fun printMessage(message: Array<out Component>, format: Boolean, logType: LogType, throwable: Throwable?) {
         scheduler {
-            val event = CloudTerminalLoggerEvent(this@CloudLogger.prefix, format, *message).callEvent()
+            val event = CloudTerminalLoggerEvent(this@CloudLogger.prefix, format, *message, throwable = throwable).callEvent()
 
             if (event.cancelled) return@scheduler
 
             val finalMessage = event.message
             val finalPrefix = event.loggerName
             val finalFormat = event.format
+            val finalThrowable = event.throwable
 
             execute {
-                val terminal = CloudAPI.instance.terminal
+                val terminal = CloudInstance.instance.terminal
 
                 if (!finalFormat) {
                     message.forEach { terminal.print(it) }
@@ -89,6 +91,17 @@ open class CloudLogger(
                         FORMAT_WITH_NAME.format(formatTime(), logType, finalPrefix, text) or
                         FORMAT_WITHOUT_NAME.format(formatTime(), logType, finalPrefix, text)
 
+
+                    formatted.add(result.deserializeComponent())
+                }
+
+                finalThrowable?.stackTrace?.forEach {
+
+                    val text = Component.text().color(NamedTextColor.RED).append(Component.text(it.toString())).resetStyle().build()
+
+                    val result = (finalPrefix != "") %
+                            FORMAT_WITH_NAME.format(formatTime(), logType, finalPrefix, text) or
+                            FORMAT_WITHOUT_NAME.format(formatTime(), logType, finalPrefix, text)
 
                     formatted.add(result.deserializeComponent())
                 }

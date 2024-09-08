@@ -18,24 +18,24 @@ import java.util.concurrent.ScheduledExecutorService
 interface Scheduler {
 
     /**
-     * Delay executing
+     * Delay executing.
      */
     var delay: Long
 
     /**
-     * Period executing
+     * Period executing.
      */
     var period: Long
 
 
     /**
-     * Starts a task with a specified parameters
+     * Starts a task with a specified parameters.
      *
-     * @param delay If set - task will be executed with delay
-     * @param period If set - task will be executed with period
-     * @param unit Time unit
+     * @param delay If set - task will be executed with delay.
+     * @param period If set - task will be executed with period.
+     * @param task Task to execute.
      *
-     * @return Instance of [SchedulerTask]
+     * @return Instance of [SchedulerTask].
      */
     fun Scheduler.execute(delay: Long = this.delay, period: Long = this.period, task: suspend () -> Unit): SchedulerTask
 

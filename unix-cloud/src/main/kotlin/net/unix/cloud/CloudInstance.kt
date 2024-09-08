@@ -1,14 +1,12 @@
 package net.unix.cloud
 
 import net.unix.api.CloudAPI
+import net.unix.api.CloudBuilder
 import net.unix.api.LocationSpace
-import net.unix.api.builder.Builder
 import net.unix.api.command.CommandDispatcher
-import net.unix.api.command.aether.AetherArgumentBuilder.Companion.argument
-import net.unix.api.command.aether.AetherCommandBuilder
-import net.unix.api.command.aether.AetherLiteralBuilder.Companion.literal
-import net.unix.api.command.aether.argument.CloudServiceArgument
-import net.unix.api.command.aether.get
+import net.unix.cloud.command.aether.argument.CloudServiceArgument
+import net.unix.cloud.command.aether.command
+import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
@@ -22,6 +20,10 @@ import net.unix.api.terminal.logger.Logger
 import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.cloud.CloudInstanceBuilder.Companion.builder
 import net.unix.cloud.command.CloudCommandDispatcher
+import net.unix.cloud.command.aether.AetherArgumentBuilder.Companion.argument
+import net.unix.cloud.command.aether.AetherCommandBuilder
+import net.unix.cloud.command.aether.AetherLiteralBuilder.Companion.literal
+import net.unix.cloud.command.aether.get
 import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
@@ -32,38 +34,62 @@ import net.unix.cloud.terminal.CloudJLineTerminal
 import net.unix.cloud.terminal.logger.CloudLoggerFactory
 import kotlin.system.exitProcess
 
-
 fun main() {
-    CloudInstance.builder()
-        .build()
+    var builder: CloudBuilder = CloudInstance.builder()
 
-    AetherCommandBuilder("screen") // <- название команды
-        .then( // <- указываем какой-то аргумент
-            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
-                .then( // <- ещё один аргумент, который следует за "toggle"
-                    argument("service", CloudServiceArgument()) // <- CloudServiceArgument фильтрует ввод пользователя и 100% возвращает существующий объект
-                        .execute {
-                            val service: CloudService = it["service"]
+    CloudStartEvent(builder).callEvent().also { builder = it.builder }
 
-                            println("Screen toggled to ${service.name}")
-                        }
-                )
-        )
-        .then( // <- указываем ещё какой-то аргумент
-            literal("switch")
-                .then(
-                    argument("service", CloudServiceArgument())
-                        .execute {
-                            val service: CloudService = it["service"]
+    builder.build()
 
-                            println("Screen switched to ${service.name}")
-                        }
-                )
-        )
-        .register() // <- регистрируем команду
+//    AetherCommandBuilder("screen") // <- название команды
+//        .then( // <- указываем какой-то аргумент
+//            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
+//                .then( // <- ещё один аргумент, который следует за "toggle"
+//                    argument("service", CloudServiceArgument()) // <- CloudServiceArgument фильтрует ввод пользователя и 100% возвращает существующий объект CloudService
+//                        .execute { // <- Вызывается при выполнении команды с аргументом toggle и service
+//                            val service: CloudService = it["service"] // <- получаем аргумент CloudService по его имени из контекста команды
+//
+//                            println("Screen toggled to ${service.name}")
+//                        }
+//                )
+//        )
+//        .then( // <- указываем ещё какой-то аргумент
+//            literal("switch") // <- Обязательный аргумент "switch"
+//                .then(
+//                    argument("service", CloudServiceArgument())
+//                        .execute {
+//                            val service: CloudService = it["service"]
+//
+//                            println("Screen switched to ${service.name}")
+//                        }
+//                )
+//        )
+//        .register() // <- регистрируем команду
+
+    command("screen") {
+        literal("toggle") {
+            argument("service", CloudServiceArgument()) {
+                execute {
+                    val service: CloudService = it["service"]
+
+                    println("Screen toggled to ${service.name}")
+                }
+            }
+        }
+        literal("switch") {
+            argument("service", CloudServiceArgument()) {
+                execute {
+                    val service: CloudService = it["service"]
+
+                    println("Screen switched to ${service.name}")
+                }
+            }
+        }
+    }.register()
 }
 
-class CloudInstanceBuilder : Builder<CloudInstance> {
+@Suppress("unused")
+class CloudInstanceBuilder : CloudBuilder {
 
     private var locationSpace: LocationSpace? = null
 
@@ -90,73 +116,73 @@ class CloudInstanceBuilder : Builder<CloudInstance> {
         }
     }
 
-    fun loggerFactory(factory: LoggerFactory): CloudInstanceBuilder {
+    override fun loggerFactory(factory: LoggerFactory): CloudInstanceBuilder {
         this.loggerFactory = factory
 
         return this
     }
 
-    fun globalLogger(logger: Logger): CloudInstanceBuilder {
+    override fun globalLogger(logger: Logger): CloudInstanceBuilder {
         this.logger = logger
 
         return this
     }
 
-    fun terminal(terminal: Terminal): CloudInstanceBuilder {
+    override fun terminal(terminal: Terminal): CloudInstanceBuilder {
         this.terminal = terminal
 
         return this
     }
 
-    fun commandDispatcher(dispatcher: CommandDispatcher): CloudInstanceBuilder {
+    override fun commandDispatcher(dispatcher: CommandDispatcher): CloudInstanceBuilder {
         this.commandDispatcher = dispatcher
 
         return this
     }
 
-    fun commandTemplateManager(manager: CloudTemplateManager): CloudInstanceBuilder {
+    override fun commandTemplateManager(manager: CloudTemplateManager): CloudInstanceBuilder {
         this.cloudTemplateManager = manager
 
         return this
     }
 
-    fun cloudGroupManager(manager: CloudGroupManager): CloudInstanceBuilder {
+    override fun cloudGroupManager(manager: CloudGroupManager): CloudInstanceBuilder {
         this.cloudGroupManager = manager
 
         return this
     }
 
-    fun cloudServiceManager(manager: CloudServiceManager): CloudInstanceBuilder {
+    override fun cloudServiceManager(manager: CloudServiceManager): CloudInstanceBuilder {
         this.cloudServiceManager = manager
 
         return this
     }
 
-    fun moduleManager(manager: ModuleManager): CloudInstanceBuilder {
+    override fun moduleManager(manager: ModuleManager): CloudInstanceBuilder {
         this.moduleManager = manager
 
         return this
     }
 
-    fun extensionManager(manager: ExtensionManager): CloudInstanceBuilder {
+    override fun extensionManager(manager: ExtensionManager): CloudInstanceBuilder {
         this.extensionManager = manager
 
         return this
     }
 
-    fun schedulerManager(manager: SchedulerManager): CloudInstanceBuilder {
+    override fun schedulerManager(manager: SchedulerManager): CloudInstanceBuilder {
         this.schedulerManager = manager
 
         return this
     }
 
-    fun server(server: Server): CloudInstanceBuilder {
+    override fun server(server: Server): CloudInstanceBuilder {
         this.server = server
 
         return this
     }
 
-    fun locationSpace(space: LocationSpace): CloudInstanceBuilder {
+    override fun locationSpace(space: LocationSpace): CloudInstanceBuilder {
         this.locationSpace = space
         
         return this
@@ -201,12 +227,20 @@ class CloudInstance(
     server: Server? = null
 ) : CloudAPI() {
 
-    override val schedulerManager: SchedulerManager = schedulerManager ?: CloudSchedulerManager
+    companion object {
+        lateinit var instance: CloudAPI
+    }
 
-    override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace()
+    init {
+        instance = this
+    }
 
     override val loggerFactory: LoggerFactory = loggerFactory ?: CloudLoggerFactory()
     override val logger: Logger = logger ?: this.loggerFactory.logger
+
+    override val schedulerManager: SchedulerManager = schedulerManager ?: CloudSchedulerManager(this.logger)
+
+    override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace()
 
     override val commandDispatcher: CommandDispatcher = commandDispatcher ?: CloudCommandDispatcher
     override val terminal: Terminal = terminal ?: CloudJLineTerminal(" <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ", this.logger, this.commandDispatcher)
@@ -228,6 +262,4 @@ class CloudInstance(
     override fun shutdown() {
         exitProcess(0)
     }
-
-    companion object
 }

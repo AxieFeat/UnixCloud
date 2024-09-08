@@ -3,6 +3,7 @@ package net.unix.cloud
 import net.unix.api.LocationSpace
 import java.io.File
 
+@Suppress("MemberVisibilityCanBePrivate")
 class CloudLocationSpace : LocationSpace {
 
     val main: File

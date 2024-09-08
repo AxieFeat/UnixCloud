@@ -1,17 +1,20 @@
-package net.unix.api
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
+package net.unix.cloud
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.unix.api.CloudExtension.rem
+import net.unix.api.CloudAPI
+import net.unix.cloud.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
 import java.security.MessageDigest
 import java.util.Base64
 import java.util.regex.Pattern
 
 /**
- * UnixCloud extensions
+ * UnixCloud extensions.
  */
 object CloudExtension {
 
@@ -26,13 +29,13 @@ object CloudExtension {
      * Format args in string.
      *
      * Function replace {NUM} to element from [args] by that index.
-     * But index starts from 1
+     * But index starts from 1.
      *
      * Example: "Now {1}".format("sunny")
      *
-     * @param args Elements for replacing
+     * @param args Elements for replacing.
      *
-     * @return Changed string
+     * @return Changed string.
      */
     fun String.format(vararg args: Any): String {
         val sb = StringBuilder()
@@ -65,7 +68,7 @@ object CloudExtension {
     }
 
     /**
-     * Format args in [Component]
+     * Format args in [Component].
      *
      * @see [format]
      */
@@ -74,79 +77,79 @@ object CloudExtension {
     }
 
     /**
-     * Replace text in [Component]
+     * Replace text in [Component].
      *
-     * @param old Replaceable text
-     * @param new Text to replace
+     * @param old Replaceable text.
+     * @param new Text to replace.
      *
-     * @return New instance of [Component]
+     * @return New instance of [Component].
      */
     fun Component.replace(old: String, new: String): Component {
         return this.serialize().replace(old, new).deserializeComponent()
     }
 
     /**
-     * Strip colors (...and other) in [Component]
+     * Strip colors (...and other) in [Component].
      *
-     * @return Text without any formatting
+     * @return Text without any formatting.
      */
     fun Component.strip(): String {
         return this.serializeLegacy().stripColor()
     }
 
     /**
-     * Deserialize [Component] from string by [MiniMessage]
+     * Deserialize [Component] from string by [MiniMessage].
      *
-     * @return Deserialized [Component]
+     * @return Deserialized [Component].
      */
     fun String.deserializeComponent(): Component {
         return miniMessage.deserialize(this)
     }
 
     /**
-     * Serialize [Component] to string by [MiniMessage]
+     * Serialize [Component] to string by [MiniMessage].
      *
-     * @return Serialized [Component]
+     * @return Serialized [Component].
      */
     fun Component.serialize(): String {
         return miniMessage.serialize(this)
     }
 
     /**
-     * Serialize [Component] to ansi
+     * Serialize [Component] to ansi.
      *
-     * @return String with ansi colors
+     * @return String with ansi colors.
      */
     fun Component.serializeAnsi(): String {
         return ansiSerializer.serialize(this)
     }
 
     /**
-     * Serialize [Component] to legacy
+     * Serialize [Component] to legacy.
      *
-     * @return Legacy colored string
+     * @return Legacy colored string.
      */
     fun Component.serializeLegacy(): String {
         return legacySerializer.serialize(this)
     }
 
     /**
-     * Print object to terminal
+     * Print object to terminal.
      *
-     * @return Current instance of [T]
+     * @return Current instance of [T].
      */
     fun <T> T.print(): T {
-        CloudAPI.instance.logger.info(this.toString())
+        CloudInstance.instance.logger.info(this.toString())
 
         return this
     }
 
     /**
-     * Hash of string
+     * Hash of string.
      *
      * SHA-256 -> MD5 -> Base64 -> SHA-256
      *
-     * @return Hash result
+     * @return Hash result.
      */
     fun String.hash(): String {
         val bytes = this.toByteArray()
@@ -158,7 +161,7 @@ object CloudExtension {
     }
 
     /**
-     * Abbreviation of the if statement for Boolean
+     * Abbreviation of the if statement for Boolean.
      *
      * Example:
      *
@@ -188,6 +191,11 @@ object CloudExtension {
         return if (result) this.result else boolFunction.result
     }
 
+    /**
+     * Don't use this, created for [rem]
+     *
+     * @see [rem]
+     */
     interface BoolInterface<T> {
         val from: Boolean?
         val result: T

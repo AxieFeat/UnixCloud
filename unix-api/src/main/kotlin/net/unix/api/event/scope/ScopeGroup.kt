@@ -8,7 +8,7 @@ import java.util.regex.Pattern
  * the event.
  *
  *
- * In general, a group must match the pattern {@value #GROUP_REGEX}
+ * In general, a group must match the pattern [group]
  *
  *
  * This class is specifically for dispatching scoped events internally, but can also be used outside to manager scopes
@@ -23,11 +23,11 @@ class ScopeGroup(scope: String) {
     }
 
     /**
-     * Determines whether a scope lies within this scope group
+     * Determines whether a scope lies within this scope group.
      *
-     * @param scope the scope that shall be checked
+     * @param scope the scope that shall be checked.
      *
-     * @return true, if the scope is within this group definition
+     * @return true, if the scope is within this group definition.
      */
     fun containsScope(scope: String): Boolean {
         require(!scope.contains("*")) { "Illegal scope format: $scope. A scope may not contain any wildcards" }
@@ -42,18 +42,19 @@ class ScopeGroup(scope: String) {
     private class Group
 
         /**
-        * A scope group has a name and may have a sub group
+        * A scope group has a name and may have a subgroup.
         *
-        * @param groupName name of the group or wildcard symbol *
-        * @param subGroup  sub group or null, if this is the deepest group already
+        * @param groupName name of the group or wildcard symbol "*".
+        * @param subGroup  subgroup or null, if this is the deepest group already.
         */
         (private val groupName: String, private val subGroup: Group?) {
+
         /**
-         * Recursive check wether another scope (group) is contained in this group
+         * Recursive check wether another scope (group) is contained in this group.
          *
-         * @param group the scope (group) that is checked
+         * @param group the scope (group) that is checked.
          *
-         * @return true, if the other group lies within this group
+         * @return true, if the other group lies within this group.
          */
         fun containsGroup(group: Group?): Boolean {
             // if this is a wild card end of a group definition
@@ -80,7 +81,7 @@ class ScopeGroup(scope: String) {
         private val GROUP_PATTERN: Pattern = Pattern.compile(GROUP_REGEX)
 
         /**
-         * Compiles the scope group, so it can be handled easier
+         * Compiles the scope group, so it can be handled easier.
          */
         private fun compile(scopeString: String): Group? {
             val scopeGroupNames = scopeString.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }

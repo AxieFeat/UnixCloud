@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package net.unix.api.event
 
 import net.unix.api.event.exception.ErrorPolicy
@@ -12,9 +14,12 @@ import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Registers and manages listeners and handles event dispatching
+ * Registers and manages listeners and handles event dispatching.
  */
 object EventManager {
+
+    //private val logger = CloudAPI.instance.logger
+
     /**
      * The error policy determines how exceptions on dispatched events will be handled.
      */
@@ -26,9 +31,9 @@ object EventManager {
     /**
      * Identify and registers all [EventHandler] methods in the class of given Object instance. The
      * instance will be saved, because it is used to invoke the listeners, thus the listeners cannot be static and the object won't get
-     * destroyed by garbage collection. Use it to unregister the listeners
+     * destroyed by garbage collection. Use it to unregister the listeners.
      *
-     * @param listenerClassInstance An object of a class containing event handlers
+     * @param listenerClassInstance An object of a class containing event handlers.
      */
     fun registerListeners(listenerClassInstance: Any) {
         for (method: Method in listenerClassInstance.javaClass.methods) {
@@ -39,20 +44,18 @@ object EventManager {
 
             // illegal parameter count
             if (method.parameterCount != 1) {
-                System.err.println(
-                    "Ignoring illegal event handler: " + method.name +
-                            ": Wrong number of arguments (required: 1)"
-                )
+//                logger.error("Ignoring illegal event handler: " + method.name +
+//                        ": Wrong number of arguments (required: 1)")
                 continue
             }
 
 
             // illegal parameter
             if (!Event::class.java.isAssignableFrom(method.parameterTypes[0])) {
-                System.err.println(
-                    ("Ignoring illegal event handler: " + method.name + ": Argument must extend " +
-                            Event::class.java.getName())
-                )
+//                logger.error(
+//                    ("Ignoring illegal event handler: " + method.name + ": Argument must extend " +
+//                            Event::class.java.getName())
+//                )
                 continue
             }
 
@@ -62,10 +65,10 @@ object EventManager {
             var scope: String = GLOBAL_SCOPE
             if (method.isAnnotationPresent(ListenerScope::class.java)) {
                 if (!Scoped::class.java.isAssignableFrom(eventType)) {
-                    System.err.println(
-                        ("Ignoring illegal event handler: " + method.name +
-                                ": Handler is scoped, but event not.")
-                    )
+//                    logger.error(
+//                        ("Ignoring illegal event handler: " + method.name +
+//                                ": Handler is scoped, but event not.")
+//                    )
                     continue
                 }
 
@@ -75,18 +78,18 @@ object EventManager {
             var listenedEventType = -1
             if (method.isAnnotationPresent(EventType::class.java)) {
                 if (!Typed::class.java.isAssignableFrom(eventType)) {
-                    System.err.println(
-                        ("Ignoring illegal event handler: " + method.name +
-                                ": Handler is typed, but event not.")
-                    )
+//                    logger.error(
+//                        ("Ignoring illegal event handler: " + method.name +
+//                                ": Handler is typed, but event not.")
+//                    )
                     continue
                 }
 
                 listenedEventType = method.getAnnotation(EventType::class.java).value
             }
 
-            val priority: ListenerPriority = method.getAnnotation(EventHandler::class.java).priority
-            val scopeGroup: ScopeGroup = ScopeGroup(scope)
+            val priority = method.getAnnotation(EventHandler::class.java).priority
+            val scopeGroup = ScopeGroup(scope)
 
             val listener = Listener(listenerClassInstance, method, scopeGroup, priority, listenedEventType)
             addListener(eventType, listener)
@@ -94,10 +97,10 @@ object EventManager {
     }
 
     /**
-     * Adds a listener to the map of registered listeners
+     * Adds a listener to the map of registered listeners.
      *
-     * @param eventType the event type that listener should handle
-     * @param listener  the listener method
+     * @param eventType the event type that listener should handle.
+     * @param listener  the listener method.
      */
     private fun addListener(eventType: Class<out Event<*>?>, listener: Listener) {
         if (!registeredListeners.containsKey(eventType)) registeredListeners[eventType] =
@@ -107,12 +110,12 @@ object EventManager {
     }
 
     /**
-     * Unregisters all event handlers associated with this object
+     * Unregisters all event handlers associated with this object.
      *
-     * @param listenerClassInstance An object of a class containing even handlers that has been registered at the event handler
+     * @param listenerClassInstance An object of a class containing even handlers that has been registered at the event handler.
      */
     fun unregisterListeners(listenerClassInstance: Any) {
-        for (listenerList: CopyOnWriteArrayList<Listener> in registeredListeners.values) {
+        registeredListeners.values.forEach { listenerList ->
             var i = 0
             while (i < listenerList.size) {
                 if (listenerList[i].listenerClassInstance === listenerClassInstance) {
@@ -125,18 +128,18 @@ object EventManager {
     }
 
     /**
-     * Unregisters all event handlers associated with given event type
+     * Unregisters all event handlers associated with given event type.
      *
-     * @param eventClass class of the event
+     * @param eventClass class of the event.
      */
-    fun unregisterListenersOfEvent(eventClass: Class<out Event<*>?>) {
-        registeredListeners[eventClass]!!.clear()
+    fun unregisterListenersOfEvent(eventClass: Class<out Event<*>>) {
+        registeredListeners[eventClass]?.clear()
     }
 
     /**
-     * Dispatch an event by calling any listener responsible for the given event
+     * Dispatch an event by calling any listener responsible for the given event.
      *
-     * @param event An arbitrary instance of any subclass of {@link Event}
+     * @param event An arbitrary instance of any subclass of [Event].
      */
     fun callEvent(event: Event<*>) {
         var scoped = false
@@ -163,50 +166,46 @@ object EventManager {
     }
 
     /**
-     * Checks for all listeners of an event class, whether they shall receive the event with given parameters
+     * Checks for all listeners of an event class, whether they shall receive the event with given parameters.
      *
-     * @param scoped Whether the event is scoped
-     * @param scope The event's scope
-     * @param typed Whether the event is typed
-     * @param type The event's type
-     * @param event The event
-     * @param priority The current dispatched priority
+     * @param scoped Whether the event is scoped.
+     * @param scope The event's scope.
+     * @param typed Whether the event is typed.
+     * @param type The event's type.
+     * @param event The event.
+     * @param priority The current dispatched priority.
      */
     private fun dispatchEvent(
         scoped: Boolean, scope: String, typed: Boolean, type: Int,
         event: Event<*>, priority: ListenerPriority
     ) {
-        val listeners = registeredListeners[event::class.java]
-        if (listeners != null) {
-            for (listener: Listener in listeners) {
-                if (!scoped || listener.scopeGroup.containsScope(scope)) {
-                    if (!typed || (listener.listenedEventType == -1) || (listener.listenedEventType == type)) {
-                        if (listener.priority === priority) {
-                            try {
-                                listener.listenerMethod.isAccessible = true
-                                listener.listenerMethod.invoke(listener.listenerClassInstance, event)
-                            } catch (e: IllegalAccessException) {
-                                System.err.print("Could not access event handler method:")
-                                e.printStackTrace()
-                            } catch (e: InvocationTargetException) {
-                                // depending on error policy, throw an exception or just log and ignore
+        val listeners = registeredListeners[event::class.java] ?: return
 
-                                when (ERROR_POLICY) {
-                                    ErrorPolicy.EXCEPTION -> throw EventDispatchException(
-                                        "Could not dispatch event to handler " +
-                                                listener.listenerMethod.name, e
-                                    )
+        for (listener in listeners) {
+            if (!(!scoped || listener.scopeGroup.containsScope(scope))) continue
+            if (!(!typed || (listener.listenedEventType == -1) || (listener.listenedEventType == type))) continue
+            if (listener.priority !== priority) continue
 
-                                    ErrorPolicy.LOG -> {
-                                        System.err.println(
-                                            "Could not dispatch event to handler " +
-                                                    listener.listenerMethod.name
-                                        )
-                                        e.printStackTrace()
-                                    }
-                                }
-                            }
-                        }
+            try {
+                listener.listenerMethod.isAccessible = true
+                listener.listenerMethod.invoke(listener.listenerClassInstance, event)
+            } catch (e: IllegalAccessException) {
+              //  logger.error("Could not access event handler method:", throwable = e)
+            } catch (e: InvocationTargetException) {
+                // depending on error policy, throw an exception or just log and ignore
+
+                when (ERROR_POLICY) {
+                    ErrorPolicy.EXCEPTION -> throw EventDispatchException(
+                        "Could not dispatch event to handler " +
+                                listener.listenerMethod.name, e
+                    )
+
+                    ErrorPolicy.LOG -> {
+//                        logger.error(
+//                            "Could not dispatch event to handler " +
+//                                    listener.listenerMethod.name,
+//                            throwable = e
+//                        )
                     }
                 }
             }
@@ -214,13 +213,13 @@ object EventManager {
     }
 
     /**
-     * A container for listener methods
+     * A container for listener methods.
      *
-     * @param listenerClassInstance Instance of the listener class
-     * @param listenerMethod The event handler method
-     * @param scopeGroup The handler scope (group)
-     * @param priority The listener priority
-     * @param listenedEventType The event type for typed events
+     * @param listenerClassInstance Instance of the listener class.
+     * @param listenerMethod The event handler method.
+     * @param scopeGroup The handler scope (group).
+     * @param priority The listener priority.
+     * @param listenedEventType The event type for typed events.
      */
     private class Listener(
         val listenerClassInstance: Any, val listenerMethod: Method, val scopeGroup: ScopeGroup,

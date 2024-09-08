@@ -16,7 +16,7 @@ import java.util.regex.Pattern
  * Keys may only contain lowercase alphanumeric characters, periods,
  * underscores, hyphens, and forward slashes.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "MemberVisibilityCanBePrivate")
 class NamespacedKey : Key {
 
     val namespace: String

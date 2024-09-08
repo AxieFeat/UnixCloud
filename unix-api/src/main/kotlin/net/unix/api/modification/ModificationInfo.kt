@@ -1,36 +1,36 @@
 package net.unix.api.modification
 
 /**
- * Info about some [Modification]
+ * Info about some [Modification].
  */
 interface ModificationInfo {
     /**
-     * Path to [Modification] main class
+     * Path to [Modification] main class.
      */
     val main: String
 
     /**
-     * Modification name
+     * Modification name.
      */
     val name: String
 
     /**
-     * Modification version
+     * Modification version.
      */
     val version: String
 
     /**
-     * Modification description
+     * Modification description.
      */
     val description: String
 
     /**
-     * Modification website
+     * Modification website.
      */
     val website: String
 
     /**
-     * Modification authors
+     * Modification authors.
      */
     val authors: List<String>
 

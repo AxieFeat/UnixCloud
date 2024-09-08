@@ -1,21 +1,21 @@
 package net.unix.api.terminal.logger
 
 /**
- * Factory for creation instances of [Logger]
+ * Factory for creation instances of [Logger].
  */
 interface LoggerFactory {
 
     /**
-     * Global logger
+     * Global logger.
      */
     val logger: Logger
 
     /**
-     * Get logger by name
+     * Get logger by name.
      *
-     * @param name Logger name
+     * @param name Logger name.
      *
-     * @return Instance of [Logger]
+     * @return Instance of [Logger].
      */
     operator fun get(name: String): Logger
 

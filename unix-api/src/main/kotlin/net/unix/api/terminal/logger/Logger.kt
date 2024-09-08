@@ -4,62 +4,68 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 /**
- * UnixCloud logger
+ * UnixCloud logger.
  */
 interface Logger {
 
     /**
-     * Logger prefix
+     * Logger prefix.
      */
     val prefix: String
 
     /**
-     * Log info to terminal
+     * Log info to terminal.
      *
      * @param format Enable message formatting?
-     * @param message Message to log. It will be deserialized to [Component] by [MiniMessage]
+     * @param message Message to log. It will be deserialized to [Component] by [MiniMessage].
+     * @param throwable Throwable to print.
      */
-    fun info(vararg message: String, format: Boolean = true)
+    fun info(vararg message: String, format: Boolean = true, throwable: Throwable? = null)
 
     /**
-     * Log info to terminal
+     * Log info to terminal.
      *
      * @param format Enable message formatting?
-     * @param message Message to log
+     * @param message Message to log.
+     * @param throwable Throwable to print.
      */
-    fun info(vararg message: Component, format: Boolean = true)
+    fun info(vararg message: Component, format: Boolean = true, throwable: Throwable? = null)
 
     /**
-     * Log error to terminal
+     * Log error to terminal.
      *
      * @param format Enable message formatting?
-     * @param message Message to log. It will be deserialized to [Component] by [MiniMessage]
+     * @param message Message to log. It will be deserialized to [Component] by [MiniMessage].
+     * @param throwable Throwable to print.
      */
-    fun error(vararg message: String, format: Boolean = true)
+    fun error(vararg message: String, format: Boolean = true, throwable: Throwable? = null)
 
     /**
-     * Log error to terminal
+     * Log error to terminal.
      *
      * @param format Enable message formatting?
-     * @param message Message to log
+     * @param message Message to log.
+     * @param throwable Throwable to print.
      */
-    fun error(vararg message: Component, format: Boolean = true)
+    fun error(vararg message: Component, format: Boolean = true, throwable: Throwable? = null)
 
     /**
-     * Lag warn to terminal
+     * Lag warn to terminal.
      *
      * @param format Enable message formatting?
-     * @param message Message to log
+     * @param message Message to log.
+     * @param throwable Throwable to print.
      */
-    fun warn(vararg message: String, format: Boolean = true)
+    fun warn(vararg message: String, format: Boolean = true, throwable: Throwable? = null)
 
     /**
-     * Lag warn to terminal
+     * Lag warn to terminal.
      *
      * @param format Enable message formatting?
-     * @param message Message to log. It will be deserialized to [Component] by [MiniMessage]
+     * @param message Message to log. It will be deserialized to [Component] by [MiniMessage].
+     * @param throwable Throwable to print.
      */
-    fun warn(vararg message: Component, format: Boolean = true)
+    fun warn(vararg message: Component, format: Boolean = true, throwable: Throwable? = null)
 
     companion object
 }

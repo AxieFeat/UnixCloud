@@ -6,22 +6,22 @@ import net.unix.api.service.CloudService
 import java.io.File
 
 /**
- * [CloudTemplate] allow control creation instance of [CloudService]'s
+ * [CloudTemplate] allow control creation instance of [CloudService]'s.
  */
 interface CloudTemplate : PersistentDataHolder, Serializable {
 
     /**
-     * Template name
+     * Template name.
      */
     var name: String
 
     /**
-     * Template location
+     * Template location.
      */
     val templateFolder: File
 
     /**
-     * Files, that will be copied on creation [CloudService]
+     * Files, that will be copied on creation [CloudService].
      */
     var files: MutableList<CloudFile>
 

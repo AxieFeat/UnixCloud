@@ -1,4 +1,4 @@
-package net.unix.api.command.aether
+package net.unix.api.command
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
@@ -7,11 +7,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import java.util.concurrent.CompletableFuture
 
 /**
- * Aether representation of [ArgumentType]
+ * Aether representation of [ArgumentType].
  *
- * @param T Object type
+ * @param T Object type.
  */
-abstract class AetherArgument<T> : ArgumentType<T> {
+abstract class CommandArgument<T> : ArgumentType<T> {
 
     override fun <S> listSuggestions(context: CommandContext<S>, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
         return Suggestions.empty()

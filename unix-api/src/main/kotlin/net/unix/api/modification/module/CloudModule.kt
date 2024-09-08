@@ -8,7 +8,7 @@ import java.io.File
  * Create an inheritor of this class to create a module.
  *
  * Also don't forget that to create a module, you must create a module.json file
- * or use the @ModuleInfo annotation for inheritor class to create a module
+ * or use the [ModuleInfo] annotation for inheritor class to create a module.
  */
 abstract class CloudModule : Modification {
 
@@ -19,44 +19,44 @@ abstract class CloudModule : Modification {
     private val internalInfo: ModuleInfo? = null
 
     /**
-     * Module folder
+     * Module folder.
      */
     override val folder: File
         get() = internalFolder!!
 
     /**
-     * Module executable file location
+     * Module executable file location.
      */
     override val executable: File
         get() = internalExecutable!!
 
     /**
-     * Module info
+     * Module info.
      *
-     * name, version, authors and etc
+     * name, version, authors etc.
      */
     override val info: ModuleInfo
         get() = internalInfo!!
 
     /**
-     * Call when module loaded
+     * Call when module loaded.
      */
     override fun onLoad() {}
 
     /**
-     * Call when module reload
+     * Call when module reload.
      */
     open fun onReload() {}
 
     /**
-     * Call when module unloaded
+     * Call when module unloaded.
      */
     open fun onUnload() {}
 
     /**
-     * Register listener for module
+     * Register listener for module.
      *
-     * @param listener Listener instance
+     * @param listener Listener instance.
      */
     override fun registerListener(listener: Any) {
         EventManager.registerListeners(listener)
@@ -64,9 +64,9 @@ abstract class CloudModule : Modification {
     }
 
     /**
-     * Unregister listener for module
+     * Unregister listener for module.
      *
-     * @param listener Listener instance
+     * @param listener Listener instance.
      */
     override fun unregisterListener(listener: Any) {
         EventManager.unregisterListeners(listener)

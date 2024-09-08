@@ -1,8 +1,8 @@
 package net.unix.api.event.listener
 
 /**
- * Типизированный слушатель прослушивает только определенный тип типизированного события.
- * Тип определяется целочисленной константой, которая идентифицирует тип
+ * A typed listener only listens to a specific type of a typed event. The type is defined by an integer constant, which
+ * identifies the type.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(
@@ -10,7 +10,7 @@ package net.unix.api.event.listener
 )
 annotation class EventType(
     /**
-     * @return Идентификатор типа, который должен прослушиваться
+     * @return The type identifier that shall be listened to.
      */
     val value: Int
 )

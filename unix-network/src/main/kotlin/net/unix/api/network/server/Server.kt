@@ -12,6 +12,7 @@ import net.unix.api.network.universe.listener.PacketListener
 /**
  * Network server
  */
+@Suppress("MemberVisibilityCanBePrivate")
 open class Server : com.esotericsoftware.kryonet.Server(), Network {
 
     val waitingPacketListener = WaitingPacketListener()

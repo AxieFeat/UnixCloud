@@ -9,7 +9,6 @@ open class CloudLoggerFactory : LoggerFactory {
 
     override val logger: Logger = CloudLogger("")
 
-
     override operator fun get(name: String): Logger {
         val logger = loggers[name]
 

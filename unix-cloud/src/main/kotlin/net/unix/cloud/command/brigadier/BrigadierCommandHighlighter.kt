@@ -5,7 +5,8 @@ import com.mojang.brigadier.context.ParsedCommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.unix.api.CloudAPI
 import net.unix.api.command.sender.CommandSender
-import net.unix.api.event.impl.cloud.CloudTerminalHighlightEvent
+import net.unix.cloud.CloudInstance
+import net.unix.cloud.event.cloud.CloudTerminalHighlightEvent
 import org.jline.reader.Highlighter
 import org.jline.reader.LineReader
 import org.jline.utils.AttributedString
@@ -27,7 +28,7 @@ open class BrigadierCommandHighlighter(
         builder = event.builder
 
         val results: ParseResults<CommandSender> =
-            CloudAPI.instance.commandDispatcher.dispatcher.parse(
+            CloudInstance.instance.commandDispatcher.dispatcher.parse(
                 BrigadierCommandCompleter.prepareStringReader(buffer),
                 sender
             )

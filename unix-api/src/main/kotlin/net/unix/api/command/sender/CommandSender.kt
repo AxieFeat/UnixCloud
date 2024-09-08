@@ -3,26 +3,26 @@ package net.unix.api.command.sender
 import net.kyori.adventure.text.Component
 
 /**
- * General representation of the command sender
+ * General representation of the command sender.
  */
 interface CommandSender {
 
     /**
-     * Sender name
+     * Sender name.
      */
     val name: String
 
     /**
-     * Send message to command sender
+     * Send message to command sender.
      *
-     * @param message Message text
+     * @param message Message text.
      */
     fun sendMessage(message: String)
 
     /**
-     * Send message to command sender
+     * Send message to command sender.
      *
-     * @param message Component to sent
+     * @param message Component to sent.
      */
     fun sendMessage(message: Component)
 }

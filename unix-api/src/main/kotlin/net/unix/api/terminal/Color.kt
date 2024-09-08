@@ -1,17 +1,20 @@
+@file:Suppress("DEPRECATION")
+
 package net.unix.api.terminal
 
 import net.unix.api.terminal.Color.ColorExecutable
 import org.fusesource.jansi.Ansi
 
 /**
- * Coloring text like minecraft legacy colors
+ * Coloring text like minecraft legacy colors.
  *
- * @param red Red value
- * @param green Green value
- * @param blue Blue value
- * @param code Color code
- * @param function Translate color function
+ * @param red Red value.
+ * @param green Green value.
+ * @param blue Blue value.
+ * @param code Color code.
+ * @param function Translate color function.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 @Deprecated("Use it only if you know, what a doing, else use Adventure Components")
 enum class Color(
     red: Int,

@@ -12,7 +12,7 @@ interface PersistentDataHolder {
      * own custom namespace therefore modifying default tags using this
      * [PersistentDataHolder] is impossible.
      *
-     * @return the persistent metadata container
+     * @return The persistent metadata container.
      */
     val persistentDataContainer: PersistentDataContainer
 

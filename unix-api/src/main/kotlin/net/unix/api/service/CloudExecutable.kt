@@ -3,42 +3,42 @@ package net.unix.api.service
 import java.io.File
 
 /**
- * Allow to start [CloudService]
+ * Allow to start [CloudService].
  */
 interface CloudExecutable {
 
     /**
-     * A [CloudService] that is managed
+     * A [CloudService] that is managed.
      */
     val service: CloudService
 
     /**
-     * Executable file
+     * Executable file.
      */
     val executableFile: File
 
     /**
-     * Is [CloudExecutable] run
+     * Is [CloudExecutable] run.
      */
     var started: Boolean
 
     /**
-     * Start [CloudService]
+     * Start [CloudService].
      */
     fun start()
 
     /**
-     * Stop process
+     * Stop process.
      */
     fun stop()
 
     /**
-     * Kill process
+     * Kill process.
      */
     fun kill()
 
     /**
-     * Create a copy of current [CloudExecutable] for other [CloudService]
+     * Create a copy of current [CloudExecutable] for other [CloudService].
      */
     fun copy(service: CloudService): CloudExecutable
 

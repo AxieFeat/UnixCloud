@@ -17,85 +17,74 @@ import net.unix.api.template.CloudTemplate
 import net.unix.api.modification.module.CloudModule
 
 /**
- * Unix API
+ * Unix API.
  */
 abstract class CloudAPI {
 
-    companion object {
-        /**
-         * API instance
-         */
-        lateinit var instance: CloudAPI
-    }
-
-    init {
-        instance = this
-    }
-
     /**
-     * Location space, that's contains some files
+     * Location space, that's contains some files.
      */
     abstract val locationSpace: LocationSpace
 
     /**
-     * Terminal, just a terminal
+     * Terminal, just a terminal.
      */
     abstract val terminal: Terminal
 
     /**
-     * Terminal logger
+     * Terminal logger.
      */
     abstract val logger: Logger
 
     /**
-     * Factory for creation loggers
+     * Factory for creation loggers.
      */
     abstract val loggerFactory: LoggerFactory
 
     /**
-     * Command dispatcher
+     * Command dispatcher.
      */
     abstract val commandDispatcher: CommandDispatcher
 
     /**
-     * Manager to control [CloudService]'s
+     * Manager to control [CloudService]'s.
      */
     abstract val cloudServiceManager: CloudServiceManager
 
     /**
-     * Manager to control [CloudTemplate]'s
+     * Manager to control [CloudTemplate]'s.
      */
     abstract val cloudTemplateManager: CloudTemplateManager
 
     /**
-     * Manager to control [CloudGroup]'s
+     * Manager to control [CloudGroup]'s.
      */
     abstract val cloudGroupManager: CloudGroupManager
 
     /**
-     * Manager to control [CloudModule]'s
+     * Manager to control [CloudModule]'s.
      */
     abstract val moduleManager: ModuleManager
 
     /**
-     * Manager to control [CloudExtension]'s
+     * Manager to control [CloudExtension]'s.
      */
     abstract val extensionManager: ExtensionManager
 
     /**
-     * Manager for scheduler
+     * Manager for scheduler.
      *
      * For INTERNAL usage only!
      */
     abstract val schedulerManager: SchedulerManager
 
     /**
-     * Websocket server on port 9191
+     * Websocket server on port 9191.
      */
     abstract val server: Server
 
     /**
-     * Shutdown
+     * Shutdown.
      */
     abstract fun shutdown()
 }
