@@ -14,7 +14,7 @@ import org.fusesource.jansi.Ansi
  * @param code Color code.
  * @param function Translate color function.
  */
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 @Deprecated("Use it only if you know, what a doing, else use Adventure Components")
 enum class Color(
     red: Int,
@@ -133,4 +133,5 @@ enum class Color(
     private fun interface ColorExecutable {
         fun run(ansi: Ansi): String
     }
+
 }

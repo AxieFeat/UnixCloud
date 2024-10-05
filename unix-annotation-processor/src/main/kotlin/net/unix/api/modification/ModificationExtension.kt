@@ -13,6 +13,22 @@ fun net.unix.api.modification.module.ModuleInfo.Companion.createByAnnotation(mai
         override val authors: List<String> = moduleInfo.authors.toList()
         override val depends: List<String> = moduleInfo.depends.toList()
         override val soft: List<String> = moduleInfo.softDepends.toList()
+
+        override fun serialize(): Map<String, Any> {
+            val result = mutableMapOf<String, Any>()
+
+            result["main"] = main
+            result["name"] = name
+            result["version"] = version
+            result["description"] = description
+            result["website"] = website
+            result["authors"] = authors
+
+            result["depends"] = depends
+            result["soft"] = soft
+
+            return result
+        }
     }
 }
 
@@ -24,5 +40,18 @@ fun net.unix.api.modification.extension.ExtensionInfo.Companion.createByAnnotati
         override val description: String = extensionInfo.description
         override val website: String = extensionInfo.website
         override val authors: List<String> = extensionInfo.authors.toList()
+
+        override fun serialize(): Map<String, Any> {
+            val result = mutableMapOf<String, Any>()
+
+            result["main"] = main
+            result["name"] = name
+            result["version"] = version
+            result["description"] = description
+            result["website"] = website
+            result["authors"] = authors
+
+            return result
+        }
     }
 }

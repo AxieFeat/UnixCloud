@@ -8,6 +8,7 @@ import net.unix.api.Serializable
  * in it.
  */
 interface PersistentDataContainer : Serializable {
+
     /**
      * Stores a metadata value on the [PersistentDataHolder] instance.
      *
@@ -134,4 +135,5 @@ interface PersistentDataContainer : Serializable {
     val adapterContext: PersistentDataAdapterContext
 
     companion object
+
 }

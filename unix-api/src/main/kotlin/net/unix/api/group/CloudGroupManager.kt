@@ -42,4 +42,5 @@ interface CloudGroupManager {
      * @return [CloudGroup] instance or null, if not founded.
      */
     operator fun get(name: String): CloudGroup?
+
 }

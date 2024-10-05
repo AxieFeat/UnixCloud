@@ -3,7 +3,7 @@ package net.unix.api.modification.module
 import java.io.File
 
 /**
- * Class loader for [CloudModule].
+ * Class loader for [Module].
  */
 interface ModuleClassLoader {
 
@@ -13,33 +13,34 @@ interface ModuleClassLoader {
     val file: File
 
     /**
-     * Is [CloudModule] loaded.
+     * Is [Module] loaded.
      */
     val loaded: Boolean
 
     /**
      * Loaded module. Null if not loaded.
      */
-    val module: CloudModule?
+    val module: Module?
 
     /**
-     * Load [CloudModule].
+     * Load [Module].
      *
      * @return True if success, else false.
      */
     fun load(): Boolean
 
     /**
-     * Unload [CloudModule].
+     * Unload [Module].
      *
      * @return True if success, else false.
      */
     fun unload(): Boolean
 
     /**
-     * Reload [CloudModule].
+     * Reload [Module].
      *
      * @return True if success, else false.
      */
     fun reload(): Boolean
+
 }

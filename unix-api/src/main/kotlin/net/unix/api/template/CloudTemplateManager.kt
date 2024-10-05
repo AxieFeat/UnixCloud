@@ -2,6 +2,9 @@ package net.unix.api.template
 
 import java.io.File
 
+/**
+ * Manager for [CloudTemplate]'s.
+ */
 interface CloudTemplateManager {
 
     /**

@@ -3,7 +3,7 @@ package net.unix.api.modification.extension
 import java.io.File
 
 /**
- * Class loader for [CloudExtension].
+ * Class loader for [Extension].
  */
 interface ExtensionClassLoader {
 
@@ -13,19 +13,20 @@ interface ExtensionClassLoader {
     val file: File
 
     /**
-     * Is [CloudExtension] loaded.
+     * Is [Extension] loaded.
      */
     val loaded: Boolean
 
     /**
      * Loaded extension. Null if not loaded.
      */
-    val module: CloudExtension?
+    val extension: Extension?
 
     /**
-     * Load [CloudExtension].
+     * Load [Extension].
      *
      * @return True if success, else false.
      */
     fun load(): Boolean
+
 }

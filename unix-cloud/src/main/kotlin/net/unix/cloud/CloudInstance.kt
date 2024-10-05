@@ -10,7 +10,9 @@ import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
+import net.unix.api.network.client.Client
 import net.unix.api.network.server.Server
+import net.unix.api.network.universe.Packet
 import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
@@ -24,6 +26,7 @@ import net.unix.cloud.command.aether.AetherArgumentBuilder.Companion.argument
 import net.unix.cloud.command.aether.AetherCommandBuilder
 import net.unix.cloud.command.aether.AetherLiteralBuilder.Companion.literal
 import net.unix.cloud.command.aether.get
+import net.unix.cloud.event.callEvent
 import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
@@ -32,6 +35,7 @@ import net.unix.cloud.service.BasicCloudServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
 import net.unix.cloud.terminal.logger.CloudLoggerFactory
+import javax.management.RuntimeErrorException
 import kotlin.system.exitProcess
 
 fun main() {
@@ -66,11 +70,11 @@ fun main() {
 //        )
 //        .register() // <- регистрируем команду
 
-    command("screen") {
-        literal("toggle") {
-            argument("service", CloudServiceArgument()) {
-                execute {
-                    val service: CloudService = it["service"]
+    command("screen") { // <- название команды
+        literal("toggle") { // <- указываем какой-то статичный аргумент
+            argument("service", CloudServiceArgument()) { // <- аргумент, требующий ввода пользователя
+                execute { // <- при выполнении команды
+                    val service: CloudService = it["service"] // <- из контекста команды получаем аргумент
 
                     println("Screen toggled to ${service.name}")
                 }
@@ -85,7 +89,37 @@ fun main() {
                 }
             }
         }
-    }.register()
+    }.register() // <- регистрируем команду
+
+
+    val server = Server() // <- Создаём объект сервера
+    server.start(7979) // <- Запускаем сервер
+
+    // Создаём слушатель по каналу "fun:example"
+    server.createListener("fun:example") { conn, packet ->
+        if (packet == null) return@createListener
+
+        Packet.builder() // <- Создаём пакет'
+            .setChannel("fun:example") // <- Пакет будет отправлен по каналу "fun:example"
+            .asResponseFor(packet) // <- Помечаем пакет как ответ
+            .addNamedBoolean("result" to true) // <- Добавляем данные
+            .send(conn.id, server) // <- Отправляем пакет на клиент
+    }
+
+    val client = Client() // <- Создаём объект клиента
+    client.connect("localhost", 7979) // <- Подключаемся к серверу
+
+    Packet.builder()
+        .setChannel("fun:example")
+        .onResponse { conn, packet -> // <- Будет выполнено при получении ответа на этот пакет
+            // Выполняем какое-то действия
+        }
+        .onResponseTimeout(10000) {
+            // Если в течение 10 секунд пакет не получит ответа - выполнится этот блок кода
+        }
+        .send(client) // <- Отправляем пакет на сервер
+
+
 }
 
 @Suppress("unused")
@@ -228,11 +262,16 @@ class CloudInstance(
 ) : CloudAPI() {
 
     companion object {
+        private var created = false
+
         lateinit var instance: CloudAPI
     }
 
     init {
+        if (created) throw Error("CloudInstance already created! Use CloudInstance.instance to get it!")
+
         instance = this
+        created = true
     }
 
     override val loggerFactory: LoggerFactory = loggerFactory ?: CloudLoggerFactory()

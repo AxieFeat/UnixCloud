@@ -4,6 +4,7 @@ package net.unix.api.event
  * Use with [Event] for cancellable events.
  */
 interface Cancellable {
+
     /**
      * Whether the event was cancelled.
      *
@@ -12,4 +13,5 @@ interface Cancellable {
      * the cancel operation.
      */
     var cancelled: Boolean
+
 }

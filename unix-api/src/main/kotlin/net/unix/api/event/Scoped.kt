@@ -7,8 +7,10 @@ package net.unix.api.event
  * the method won't get called.
  */
 interface Scoped {
+
     /**
      * The event's scope.
      */
     val scope: String
+
 }

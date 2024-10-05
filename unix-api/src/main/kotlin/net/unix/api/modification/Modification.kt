@@ -8,19 +8,19 @@ import java.io.File
 interface Modification {
 
     /**
-     * Module folder location.
+     * Modification folder location.
      */
-    val folder: File
+    var folder: File
 
     /**
-     * Module executable file location.
+     * Modification executable file location.
      */
-    val executable: File
+    var executable: File
 
     /**
-     * Info about current modification.
+     * Modification information
      */
-    val info: ModificationInfo
+    var modification: ModificationInfo
 
     /**
      * Call when modification loaded.
@@ -42,4 +42,5 @@ interface Modification {
     fun unregisterListener(listener: Any)
 
     companion object
+
 }

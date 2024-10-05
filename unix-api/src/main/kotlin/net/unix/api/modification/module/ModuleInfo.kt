@@ -3,7 +3,7 @@ package net.unix.api.modification.module
 import net.unix.api.modification.ModificationInfo
 
 /**
- * Info about [CloudModule].
+ * Info about [Module].
  */
 interface ModuleInfo : ModificationInfo {
 
@@ -18,4 +18,5 @@ interface ModuleInfo : ModificationInfo {
     val soft: List<String>
 
     companion object
+
 }

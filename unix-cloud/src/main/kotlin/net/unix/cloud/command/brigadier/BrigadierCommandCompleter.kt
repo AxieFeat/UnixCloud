@@ -3,9 +3,9 @@ package net.unix.cloud.command.brigadier
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.StringReader
-import net.unix.api.CloudAPI
 import net.unix.api.command.sender.CommandSender
 import net.unix.cloud.CloudInstance
+import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudTerminalCompleteEvent
 import org.jline.reader.Candidate
 import org.jline.reader.Completer

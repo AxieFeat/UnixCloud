@@ -2,15 +2,16 @@ package net.unix.cloud.terminal.logger
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.unix.api.CloudAPI
 import net.unix.cloud.event.cloud.CloudTerminalLoggerEvent
 import net.unix.api.terminal.logger.LogType
 import net.unix.api.terminal.logger.Logger
 import net.unix.cloud.CloudExtension.deserializeComponent
+import net.unix.cloud.CloudExtension.format
 import net.unix.cloud.CloudExtension.or
 import net.unix.cloud.CloudExtension.rem
 import net.unix.cloud.CloudExtension.strip
 import net.unix.cloud.CloudInstance
+import net.unix.cloud.event.callEvent
 import net.unix.cloud.scheduler.scheduler
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager

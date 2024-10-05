@@ -1,9 +1,12 @@
 package net.unix.api.modification
 
+import net.unix.api.Serializable
+
 /**
  * Info about some [Modification].
  */
-interface ModificationInfo {
+interface ModificationInfo : Serializable {
+
     /**
      * Path to [Modification] main class.
      */
@@ -35,4 +38,5 @@ interface ModificationInfo {
     val authors: List<String>
 
     companion object
+
 }

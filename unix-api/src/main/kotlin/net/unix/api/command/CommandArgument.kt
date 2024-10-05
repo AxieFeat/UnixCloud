@@ -24,4 +24,5 @@ abstract class CommandArgument<T> : ArgumentType<T> {
     override fun <S> listSuggestions(context: CommandContext<S>, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
         return Suggestions.empty()
     }
+
 }

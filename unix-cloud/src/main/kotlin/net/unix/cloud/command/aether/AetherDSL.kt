@@ -13,6 +13,16 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@DslMarker
+annotation class CommandDSL2
+
+@DslMarker
+annotation class CommandDSL4
+
+@DslMarker
+annotation class CommandDSL3
+
+@CommandDSL2
 @OptIn(ExperimentalContracts::class)
 inline fun command(name: String, vararg aliases: String, setup: AetherDSLCommandBuilder.() -> Unit): AetherDSLCommandBuilder {
     contract {
@@ -31,6 +41,7 @@ class AetherDSLCommandBuilder(name: String, vararg aliases: String) {
     }
 
     @OptIn(ExperimentalContracts::class)
+    @CommandDSL4
     fun literal(name: String, setup: AetherDSLLiteralBuilder.() -> Unit): AetherDSLLiteralBuilder {
         contract {
             callsInPlace(setup, InvocationKind.EXACTLY_ONCE)
@@ -123,6 +134,7 @@ class AetherDSLLiteralBuilder(
     }
 
     @OptIn(ExperimentalContracts::class)
+    @CommandDSL4
     fun <T> argument(name: String, type: ArgumentType<T>, setup: AetherDSLArgumentBuilder<T>.() -> Unit): AetherDSLArgumentBuilder<T> {
         contract {
             callsInPlace(setup, InvocationKind.EXACTLY_ONCE)
@@ -200,6 +212,7 @@ class AetherDSLArgumentBuilder<T>(
      *
      * @return Current instance of [AetherLiteralBuilder]
      */
+    @CommandDSL3
     fun execute(command: CommandExecutor<CommandSender>): AetherDSLArgumentBuilder<T> {
         val command = Command { context ->
             command.run(context)

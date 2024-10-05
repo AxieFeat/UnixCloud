@@ -6,6 +6,7 @@ package net.unix.api.persistence
  * serialize and deserialize the passed values.
  */
 interface PersistentDataAdapterContext {
+
     /**
      * Creates a new and empty meta container instance.
      *
@@ -14,4 +15,5 @@ interface PersistentDataAdapterContext {
     fun newPersistentDataContainer(): PersistentDataContainer
 
     companion object
+
 }

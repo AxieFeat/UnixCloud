@@ -61,4 +61,5 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     fun create(): CloudService
 
     companion object
+
 }

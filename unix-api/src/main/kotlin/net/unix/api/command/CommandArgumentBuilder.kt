@@ -26,4 +26,5 @@ abstract class CommandArgumentBuilder<T, S> : ArgumentBuilder<T, CommandArgument
      * @return Current instance of [CommandArgumentBuilder]
      */
     abstract fun execute(command: CommandExecutor<T>?): CommandArgumentBuilder<T, S>
+
 }

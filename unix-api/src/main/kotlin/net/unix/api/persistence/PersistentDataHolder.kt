@@ -5,6 +5,7 @@ package net.unix.api.persistence
  * custom persistent meta data on it.
  */
 interface PersistentDataHolder {
+
     /**
      * Returns a custom tag container capable of storing tags on the object.
      *

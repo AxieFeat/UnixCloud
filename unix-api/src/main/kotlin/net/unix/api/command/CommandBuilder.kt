@@ -63,4 +63,5 @@ abstract class CommandBuilder<T>(
      * @return Current instance of [CommandBuilder].
      */
     abstract fun execute(command: CommandExecutor<T>?): CommandBuilder<T>
+
 }

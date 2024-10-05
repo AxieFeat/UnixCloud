@@ -61,7 +61,7 @@ class NamespacedKey : Key {
      * @param key The key to create
      */
     constructor(modification: Modification, key: String) {
-        this.namespace = modification.info.name.lowercase(Locale.ROOT)
+        this.namespace = modification.modification.name.lowercase(Locale.ROOT)
         this.key = key.lowercase()
 
         Preconditions.checkArgument(

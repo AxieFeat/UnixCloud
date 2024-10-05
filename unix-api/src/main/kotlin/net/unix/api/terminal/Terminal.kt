@@ -39,4 +39,5 @@ interface Terminal : PersistentDataHolder {
     fun print(component: Component)
 
     companion object
+
 }

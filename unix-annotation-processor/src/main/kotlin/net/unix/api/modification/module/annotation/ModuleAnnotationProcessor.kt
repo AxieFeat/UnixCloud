@@ -2,7 +2,7 @@ package net.unix.api.modification.module.annotation
 
 import net.unix.api.modification.CloudAnnotationProcessor
 import net.unix.api.modification.createByAnnotation
-import net.unix.api.modification.module.CloudModule
+import net.unix.api.modification.module.Module
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -52,7 +52,7 @@ class ModuleAnnotationProcessor : CloudAnnotationProcessor() {
                     else -> {
                         if (!processingEnv.typeUtils.isSubtype(
                                 mainModuleElement.asType(), this.fromClass(
-                                    CloudModule::class.java
+                                    Module::class.java
                                 )
                             )
                         ) {

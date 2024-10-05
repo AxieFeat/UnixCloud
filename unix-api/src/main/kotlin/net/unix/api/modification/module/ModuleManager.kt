@@ -6,25 +6,26 @@ import net.unix.api.modification.exception.ModificationLoadException
 import java.io.File
 
 /**
- * Manager for [CloudModule]'s.
+ * Manager for [Module]'s.
  */
 interface ModuleManager : ModificationManager {
-    /**
-     * List of all [CloudModule]'s.
-     */
-    val modules: List<CloudModule>
 
     /**
-     * Get [CloudModule] by name.
+     * List of all [Module]'s.
+     */
+    val modules: List<Module>
+
+    /**
+     * Get [Module] by name.
      *
      * @param name Module name.
      *
-     * @return Instance of [CloudModule] or null, if not founded.
+     * @return Instance of [Module] or null, if not founded.
      */
-    override fun get(name: String): CloudModule?
+    override fun get(name: String): Module?
 
     /**
-     * Load [CloudModule] from file.
+     * Load [Module] from file.
      *
      * @param file Module file.
      *
@@ -34,25 +35,26 @@ interface ModuleManager : ModificationManager {
      * @throws ModificationExistException If module with this name already loaded.
      */
     @Throws(ModificationLoadException::class, ModificationExistException::class)
-    override fun load(file: File): CloudModule
+    override fun load(file: File): Module
 
     /**
-     * Unload specific [CloudModule].
+     * Unload specific [Module].
      *
      * @param module Module to unload.
      *
      * @return True if success, else false.
      */
-    fun unload(module: CloudModule): Boolean
+    fun unload(module: Module): Boolean
 
     /**
-     * Reload specific [CloudModule].
+     * Reload specific [Module].
      *
      * @param module Module to reload.
      *
      * @return True if success, else false.
      */
-    fun reload(module: CloudModule): Boolean
+    fun reload(module: Module): Boolean
 
     companion object
+
 }

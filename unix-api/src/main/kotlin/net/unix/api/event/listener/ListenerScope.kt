@@ -12,8 +12,10 @@ import net.unix.api.event.scope.ScopeGroup
     AnnotationRetention.RUNTIME
 )
 annotation class ListenerScope(
+
     /**
      * The handler's scope or scope group.
      */
     val value: String
+
 )

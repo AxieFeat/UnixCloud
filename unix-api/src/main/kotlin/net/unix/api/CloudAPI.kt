@@ -14,7 +14,7 @@ import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.api.service.CloudService
 import net.unix.api.group.CloudGroup
 import net.unix.api.template.CloudTemplate
-import net.unix.api.modification.module.CloudModule
+import net.unix.api.modification.module.Module
 
 /**
  * Unix API.
@@ -62,7 +62,7 @@ abstract class CloudAPI {
     abstract val cloudGroupManager: CloudGroupManager
 
     /**
-     * Manager to control [CloudModule]'s.
+     * Manager to control [Module]'s.
      */
     abstract val moduleManager: ModuleManager
 

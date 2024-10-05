@@ -29,4 +29,5 @@ interface ModificationManager {
     fun load(file: File): Modification?
 
     companion object
+
 }

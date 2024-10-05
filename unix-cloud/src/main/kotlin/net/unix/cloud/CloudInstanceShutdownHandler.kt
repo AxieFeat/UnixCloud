@@ -1,5 +1,6 @@
 package net.unix.cloud
 
+import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudShutdownEvent
 
 class CloudInstanceShutdownHandler(

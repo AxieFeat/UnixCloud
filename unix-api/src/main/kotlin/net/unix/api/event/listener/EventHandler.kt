@@ -8,9 +8,11 @@ package net.unix.api.event.listener
     AnnotationRetention.RUNTIME
 )
 annotation class EventHandler(
+
     /**
      * The priority of the listener method. The highest priority listeners are called first, while lowest priority are
      * called last. By default, priority is set to normal.
      */
     val priority: ListenerPriority = ListenerPriority.NORMAL
+
 )

@@ -9,8 +9,10 @@ package net.unix.api.event.listener
     AnnotationRetention.RUNTIME
 )
 annotation class EventType(
+
     /**
      * @return The type identifier that shall be listened to.
      */
     val value: Int
+
 )

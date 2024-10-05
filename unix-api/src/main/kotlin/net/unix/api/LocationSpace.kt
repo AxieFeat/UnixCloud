@@ -4,7 +4,7 @@ import java.io.File
 import net.unix.api.group.CloudGroup
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
-import net.unix.api.modification.module.CloudModule
+import net.unix.api.modification.module.Module
 
 /**
  * Location space for cloud system.
@@ -12,7 +12,7 @@ import net.unix.api.modification.module.CloudModule
 interface LocationSpace {
 
     /**
-     * Directory for [CloudModule]'s.
+     * Directory for [Module]'s.
      */
     val module: File
 

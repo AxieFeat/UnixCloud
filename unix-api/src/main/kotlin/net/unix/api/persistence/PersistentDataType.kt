@@ -14,6 +14,7 @@ package net.unix.api.persistence
  * @param Z The retrieved object type when applying this tag type.
  */
 interface PersistentDataType<T, Z> {
+
     /**
      * Returns the primitive data type of this tag.
      *
@@ -101,5 +102,7 @@ interface PersistentDataType<T, Z> {
          * Nested PersistentDataContainer.
          */
         val TAG_CONTAINER = PrimitivePersistentDataType(PersistentDataContainer::class.java)
+
     }
+
 }

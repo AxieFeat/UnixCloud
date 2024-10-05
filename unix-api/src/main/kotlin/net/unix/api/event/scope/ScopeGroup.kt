@@ -14,6 +14,7 @@ import java.util.regex.Pattern
  * This class is specifically for dispatching scoped events internally, but can also be used outside to manager scopes
  */
 class ScopeGroup(scope: String) {
+
     private val group: Group?
 
     init {
@@ -74,9 +75,11 @@ class ScopeGroup(scope: String) {
 
             return groupName.equals(group.groupName, ignoreCase = true) && subGroup.containsGroup(group.subGroup)
         }
+
     }
 
     companion object {
+
         private const val GROUP_REGEX = "((\\.?[a-zA-Z0-9])+(\\.\\*)?|\\*)"
         private val GROUP_PATTERN: Pattern = Pattern.compile(GROUP_REGEX)
 
@@ -94,5 +97,7 @@ class ScopeGroup(scope: String) {
 
             return newGroup
         }
+
     }
+
 }
