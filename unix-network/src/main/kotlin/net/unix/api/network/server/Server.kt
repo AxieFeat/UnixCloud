@@ -8,13 +8,14 @@ import net.unix.api.network.universe.Packet
 import net.unix.api.network.universe.ResponsePacket
 import net.unix.api.network.universe.listener.Listener
 import net.unix.api.network.universe.listener.PacketListener
-
 /**
  * Network server
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class Server : com.esotericsoftware.kryonet.Server(), Network {
 
+    // TODO crypto
+    //val keyPair = CryptoUtil.generateKeyPair()
     val waitingPacketListener = WaitingPacketListener()
 
     init {

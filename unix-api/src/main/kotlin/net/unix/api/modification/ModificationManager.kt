@@ -7,6 +7,11 @@ import java.io.File
 interface ModificationManager {
 
     /**
+     * Folder from which modifications will be loaded.
+     */
+    var folder: File
+
+    /**
      * Get some [Modification] by name.
      *
      * @param name Modification name.

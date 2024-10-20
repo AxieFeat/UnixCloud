@@ -14,6 +14,8 @@ import net.unix.api.network.universe.listener.PacketListener
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 open class Client : com.esotericsoftware.kryonet.Client(), Network {
 
+    // TODO crypto
+    //val keyPair = CryptoUtil.generateKeyPair()
     val waitingPacketListener = WaitingPacketListener()
 
     init {

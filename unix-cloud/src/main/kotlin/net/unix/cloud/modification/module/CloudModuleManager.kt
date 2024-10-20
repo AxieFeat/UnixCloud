@@ -9,6 +9,10 @@ object CloudModuleManager : ModuleManager {
 
     private val cachedModules = mutableMapOf<String, Module>()
 
+    override var folder: File
+        get() = TODO("Not yet implemented")
+        set(value) {}
+
     override val modules: List<Module>
         get() = cachedModules.values.toList()
 

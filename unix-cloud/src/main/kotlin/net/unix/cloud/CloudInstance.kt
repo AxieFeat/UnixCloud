@@ -31,6 +31,7 @@ import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.scheduler.CloudSchedulerManager
+import net.unix.cloud.scheduler.scheduler
 import net.unix.cloud.service.BasicCloudServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
@@ -39,6 +40,7 @@ import javax.management.RuntimeErrorException
 import kotlin.system.exitProcess
 
 fun main() {
+
     var builder: CloudBuilder = CloudInstance.builder()
 
     CloudStartEvent(builder).callEvent().also { builder = it.builder }
@@ -91,34 +93,75 @@ fun main() {
         }
     }.register() // <- регистрируем команду
 
+//    val server = Server() // <- Создаём объект сервера
+//    server.start(7979) // <- Запускаем сервер
+//
+//    // Создаём слушатель по каналу "fun:example"
+//    server.createListener("fun:example") { conn, packet ->
+//        if (packet == null) return@createListener
+//
+//        Packet.builder() // <- Создаём пакет'
+//            .setChannel("fun:example") // <- Пакет будет отправлен по каналу "fun:example"
+//            .asResponseFor(packet) // <- Помечаем пакет как ответ
+//            .addNamedBoolean("result" to true) // <- Добавляем данные
+//            .send(conn.id, server) // <- Отправляем пакет на клиент
+//    }
+//
+//    val client = Client() // <- Создаём объект клиента
+//    client.connect("localhost", 7979) // <- Подключаемся к серверу
+//
+//    Packet.builder()
+//        .setChannel("fun:example")
+//        .onResponse { conn, packet -> // <- Будет выполнено при получении ответа на этот пакет
+//            // Выполняем какое-то действия
+//        }
+//        .onResponseTimeout(10000) {
+//            // Если в течение 10 секунд пакет не получит ответа - выполнится этот блок кода
+//        }
+//        .send(client) // <- Отправляем пакет на сервер
 
-    val server = Server() // <- Создаём объект сервера
-    server.start(7979) // <- Запускаем сервер
 
-    // Создаём слушатель по каналу "fun:example"
-    server.createListener("fun:example") { conn, packet ->
-        if (packet == null) return@createListener
-
-        Packet.builder() // <- Создаём пакет'
-            .setChannel("fun:example") // <- Пакет будет отправлен по каналу "fun:example"
-            .asResponseFor(packet) // <- Помечаем пакет как ответ
-            .addNamedBoolean("result" to true) // <- Добавляем данные
-            .send(conn.id, server) // <- Отправляем пакет на клиент
-    }
-
-    val client = Client() // <- Создаём объект клиента
-    client.connect("localhost", 7979) // <- Подключаемся к серверу
-
-    Packet.builder()
-        .setChannel("fun:example")
-        .onResponse { conn, packet -> // <- Будет выполнено при получении ответа на этот пакет
-            // Выполняем какое-то действия
-        }
-        .onResponseTimeout(10000) {
-            // Если в течение 10 секунд пакет не получит ответа - выполнится этот блок кода
-        }
-        .send(client) // <- Отправляем пакет на сервер
-
+//    val server = Server()
+//    server.start(7777)
+//    println("Сервер запущен!")
+//
+//    server.createListener("fun:auth") { conn, packet ->
+//        if (packet == null) return@createListener
+//
+//        val name: String? = packet["name"]
+//
+//        println("Подключен клиент: $name")
+//    }
+//
+//    server.createListener("fun:counter") { conn, packet ->
+//        if (packet == null) return@createListener
+//
+//        val count: Long? = packet["count"]
+//
+//        println("Число: $count")
+//    }
+//
+//
+//    val client = Client()
+//    client.connect("localhost", 7777)
+//
+//    Packet.builder()
+//        .setChannel("fun:auth")
+//        .addNamedString("name" to "Proxy-1")
+//        .send(client)
+//
+//    scheduler {
+//        var counter = 0L
+//
+//        execute(0, 1000) {
+//            Packet.builder()
+//                .setChannel("fun:counter")
+//                .addNamedLong("count" to counter)
+//                .send(client)
+//
+//            counter++
+//        }
+//    }
 
 }
 

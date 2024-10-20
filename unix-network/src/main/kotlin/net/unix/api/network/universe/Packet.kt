@@ -379,9 +379,10 @@ data class Packet(
                     namedString, namedChar, namedBoolean, namedInt, namedLong, namedDouble, namedFloat
                 )
 
-                val pair = Pair(uuid!!, responsePacket!!)
-
                 if (responsePacket != null) {
+
+                    val pair = Pair(uuid!!, responsePacket!!)
+
                     when (network) {
                         is Client -> network.waitingPacketListener.waitingPackets.add(pair)
                         is Server -> network.waitingPacketListener.waitingPackets.add(pair)
@@ -439,9 +440,9 @@ data class Packet(
                     namedString, namedChar, namedBoolean, namedInt, namedLong, namedDouble, namedFloat
                 )
 
-                val pair = Pair(uuid!!, responsePacket!!)
-
                 if (responsePacket != null) {
+                    val pair = Pair(uuid!!, responsePacket!!)
+
                     when (network) {
                         is Client -> network.waitingPacketListener.waitingPackets.add(pair)
                         is Server -> network.waitingPacketListener.waitingPackets.add(pair)

@@ -7,6 +7,10 @@ import java.io.File
 
 object CloudExtensionManager : ExtensionManager {
 
+    override var folder: File
+        get() = TODO("Not yet implemented")
+        set(value) {}
+
     private val cachedExtensions = mutableMapOf<String, Extension>()
 
     override val extensions: List<Extension>
