@@ -18,7 +18,7 @@ interface ExtensionManager : ModificationManager {
     /**
      * Get [Extension] by name.
      *
-     * @param name Module name.
+     * @param name Extension name.
      *
      * @return Instance of [Extension] or null, if not founded.
      */
@@ -27,9 +27,9 @@ interface ExtensionManager : ModificationManager {
     /**
      * Load [Extension] from file.
      *
-     * @param file Module file.
+     * @param file Extension file.
      *
-     * @return Loaded module.
+     * @return Loaded extension.
      *
      * @throws ModificationLoadException Generic exception, may be corrupted file?
      * @throws ModificationExistException If extension with this name already loaded.

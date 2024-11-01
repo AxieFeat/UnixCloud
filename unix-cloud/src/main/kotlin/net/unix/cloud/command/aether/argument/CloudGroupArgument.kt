@@ -35,7 +35,7 @@ class CloudGroupArgument : CommandArgument<CloudGroup>() {
     }
 
     override fun parse(reader: StringReader): CloudGroup {
-        val service = CloudInstance.instance.cloudGroupManager[reader.readString()]
+        val service = CloudInstance.instance.cloudGroupManager[reader.readString()].firstOrNull()
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return service

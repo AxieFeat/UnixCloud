@@ -6,6 +6,7 @@ import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
 import org.jetbrains.annotations.Range
+import java.util.UUID
 
 /**
  * Generic template for starting instances of [CloudService].
@@ -13,9 +14,24 @@ import org.jetbrains.annotations.Range
 interface CloudGroup : PersistentDataHolder, Serializable {
 
     /**
-     * Cloud group name.
+     * The unique id of [CloudGroup].
+     */
+    val uuid: UUID
+
+    /**
+     * Cloud group name. Can be repeated by other groups.
      */
     var name: String
+
+    /**
+     * The type of group.
+     *
+     * If you set type of group - all services will be
+     * started with this executable properties of this type.
+     *
+     * If null - type is not set.
+     */
+    val type: CloudGroupType?
 
     /**
      * [CloudTemplate]'s of group.

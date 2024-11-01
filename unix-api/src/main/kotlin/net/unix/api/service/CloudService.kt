@@ -12,14 +12,14 @@ import java.util.*
 interface CloudService : PersistentDataHolder {
 
     /**
-     * Service name.
-     */
-    val name: String
-
-    /**
-     * Service uuid.
+     * Unique service id.
      */
     val uuid: UUID
+
+    /**
+     * Service name. Can be repeated by other services.
+     */
+    var name: String
 
     /**
      * Service group.
@@ -45,12 +45,14 @@ interface CloudService : PersistentDataHolder {
      * Start [CloudService] with some executable properties.
      *
      * @param executable Executable properties.
+     * @param overwrite If true - [executable] will be used in any case, else [executable] may
+     * be not used (If [CloudGroup] has some [CloudGroup.type])
      *
      * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
      * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.PREPARED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    fun start(executable: CloudExecutable)
+    fun start(executable: CloudExecutable, overwrite: Boolean = false)
 
     /**
      * Stop [CloudService].

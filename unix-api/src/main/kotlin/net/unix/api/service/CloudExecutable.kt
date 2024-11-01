@@ -40,7 +40,7 @@ interface CloudExecutable {
     /**
      * Create a copy of current [CloudExecutable] for other [CloudService].
      */
-    fun copy(service: CloudService): CloudExecutable
+    fun copy(): CloudExecutable
 
     companion object
 }

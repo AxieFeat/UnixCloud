@@ -20,6 +20,32 @@ import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
+ * Create inline listener.
+ *
+ * @param T Event for listening.
+ * @param listener Some your code.
+ */
+inline fun <reified T> listener(listener: InlineListener<T>) {
+
+    CloudEventManager.registerListeners(
+        object {
+            @EventHandler
+            fun event(event: T) {
+                listener.run(event)
+            }
+        }
+    )
+
+}
+
+/**
+ * Interface for [listener] function.
+ */
+fun interface InlineListener<T> {
+    fun run(event: T)
+}
+
+/**
  * Call event.
  *
  * @return Instance of [T].

@@ -35,7 +35,7 @@ class CloudServiceArgument : CommandArgument<CloudService>() {
     }
 
     override fun parse(reader: StringReader): CloudService {
-        val service = CloudInstance.instance.cloudServiceManager[reader.readString()]
+        val service = CloudInstance.instance.cloudServiceManager[reader.readString()].firstOrNull()
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return service

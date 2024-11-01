@@ -14,7 +14,7 @@ import kotlin.jvm.Throws
 
 open class BasicCloudService(
     override val group: CloudGroup,
-    override val name: String,
+    override var name: String,
     override val uuid: UUID = uniqueUUID()
 ) : CloudService {
 
@@ -26,12 +26,12 @@ open class BasicCloudService(
     override var status: CloudServiceStatus = CloudServiceStatus.PREPARED
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    override fun start(executable: CloudExecutable) {
+    override fun start(executable: CloudExecutable, overwrite: Boolean) {
         if (status == CloudServiceStatus.DELETED) throw CloudServiceModificationException("You cannot run deleted CloudService!")
         if (status == CloudServiceStatus.STARTED) throw IllegalArgumentException("CloudService already started!")
 
         if (executable.service != this) {
-            val copy = executable.copy(this)
+            val copy = executable.copy()
 
             this.executable = executable
 

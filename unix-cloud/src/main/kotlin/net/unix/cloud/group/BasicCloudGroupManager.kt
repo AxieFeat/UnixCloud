@@ -3,6 +3,7 @@ package net.unix.cloud.group
 import net.unix.api.group.CloudGroup
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.template.CloudTemplate
+import java.util.*
 
 object BasicCloudGroupManager : CloudGroupManager {
 
@@ -19,7 +20,11 @@ object BasicCloudGroupManager : CloudGroupManager {
         TODO("Not yet implemented")
     }
 
-    override operator fun get(name: String): CloudGroup? {
-        return null
+    override fun get(name: String): List<CloudGroup> {
+        TODO("Not yet implemented")
+    }
+
+    override fun get(uuid: UUID): CloudGroup? {
+        TODO("Not yet implemented")
     }
 }
