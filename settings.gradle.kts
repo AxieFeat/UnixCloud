@@ -6,3 +6,6 @@ include("unix-api")
 include("unix-cloud")
 include("unix-annotation-processor")
 include("unix-network")
+include("unix-modules")
+include("unix-modules:unix-module-test")
+findProject(":unix-modules:unix-module-test")?.name = "unix-module-test"

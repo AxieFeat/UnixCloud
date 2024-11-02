@@ -12,16 +12,18 @@ import java.io.File
  *
  * Also don't forget that to create a module, you must create a module.json file.
  */
-class CloudModule : Module {
+abstract class CloudModule : Module {
 
-    private val listeners = mutableListOf<Any>()
+    val listeners = mutableListOf<Any>()
 
-    override lateinit var loader: ModuleClassLoader
-    override lateinit var folder: File
-    override lateinit var executable: File
-    override lateinit var info: ModuleInfo
+    final override lateinit var loader: ModuleClassLoader
+    final override lateinit var folder: File
+    final override lateinit var executable: File
+    final override lateinit var info: ModuleInfo
 
-    override lateinit var modification: ModificationInfo
+    final override var modification: ModificationInfo
+        get() = info
+        set(value) { info = value as ModuleInfo }
 
     override fun registerListener(listener: Any) {
         CloudEventManager.registerListeners(listener)

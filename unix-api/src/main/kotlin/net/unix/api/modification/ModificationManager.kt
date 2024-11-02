@@ -21,6 +21,19 @@ interface ModificationManager {
     operator fun get(name: String): Modification?
 
     /**
+     * Load all modifications from [folder].
+     *
+     * @param silent If true - all errors will be ignored, else it can throw exceptions.
+     *
+     * @return List of all loaded modifications.
+     *
+     * @throws ModificationLoadException Generic exception, may be corrupted file?
+     * @throws ModificationExistException If modification with this name already loaded.
+     */
+    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    fun loadAll(silent: Boolean = true): List<Modification>
+
+    /**
      * Load some [Modification] from file.
      *
      * @param file Modification file.

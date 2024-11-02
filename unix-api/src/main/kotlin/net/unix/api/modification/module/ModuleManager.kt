@@ -1,5 +1,6 @@
 package net.unix.api.modification.module
 
+import net.unix.api.modification.Modification
 import net.unix.api.modification.ModificationManager
 import net.unix.api.modification.exception.ModificationExistException
 import net.unix.api.modification.exception.ModificationLoadException
@@ -23,6 +24,19 @@ interface ModuleManager : ModificationManager {
      * @return Instance of [Module] or null, if not founded.
      */
     override fun get(name: String): Module?
+
+    /**
+     * Load all modules from [folder].
+     *
+     * @param silent If true - all errors will be ignored, else it can throw exceptions.
+     *
+     * @return List of all loaded modules.
+     *
+     * @throws ModificationLoadException Generic exception, may be corrupted file?
+     * @throws ModificationExistException If module with this name already loaded.
+     */
+    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    override fun loadAll(silent: Boolean): List<Module>
 
     /**
      * Load [Module] from file.

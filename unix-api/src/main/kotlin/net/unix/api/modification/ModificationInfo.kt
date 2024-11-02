@@ -15,7 +15,7 @@ interface ModificationInfo : Serializable {
     /**
      * Load priority. The higher the number, the higher the priority
      */
-    val priority: UInt
+    val priority: Double
 
     /**
      * Modification name.

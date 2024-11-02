@@ -14,17 +14,17 @@ import java.io.File
  *
  * Also don't forget that to create extension, you must create extension.json file.
  */
-class CloudExtension : Extension {
+abstract class CloudExtension : Extension {
 
     private val listeners = mutableListOf<Any>()
 
     override lateinit var loader: ExtensionClassLoader
 
-    override lateinit var folder: File
-    override lateinit var executable: File
-    override lateinit var info: ExtensionInfo
+    final override lateinit var folder: File
+    final override lateinit var executable: File
+    final override lateinit var info: ExtensionInfo
 
-    override lateinit var modification: ModificationInfo
+    final override var modification: ModificationInfo = info
 
     override fun registerListener(listener: Any) {
         CloudEventManager.registerListeners(listener)

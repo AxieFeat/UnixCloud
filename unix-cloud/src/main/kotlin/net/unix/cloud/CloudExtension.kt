@@ -2,6 +2,7 @@
 
 package net.unix.cloud
 
+import com.google.gson.GsonBuilder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
@@ -9,14 +10,21 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.unix.api.CloudAPI
 import net.unix.cloud.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
+import java.io.Reader
 import java.security.MessageDigest
 import java.util.Base64
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
 import java.util.regex.Pattern
 
 /**
  * UnixCloud extensions.
  */
 object CloudExtension {
+
+    private val gson = GsonBuilder()
+        .setPrettyPrinting()
+        .create()
 
     private val sha256 = MessageDigest.getInstance("SHA-256")
     private val md5 = MessageDigest.getInstance("MD5")
@@ -158,6 +166,25 @@ object CloudExtension {
         val second = md5.digest(first).fold("") { str, it -> str + "%02x".format(it) }.toByteArray()
         
         return Base64.getEncoder().encode(second).fold("") { str, it -> str + "%02x".format(it) }
+    }
+
+    /**
+     * Deserialize json from [JarEntry].
+     *
+     * @param T Type for deserializing.
+     * @param entry Jar entry.
+     *
+     * @return Deserialized [T].
+     */
+    fun <T> JarFile.deserializeJson(entry: JarEntry): T {
+        val reader = this.getInputStream(entry).reader()
+
+        val result = gson.fromJson<T>(reader, MutableMap::class.java)
+
+        reader.close()
+        this.close()
+
+        return result
     }
 
     /**

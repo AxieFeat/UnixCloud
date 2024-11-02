@@ -1,0 +1,6 @@
+{
+  "main": "net.unix.module.test.Test",
+  "priority": 1,
+  "name": "Test",
+  "version": "1.0"
+}

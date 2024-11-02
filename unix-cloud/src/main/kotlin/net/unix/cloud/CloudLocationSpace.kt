@@ -3,13 +3,16 @@ package net.unix.cloud
 import net.unix.api.LocationSpace
 import java.io.File
 
+
 @Suppress("MemberVisibilityCanBePrivate")
 class CloudLocationSpace : LocationSpace {
 
     val main: File
 
     init {
-        val path = System.getProperty("user.dir") + "/"
+        val path = File(
+            CloudLocationSpace::class.java.getProtectionDomain().codeSource.location.toURI()
+        ).parentFile.path
 
         val file = File(path)
 

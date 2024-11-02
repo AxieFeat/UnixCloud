@@ -40,6 +40,8 @@ fun main() {
 
     builder.build()
 
+    CloudInstance.instance.moduleManager.loadAll()
+
 //    AetherCommandBuilder("screen") // <- название команды
 //        .then( // <- указываем какой-то аргумент
 //            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
@@ -327,11 +329,10 @@ class CloudInstance(
     override val moduleManager: ModuleManager = moduleManager ?: CloudModuleManager
     override val extensionManager: ExtensionManager = extensionManager ?: CloudExtensionManager
 
-    override val server: Server = server ?: Server()
+    override val server: Server = (server ?: Server()).also { it.start(9191) }
 
     init {
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler(this).run() })
-        this.server.start(9191)
     }
 
     override fun shutdown() {

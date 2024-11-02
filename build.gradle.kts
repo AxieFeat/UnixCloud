@@ -52,6 +52,8 @@ allprojects {
         implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
         implementation("net.kyori:adventure-text-minimessage:4.17.0")
         implementation("net.kyori:adventure-text-serializer-ansi:4.17.0")
+
+        implementation("com.google.code.gson:gson:2.11.0")
     }
 }
 

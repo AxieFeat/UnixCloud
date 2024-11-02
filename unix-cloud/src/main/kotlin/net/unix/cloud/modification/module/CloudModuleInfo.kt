@@ -6,7 +6,7 @@ import kotlin.jvm.Throws
 @Suppress("UNCHECKED_CAST")
 data class CloudModuleInfo(
     override val main: String,
-    override val priority: UInt,
+    override val priority: Double,
     override val name: String,
     override val version: String,
     override val description: String,
@@ -19,17 +19,16 @@ data class CloudModuleInfo(
     companion object {
         @Throws(IllegalArgumentException::class)
         fun deserialize(serialized: Map<String, Any>): CloudModuleInfo {
-            val ex = IllegalArgumentException("Incorrect data, check your serialized data!")
 
-            val main = serialized["main"] as String? ?: throw ex
-            val priority = serialized["priority"] as UInt? ?: throw ex
-            val name = serialized["name"] as String? ?: throw ex
-            val version = serialized["version"] as String? ?: throw ex
-            val description = serialized["description"] as String? ?: throw ex
-            val website = serialized["website"] as String? ?: throw ex
-            val authors = serialized["authors"] as List<String>?  ?: throw ex
-            val depends = serialized["depends"] as List<String>? ?: throw ex
-            val soft = serialized["soft"] as List<String>? ?: throw ex
+            val main = serialized["main"].toString()
+            val priority = serialized["priority"].toString().toDoubleOrNull() ?: 0.0
+            val name = serialized["name"].toString()
+            val version = serialized["version"].toString()
+            val description = serialized["description"].toString()
+            val website = serialized["website"].toString()
+            val authors = serialized["authors"] as List<String>?  ?: listOf()
+            val depends = serialized["depends"] as List<String>? ?: listOf()
+            val soft = serialized["soft"] as List<String>? ?: listOf()
 
             return CloudModuleInfo(main, priority, name, version, description, website, authors, depends, soft)
         }

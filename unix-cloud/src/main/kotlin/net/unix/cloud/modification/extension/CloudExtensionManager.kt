@@ -3,6 +3,7 @@ package net.unix.cloud.modification.extension
 import net.unix.api.modification.exception.ModificationLoadException
 import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
+import net.unix.api.modification.module.Module
 import java.io.File
 
 object CloudExtensionManager : ExtensionManager {
@@ -17,6 +18,10 @@ object CloudExtensionManager : ExtensionManager {
         get() = cachedExtensions.values.toList()
 
     override fun get(name: String): Extension? = cachedExtensions[name]
+
+    override fun loadAll(silent: Boolean): List<Module> {
+        TODO("Not yet implemented")
+    }
 
     override fun load(file: File): Extension {
         val loader = CloudExtensionLoader(file)
