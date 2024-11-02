@@ -6,6 +6,7 @@ import kotlin.jvm.Throws
 @Suppress("UNCHECKED_CAST")
 data class CloudModuleInfo(
     override val main: String,
+    override val priority: UInt,
     override val name: String,
     override val version: String,
     override val description: String,
@@ -21,6 +22,7 @@ data class CloudModuleInfo(
             val ex = IllegalArgumentException("Incorrect data, check your serialized data!")
 
             val main = serialized["main"] as String? ?: throw ex
+            val priority = serialized["priority"] as UInt? ?: throw ex
             val name = serialized["name"] as String? ?: throw ex
             val version = serialized["version"] as String? ?: throw ex
             val description = serialized["description"] as String? ?: throw ex
@@ -29,7 +31,7 @@ data class CloudModuleInfo(
             val depends = serialized["depends"] as List<String>? ?: throw ex
             val soft = serialized["soft"] as List<String>? ?: throw ex
 
-            return CloudModuleInfo(main, name, version, description, website, authors, depends, soft)
+            return CloudModuleInfo(main, priority, name, version, description, website, authors, depends, soft)
         }
     }
 
@@ -37,6 +39,7 @@ data class CloudModuleInfo(
         val result = mutableMapOf<String, Any>()
 
         result["main"] = main
+        result["priority"] = priority
         result["name"] = name
         result["version"] = version
         result["description"] = description
