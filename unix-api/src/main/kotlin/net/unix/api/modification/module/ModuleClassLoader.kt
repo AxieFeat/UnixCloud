@@ -1,5 +1,7 @@
 package net.unix.api.modification.module
 
+import net.unix.api.modification.exception.ModificationExistException
+import net.unix.api.modification.exception.ModificationLoadException
 import java.io.File
 
 /**
@@ -13,6 +15,12 @@ interface ModuleClassLoader {
     val file: File
 
     /**
+     * Info about current module.
+     * If file is not module or corrupted - it can be null.
+     */
+    val info: ModuleInfo?
+
+    /**
      * Is [Module] loaded.
      */
     val loaded: Boolean
@@ -23,21 +31,25 @@ interface ModuleClassLoader {
     val module: Module?
 
     /**
-     * Load [Module].
+     * Load [Module]. It not calls [Module.onLoad] function.
      *
-     * @return True if success, else false.
+     * @return Loaded instance of [Module] or null, if throw exception.
+     *
+     * @throws ModificationLoadException Generic exception, may be corrupted file?
+     * @throws ModificationExistException If module with this name already loaded.
      */
-    fun load(): Boolean
+    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    fun load(): Module?
 
     /**
-     * Unload [Module].
+     * Unload [Module]. It calls [Module.onUnload] function.
      *
      * @return True if success, else false.
      */
     fun unload(): Boolean
 
     /**
-     * Reload [Module].
+     * Reload [Module]. It calls [Module.onReload] function.
      *
      * @return True if success, else false.
      */

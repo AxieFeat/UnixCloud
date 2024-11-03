@@ -24,6 +24,7 @@ import net.unix.cloud.command.aether.get
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
+import net.unix.cloud.modification.module.CloudModuleInfo
 import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.scheduler.CloudSchedulerManager
 import net.unix.cloud.service.BasicCloudServiceManager

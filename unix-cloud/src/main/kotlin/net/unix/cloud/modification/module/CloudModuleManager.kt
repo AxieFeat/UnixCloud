@@ -18,10 +18,25 @@ object CloudModuleManager : ModuleManager {
     override fun get(name: String): Module? = cachedModules[name]
 
     override fun loadAll(silent: Boolean): List<Module> {
-        // TODO переделать загрузку: эта функция должна сначала отсортировать все модули по зависимостям и приоритетам.
-        folder.listFiles()?.forEach {
-            load(it)
-        }
+        val loaders = folder.listFiles()
+            ?.filter { it.name.endsWith(".jar") }
+            ?.map { CloudModuleLoader(it) }
+            ?.filter { it.info != null }
+            ?: run {
+                if (!silent) throw IllegalArgumentException("File \"${folder.path}\" is not a folder!")
+                else listOf()
+            }
+
+//        Написать сортировку загрузчиков по их CloudModuleInfo:
+//
+//        Для сортировки объектов CloudModuleInfo нужно учитывать несколько условий:
+//
+//        1. Приоритет – основной критерий для сортировки, чем он выше - тем выше модуль.
+//        2. Если модуль зависит от других модулей (depends), он должен следовать после них.
+//        3. Если в списке рекомендуемых зависимостей (soft) указаны другие модули,
+//        он должен идти после них (Только если они установлены),
+//        но если есть модуль, который имеет такую же зависимость, но в качестве обязательной (depends),
+//        то он должен идти после него
 
         return listOf()
     }
@@ -29,9 +44,11 @@ object CloudModuleManager : ModuleManager {
     override fun load(file: File): Module {
         val loader = CloudModuleLoader(file)
 
-        if (loader.load()) return loader.module!!
+        val result = loader.load() ?: throw ModificationLoadException("Could not load ${file.name}. Corrupted file?")
 
-        throw ModificationLoadException("Could not load ${file.name}. Corrupted file?")
+        result.onLoad()
+
+        return result
     }
 
     override fun unload(module: Module): Boolean = module.loader.unload()

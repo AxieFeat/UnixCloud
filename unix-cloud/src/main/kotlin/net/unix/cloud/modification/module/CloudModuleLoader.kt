@@ -6,7 +6,6 @@ import net.unix.api.modification.module.Module
 import net.unix.api.modification.module.ModuleClassLoader
 import net.unix.api.modification.module.ModuleInfo
 import net.unix.cloud.CloudExtension.deserializeJson
-import net.unix.cloud.CloudExtension.print
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.event.CloudEventManager
 import java.io.File
@@ -18,19 +17,33 @@ class CloudModuleLoader(
     override val file: File
 ) : ModuleClassLoader, URLClassLoader(arrayOf(file.toURI().toURL())) {
 
-    private val entries = mutableListOf<JarEntry>()
+    private val entries = mutableListOf<JarEntry>().also { list ->
+        JarFile(file).also {
+            it.stream().forEach { e: JarEntry -> list.add(e) }
+            it.close()
+        }
+    }
 
     private var cachedLoad = false
-    private var cachedModule: Module? = null
+    private var cachedModule: CloudModule? = null
 
     override val loaded: Boolean
         get() = cachedLoad
 
-    override val module: Module?
+    override val module: CloudModule?
         get() = cachedModule
 
+    override val info: ModuleInfo? = run {
+        val info = (entries.find {
+            it.name == "module.json"
+        } ?: return@run null)
+            .let { JarFile(file).deserializeJson<MutableMap<String, Any>>(it) }
+            .let { CloudModuleInfo.deserialize(it) }
 
-    private fun Module.init(info: CloudModuleInfo) {
+        return@run info
+    }
+
+    private fun CloudModule.init(info: ModuleInfo) {
         this.loader = this@CloudModuleLoader
         this.info = info
         this.folder = File(CloudModuleManager.folder, "")
@@ -39,26 +52,19 @@ class CloudModuleLoader(
         cachedModule = this
     }
 
-    private fun CloudModule.disable() {
+    private fun CloudModule.disableListeners(delete: Boolean = false) {
         this.listeners.forEach { CloudEventManager.unregisterListeners(it) }
-        this.listeners.clear()
+        if (delete) this.listeners.clear()
     }
 
-    init {
-        JarFile(file).also {
-            it.stream().forEach { e: JarEntry -> entries.add(e) }
-            it.close()
-        }
+    private fun CloudModule.enableListeners() {
+        this.listeners.forEach { CloudEventManager.registerListeners(it) }
     }
 
-    override fun load(): Boolean {
-        if(loaded) return false
+    override fun load(): Module? {
+        if(loaded) return module
 
-        val info = (entries.find {
-            it.name == "module.json"
-        } ?: throw ModificationLoadException("File \"module.json\" not found in ${file.name}!"))
-            .let { JarFile(file).deserializeJson<MutableMap<String, Any>>(it) }
-            .let { CloudModuleInfo.deserialize(it) }
+        val info = (info ?: throw ModificationLoadException("File \"module.json\" not found in ${file.name} or it corrupted!"))
             .also { info ->
                 val loaded = CloudInstance.instance.moduleManager.modules.map { it.info.name }
 
@@ -91,21 +97,28 @@ class CloudModuleLoader(
 
                 instance.init(info)
 
-                instance.onLoad()
+                return instance
             }
         }
 
-        return true
+        return null
     }
 
     override fun unload(): Boolean {
         if (!loaded) return false
+
+        module?.disableListeners(true)
+        module?.onUnload()
 
         return true
     }
 
     override fun reload(): Boolean {
         if (!loaded) return false
+
+        module?.onReload()
+        module?.disableListeners(false)
+        module?.enableListeners()
 
         return true
     }

@@ -32,10 +32,11 @@ interface ModuleManager : ModificationManager {
      *
      * @return List of all loaded modules.
      *
+     * @throws IllegalArgumentException If [folder] is not a folder.
      * @throws ModificationLoadException Generic exception, may be corrupted file?
      * @throws ModificationExistException If module with this name already loaded.
      */
-    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    @Throws(IllegalArgumentException::class, ModificationLoadException::class, ModificationExistException::class)
     override fun loadAll(silent: Boolean): List<Module>
 
     /**
