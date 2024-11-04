@@ -27,18 +27,16 @@ object CloudModuleManager : ModuleManager {
                 else listOf()
             }
 
-//        Написать сортировку загрузчиков по их CloudModuleInfo:
-//
-//        Для сортировки объектов CloudModuleInfo нужно учитывать несколько условий:
-//
-//        1. Приоритет – основной критерий для сортировки, чем он выше - тем выше модуль.
-//        2. Если модуль зависит от других модулей (depends), он должен следовать после них.
-//        3. Если в списке рекомендуемых зависимостей (soft) указаны другие модули,
-//        он должен идти после них (Только если они установлены),
-//        но если есть модуль, который имеет такую же зависимость, но в качестве обязательной (depends),
-//        то он должен идти после него
+        val sortedLoaders = sortLoadersByCloudModuleInfo(loaders)
 
-        return listOf()
+        return sortedLoaders.map { loader ->
+            val module = loader.load()
+            if (module != null) {
+                cachedModules[module.info.name] = module
+                module.onLoad()
+            }
+            module
+        }.filterNotNull()
     }
 
     override fun load(file: File): Module {
@@ -54,3 +52,26 @@ object CloudModuleManager : ModuleManager {
     override fun unload(module: Module): Boolean = module.loader.unload()
     override fun reload(module: Module): Boolean = module.loader.reload()
 }
+
+    private fun sortLoadersByCloudModuleInfo(loaders: List<CloudModuleLoader>): List<CloudModuleLoader> {
+        val moduleMap = loaders.associateBy { it.info!!.name }
+
+        fun moduleWeight(loader: CloudModuleLoader): Double {
+            val info = loader.info!!
+            var weight = info.priority * 1000
+
+            val dependsWeight = info.depends
+                .filter { it in moduleMap }
+                .sumOf { moduleMap[it]!!.info!!.priority }
+            weight -= dependsWeight * 10
+
+            val softWeight = info.soft
+                .filter { it in moduleMap }
+                .sumOf { moduleMap[it]!!.info!!.priority }
+            weight -= softWeight * 5
+
+            return weight
+        }
+
+        return loaders.sortedWith(compareBy({ moduleWeight(it) }, { it.info!!.name }))
+    }
