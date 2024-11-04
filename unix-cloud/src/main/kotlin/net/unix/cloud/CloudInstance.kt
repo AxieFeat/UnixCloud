@@ -43,6 +43,78 @@ fun main() {
 
     CloudInstance.instance.moduleManager.loadAll()
 
+    CloudModuleManager.sortLoadersByCloudModuleInfo(
+        listOf(
+            CloudModuleInfo(
+                "main1",
+                1.0,
+                "SoftDepend",
+                "1.0",
+                "desc1",
+                "site1",
+                listOf("AxieFeat"),
+                listOf(),
+                listOf("MainModule")
+            ),
+            CloudModuleInfo(
+                "main1",
+                1.5,
+                "SoftDependTwo",
+                "1.0",
+                "desc1",
+                "site1",
+                listOf("AxieFeat"),
+                listOf(),
+                listOf("MainModule")
+            ),
+            CloudModuleInfo(
+                "main1",
+                1.0,
+                "Depend",
+                "1.0",
+                "desc1",
+                "site1",
+                listOf("AxieFeat"),
+                listOf("MainModule"),
+                listOf()    ),
+            CloudModuleInfo(
+                "main1",
+                2.0,
+                "DependTwo",
+                "1.0",
+                "desc1",
+                "site1",
+                listOf("AxieFeat"),
+                listOf("MainModule"),
+                listOf()
+            ),
+            CloudModuleInfo(
+                "main1",
+                1.5,
+                "MainModuleTwo",
+                "1.0",
+                "desc1",
+                "site1",
+                listOf("AxieFeat"),
+                listOf(),
+                listOf()
+            ),
+            CloudModuleInfo(
+                "main1",
+                1.0,
+                "MainModule",
+                "1.0",
+                "desc1",
+                "site1",
+                listOf("AxieFeat"),
+                listOf(),
+                listOf()
+            ),
+        )
+    ).forEach {
+        println(it.name)
+    }
+
 //    AetherCommandBuilder("screen") // <- название команды
 //        .then( // <- указываем какой-то аргумент
 //            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
