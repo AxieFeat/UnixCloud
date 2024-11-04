@@ -29,14 +29,14 @@ object CloudModuleManager : ModuleManager {
 
         val sortedLoaders = sortLoadersByCloudModuleInfo(loaders)
 
-        return sortedLoaders.map { loader ->
+        return sortedLoaders.mapNotNull { loader ->
             val module = loader.load()
-            if (module != null) {
-                cachedModules[module.info.name] = module
-                module.onLoad()
+            module?.let {
+                cachedModules[it.info.name] = it
+                it.onLoad()
             }
             module
-        }.filterNotNull()
+        }
     }
 
     override fun load(file: File): Module {
@@ -51,27 +51,27 @@ object CloudModuleManager : ModuleManager {
 
     override fun unload(module: Module): Boolean = module.loader.unload()
     override fun reload(module: Module): Boolean = module.loader.reload()
-}
+
+    private fun moduleWeight(loader: CloudModuleLoader, moduleMap: Map<String, CloudModuleLoader>): Double {
+        val info = loader.info!!
+        var weight = info.priority * 1000
+
+        val dependsWeight = info.depends
+            .filter { it in moduleMap }
+            .sumOf { moduleMap[it]!!.info!!.priority }
+        weight -= dependsWeight * 10
+
+        val softWeight = info.soft
+            .filter { it in moduleMap }
+            .sumOf { moduleMap[it]!!.info!!.priority }
+        weight -= softWeight * 5
+
+        return weight
+    }
 
     private fun sortLoadersByCloudModuleInfo(loaders: List<CloudModuleLoader>): List<CloudModuleLoader> {
         val moduleMap = loaders.associateBy { it.info!!.name }
 
-        fun moduleWeight(loader: CloudModuleLoader): Double {
-            val info = loader.info!!
-            var weight = info.priority * 1000
-
-            val dependsWeight = info.depends
-                .filter { it in moduleMap }
-                .sumOf { moduleMap[it]!!.info!!.priority }
-            weight -= dependsWeight * 10
-
-            val softWeight = info.soft
-                .filter { it in moduleMap }
-                .sumOf { moduleMap[it]!!.info!!.priority }
-            weight -= softWeight * 5
-
-            return weight
-        }
-
-        return loaders.sortedWith(compareBy({ moduleWeight(it) }, { it.info!!.name }))
+        return loaders.sortedWith(compareBy({ moduleWeight(it, moduleMap) }, { it.info!!.name }))
     }
+}
