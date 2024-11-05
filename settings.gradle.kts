@@ -6,6 +6,10 @@ include("unix-api")
 include("unix-cloud")
 include("unix-annotation-processor")
 include("unix-network")
-include("unix-modules")
-include("unix-modules:unix-module-test")
-findProject(":unix-modules:unix-module-test")?.name = "unix-module-test"
+include("unix-modifications")
+include("unix-modifications:unix-modules")
+include("unix-modifications:unix-modules:unix-module-test")
+include("unix-modifications:unix-extensions")
+findProject(":unix-modifications:unix-extensions")?.name = "unix-extensions"
+include("unix-modifications:unix-extensions:unix-extension-test")
+findProject(":unix-modifications:unix-extensions:unix-extension-test")?.name = "unix-extension-test"

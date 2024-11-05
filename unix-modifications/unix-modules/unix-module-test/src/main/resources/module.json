@@ -1,0 +1,5 @@
+{
+  "name": "TestModule",
+  "version": "1.0",
+  "main": "net.unix.module.test.Test"
+}
