@@ -4,15 +4,12 @@ import net.unix.api.CloudAPI
 import net.unix.api.CloudBuilder
 import net.unix.api.LocationSpace
 import net.unix.api.command.CommandDispatcher
-import net.unix.cloud.command.aether.argument.CloudServiceArgument
-import net.unix.cloud.command.aether.command
 import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
 import net.unix.api.scheduler.SchedulerManager
-import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
@@ -20,12 +17,12 @@ import net.unix.api.terminal.logger.Logger
 import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.cloud.CloudInstanceBuilder.Companion.builder
 import net.unix.cloud.command.CloudCommandDispatcher
-import net.unix.cloud.command.aether.get
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.scheduler.CloudSchedulerManager
+import net.unix.cloud.scheduler.scheduler
 import net.unix.cloud.service.BasicCloudServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
@@ -36,11 +33,19 @@ fun main() {
 
     var builder: CloudBuilder = CloudInstance.builder()
 
-    CloudStartEvent(builder).callEvent().also { builder = it.builder }
+    scheduler {
+        execute {
+            CloudExtensionManager.loadAll(false)
+        }
 
-    builder.build()
+        CloudStartEvent(builder).callEvent().also { builder = it.builder }
 
-    CloudInstance.instance.moduleManager.loadAll()
+        builder.build()
+
+        execute {
+            CloudInstance.instance.moduleManager.loadAll(false)
+        }
+    }
 
 //    AetherCommandBuilder("screen") // <- название команды
 //        .then( // <- указываем какой-то аргумент
@@ -67,26 +72,26 @@ fun main() {
 //        )
 //        .register() // <- регистрируем команду
 
-    command("screen") { // <- название команды
-        literal("toggle") { // <- указываем какой-то статичный аргумент
-            argument("service", CloudServiceArgument()) { // <- аргумент, требующий ввода пользователя
-                execute { // <- при выполнении команды
-                    val service: CloudService = it["service"] // <- из контекста команды получаем аргумент
-
-                    println("Screen toggled to ${service.name}")
-                }
-            }
-        }
-        literal("switch") {
-            argument("service", CloudServiceArgument()) {
-                execute {
-                    val service: CloudService = it["service"]
-
-                    println("Screen switched to ${service.name}")
-                }
-            }
-        }
-    }.register() // <- регистрируем команду
+//    command("screen") { // <- название команды
+//        literal("toggle") { // <- указываем какой-то статичный аргумент
+//            argument("service", CloudServiceArgument()) { // <- аргумент, требующий ввода пользователя
+//                execute { // <- при выполнении команды
+//                    val service: CloudService = it["service"] // <- из контекста команды получаем аргумент
+//
+//                    println("Screen toggled to ${service.name}")
+//                }
+//            }
+//        }
+//        literal("switch") {
+//            argument("service", CloudServiceArgument()) {
+//                execute {
+//                    val service: CloudService = it["service"]
+//
+//                    println("Screen switched to ${service.name}")
+//                }
+//            }
+//        }
+//    }.register() // <- регистрируем команду
 
 //    val server = Server() // <- Создаём объект сервера
 //    server.start(7979) // <- Запускаем сервер

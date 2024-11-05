@@ -1,7 +1,6 @@
 package net.unix.cloud.modification.extension
 
 import net.unix.api.modification.extension.ExtensionInfo
-import kotlin.jvm.Throws
 
 @Suppress("UNCHECKED_CAST")
 data class CloudExtensionInfo(

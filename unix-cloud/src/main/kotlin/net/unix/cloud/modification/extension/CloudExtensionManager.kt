@@ -3,12 +3,7 @@ package net.unix.cloud.modification.extension
 import net.unix.api.modification.exception.ModificationLoadException
 import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
-import net.unix.api.modification.module.Module
-import net.unix.cloud.CloudExtension
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.CloudLocationSpace
-import net.unix.cloud.modification.module.CloudModuleLoader
-import net.unix.cloud.modification.module.CloudModuleManager
 import java.io.File
 
 object CloudExtensionManager : ExtensionManager {

@@ -10,6 +10,4 @@ include("unix-modifications")
 include("unix-modifications:unix-modules")
 include("unix-modifications:unix-modules:unix-module-test")
 include("unix-modifications:unix-extensions")
-findProject(":unix-modifications:unix-extensions")?.name = "unix-extensions"
 include("unix-modifications:unix-extensions:unix-extension-test")
-findProject(":unix-modifications:unix-extensions:unix-extension-test")?.name = "unix-extension-test"
