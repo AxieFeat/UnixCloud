@@ -56,7 +56,19 @@ object CloudModuleManager : ModuleManager {
         val visited = mutableSetOf<String>()
         val sortedModules = mutableListOf<CloudModuleInfo>()
 
-        modules.forEach { module ->
+        modules.filter { it.depends.isEmpty() && it.soft.isEmpty() }.forEach { module ->
+            if (module.name !in visited) {
+                process(module, moduleMap, visited, sortedModules)
+            }
+        }
+
+        modules.filter { it.depends.isNotEmpty() }.forEach { module ->
+            if (module.name !in visited) {
+                process(module, moduleMap, visited, sortedModules)
+            }
+        }
+
+        modules.filter { it.soft.isNotEmpty() }.forEach { module ->
             if (module.name !in visited) {
                 process(module, moduleMap, visited, sortedModules)
             }
@@ -81,6 +93,7 @@ object CloudModuleManager : ModuleManager {
                     }
                 }
             }
+
             sortedModules.add(module)
         }
     }
