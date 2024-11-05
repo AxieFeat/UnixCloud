@@ -4,14 +4,16 @@ import net.unix.api.modification.exception.ModificationLoadException
 import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.Module
+import net.unix.cloud.CloudExtension
+import net.unix.cloud.CloudInstance
+import net.unix.cloud.CloudLocationSpace
+import net.unix.cloud.modification.module.CloudModuleLoader
+import net.unix.cloud.modification.module.CloudModuleManager
 import java.io.File
 
 object CloudExtensionManager : ExtensionManager {
 
-    override var folder: File
-        get() = TODO("Not yet implemented")
-        set(value) {}
-
+    override var folder: File = CloudLocationSpace.extension
     private val cachedExtensions = mutableMapOf<String, Extension>()
 
     override val extensions: List<Extension>
@@ -19,15 +21,25 @@ object CloudExtensionManager : ExtensionManager {
 
     override fun get(name: String): Extension? = cachedExtensions[name]
 
-    override fun loadAll(silent: Boolean): List<Module> {
-        TODO("Not yet implemented")
+    override fun loadAll(silent: Boolean): List<Extension> {
+        return (folder.listFiles()
+            ?.filter { it.name.endsWith(".jar") }
+            ?.map { CloudExtensionLoader(it) }
+            ?.filter { it.info != null }
+            ?: run {
+                if (!silent) throw IllegalArgumentException("File \"${folder.path}\" is not a folder!")
+                else listOf()
+            }).mapNotNull { it.load() }
     }
 
     override fun load(file: File): Extension {
         val loader = CloudExtensionLoader(file)
 
-        if (loader.load()) return loader.extension!!
-
+        val result = loader.load() ?:
         throw ModificationLoadException("Could not load ${file.name}. Corrupted file?")
+
+        result.onLoad()
+
+        return result
     }
 }

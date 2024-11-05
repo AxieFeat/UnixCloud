@@ -33,7 +33,8 @@ object CloudModuleManager : ModuleManager {
     override fun load(file: File): Module {
         val loader = CloudModuleLoader(file)
 
-        val result = loader.load() ?: throw ModificationLoadException("Could not load ${file.name}. Corrupted file?")
+        val result = loader.load() ?:
+        throw ModificationLoadException("Could not load ${file.name}. Corrupted file?")
 
         result.onLoad()
 

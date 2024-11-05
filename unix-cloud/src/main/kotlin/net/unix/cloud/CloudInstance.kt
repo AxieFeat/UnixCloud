@@ -24,7 +24,6 @@ import net.unix.cloud.command.aether.get
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
-import net.unix.cloud.modification.module.CloudModuleInfo
 import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.scheduler.CloudSchedulerManager
 import net.unix.cloud.service.BasicCloudServiceManager
@@ -318,7 +317,7 @@ class CloudInstance(
 
     override val schedulerManager: SchedulerManager = schedulerManager ?: CloudSchedulerManager(this.logger)
 
-    override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace()
+    override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace
 
     override val commandDispatcher: CommandDispatcher = commandDispatcher ?: CloudCommandDispatcher
     override val terminal: Terminal = terminal ?: CloudJLineTerminal(" <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ", this.logger, this.commandDispatcher)

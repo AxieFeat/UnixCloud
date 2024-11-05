@@ -2,6 +2,7 @@ package net.unix.api
 
 import java.io.File
 import net.unix.api.group.CloudGroup
+import net.unix.api.modification.extension.Extension
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
 import net.unix.api.modification.module.Module
@@ -15,6 +16,11 @@ interface LocationSpace {
      * Directory for [Module]'s.
      */
     val module: File
+
+    /**
+     * Directory for [Extension]'s
+     */
+    val extension: File
 
     /**
      * Directory for [CloudGroup]'s.

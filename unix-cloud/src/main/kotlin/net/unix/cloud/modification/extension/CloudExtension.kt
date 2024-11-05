@@ -16,7 +16,7 @@ import java.io.File
  */
 abstract class CloudExtension : Extension {
 
-    private val listeners = mutableListOf<Any>()
+    val listeners = mutableListOf<Any>()
 
     override lateinit var loader: ExtensionClassLoader
 
