@@ -13,11 +13,6 @@ interface ModificationInfo : Serializable {
     val main: String
 
     /**
-     * Load priority. The higher the number, the higher the priority
-     */
-    val priority: Double
-
-    /**
      * Modification name.
      */
     val name: String

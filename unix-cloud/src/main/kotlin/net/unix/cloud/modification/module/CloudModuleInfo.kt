@@ -1,12 +1,10 @@
 package net.unix.cloud.modification.module
 
 import net.unix.api.modification.module.ModuleInfo
-import kotlin.jvm.Throws
 
 @Suppress("UNCHECKED_CAST")
 data class CloudModuleInfo(
     override val main: String,
-    override val priority: Double,
     override val name: String,
     override val version: String,
     override val description: String,
@@ -17,11 +15,9 @@ data class CloudModuleInfo(
 ) : ModuleInfo {
 
     companion object {
-        @Throws(IllegalArgumentException::class)
         fun deserialize(serialized: Map<String, Any>): CloudModuleInfo {
 
             val main = serialized["main"].toString()
-            val priority = serialized["priority"].toString().toDoubleOrNull() ?: 0.0
             val name = serialized["name"].toString()
             val version = serialized["version"].toString()
             val description = serialized["description"].toString()
@@ -30,7 +26,7 @@ data class CloudModuleInfo(
             val depends = serialized["depends"] as List<String>? ?: listOf()
             val soft = serialized["soft"] as List<String>? ?: listOf()
 
-            return CloudModuleInfo(main, priority, name, version, description, website, authors, depends, soft)
+            return CloudModuleInfo(main, name, version, description, website, authors, depends, soft)
         }
     }
 
@@ -38,7 +34,6 @@ data class CloudModuleInfo(
         val result = mutableMapOf<String, Any>()
 
         result["main"] = main
-        result["priority"] = priority
         result["name"] = name
         result["version"] = version
         result["description"] = description

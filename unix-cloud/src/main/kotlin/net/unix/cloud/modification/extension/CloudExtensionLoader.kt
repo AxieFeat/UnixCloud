@@ -2,6 +2,7 @@ package net.unix.cloud.modification.extension
 
 import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionClassLoader
+import net.unix.api.modification.extension.ExtensionInfo
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
@@ -23,6 +24,8 @@ class CloudExtensionLoader(
 
     private var _loaded = false
     private var _extension: Extension? = null
+    override val info: ExtensionInfo?
+        get() = TODO("Not yet implemented")
 
     override val loaded: Boolean
         get() = _loaded
@@ -30,17 +33,9 @@ class CloudExtensionLoader(
     override val extension: Extension?
         get() = _extension
 
-    override fun load(): Boolean {
-
-        entries.filter {
-            it.name.endsWith(".class")
-        }.forEach {
-            val name = it.name.substring(0, it.name.length - 6).replace('/', '.')
-
-            val clazz = loadClass(name).kotlin
-        }
-
-
-        return true
+    override fun load(): Extension? {
+        TODO("Not yet implemented")
     }
+
+
 }

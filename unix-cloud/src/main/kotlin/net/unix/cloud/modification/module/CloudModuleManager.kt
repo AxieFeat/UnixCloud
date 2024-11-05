@@ -27,18 +27,7 @@ object CloudModuleManager : ModuleManager {
                 else listOf()
             }
 
-        val sortedLoaders = sortLoadersByCloudModuleInfo(loaders.map { it.info as CloudModuleInfo })
-
-        return sortedLoaders.mapNotNull { info ->
-            val module = loaders.find { it.info === info }!!.load()
-
-            module?.let {
-                cachedModules[it.info.name] = it
-                it.onLoad()
-            }
-
-            module
-        }
+        return listOf()
     }
 
     override fun load(file: File): Module {
@@ -53,26 +42,4 @@ object CloudModuleManager : ModuleManager {
 
     override fun unload(module: Module): Boolean = module.loader.unload()
     override fun reload(module: Module): Boolean = module.loader.reload()
-
-    private fun moduleWeight(info: CloudModuleInfo, moduleMap: Map<String, CloudModuleInfo>): Double {
-        var weight = info.priority * 1000
-
-        val dependsWeight = info.depends
-            .filter { it in moduleMap }
-            .sumOf { moduleMap[it]!!.priority }
-        weight -= dependsWeight * 10
-
-        val softWeight = info.soft
-            .filter { it in moduleMap }
-            .sumOf { moduleMap[it]!!.priority }
-        weight -= softWeight * 5
-
-        return weight
-    }
-
-    fun sortLoadersByCloudModuleInfo(info: List<CloudModuleInfo>): List<CloudModuleInfo> {
-        val moduleMap = info.associateBy { it.name }
-
-        return info.sortedWith(compareBy({ moduleWeight(it, moduleMap) }, { it.name }))
-    }
 }
