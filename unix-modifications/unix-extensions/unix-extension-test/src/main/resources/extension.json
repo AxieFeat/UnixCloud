@@ -1,0 +1,5 @@
+{
+  "name": "TestExtension",
+  "version": "1.0",
+  "main": "net.unix.extension.test.Test"
+}

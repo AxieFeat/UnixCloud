@@ -36,7 +36,7 @@ interface ExtensionManager : ModificationManager {
      * @throws ModificationExistException If extension with this name already loaded.
      */
     @Throws(ModificationLoadException::class, ModificationExistException::class)
-    override fun loadAll(silent: Boolean): List<Module>
+    override fun loadAll(silent: Boolean): List<Extension>
 
     /**
      * Load [Extension] from file.

@@ -14,9 +14,10 @@ import java.io.File
  *
  * Also don't forget that to create extension, you must create extension.json file.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class CloudExtension : Extension {
 
-    private val listeners = mutableListOf<Any>()
+    val listeners = mutableListOf<Any>()
 
     override lateinit var loader: ExtensionClassLoader
 

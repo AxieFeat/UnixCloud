@@ -5,7 +5,7 @@ import java.io.File
 
 
 @Suppress("MemberVisibilityCanBePrivate")
-class CloudLocationSpace : LocationSpace {
+object CloudLocationSpace : LocationSpace {
 
     val main: File
 
@@ -26,6 +26,7 @@ class CloudLocationSpace : LocationSpace {
     val storage = File(main.path + "/storage")
 
     override val module = File(main.path + "/modules")
+    override val extension: File = File(main.path + "/extensions")
     override val group = File(storage.path + "/groups")
     override val service = File(storage.path + "/services")
     override val template = File(storage.path + "/templates")
