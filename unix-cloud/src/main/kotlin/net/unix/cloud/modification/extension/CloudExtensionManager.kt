@@ -24,7 +24,14 @@ object CloudExtensionManager : ExtensionManager {
             ?: run {
                 if (!silent) throw IllegalArgumentException("File \"${folder.path}\" is not a folder!")
                 else listOf()
-            }).mapNotNull { it.load() }
+            }).map { loader ->
+                val extension = loader.load() ?:
+                throw ModificationLoadException("Could not load ${loader.info!!.name} extension, corrupted file?")
+
+                cachedExtensions[extension.info.name] = extension
+
+                extension
+            }
     }
 
     override fun load(file: File): Extension {

@@ -27,13 +27,15 @@ object CloudModuleManager : ModuleManager {
                 else listOf()
             }
 
-        val sortedLoaders = sortModulesByDependencies(loaders.map { it.info as CloudModuleInfo })
-        return sortedLoaders.mapNotNull { info ->
-            val module = loaders.find { it.info === info }!!.load()
-            module?.let {
-                cachedModules[it.info.name] = it
-                it.onLoad()
-            }
+        val sortedLoaders = sortModulesByDependencies(loaders)
+
+        return sortedLoaders.map { loader ->
+
+            val module = loader.load() ?:
+            throw ModificationLoadException("Could not load ${loader.info!!.name} extension, corrupted file?")
+
+            cachedModules[loader.info!!.name] = module
+
             module
         }
     }
@@ -51,25 +53,25 @@ object CloudModuleManager : ModuleManager {
     override fun unload(module: Module): Boolean = module.loader.unload()
     override fun reload(module: Module): Boolean = module.loader.reload()
 
-    fun sortModulesByDependencies(modules: List<CloudModuleInfo>): List<CloudModuleInfo> {
-        val moduleMap = modules.associateBy { it.name }
+    private fun sortModulesByDependencies(modules: List<CloudModuleLoader>): List<CloudModuleLoader> {
+        val moduleMap = modules.associateBy { it.info!!.name }
         val visited = mutableSetOf<String>()
-        val sortedModules = mutableListOf<CloudModuleInfo>()
+        val sortedModules = mutableListOf<CloudModuleLoader>()
 
-        modules.filter { it.depends.isEmpty() && it.soft.isEmpty() }.forEach { module ->
-            if (module.name !in visited) {
+        modules.filter { it.info!!.depends.isEmpty() && it.info.soft.isEmpty() }.forEach { module ->
+            if (module.info!!.name !in visited) {
                 process(module, moduleMap, visited, sortedModules)
             }
         }
 
-        modules.filter { it.depends.isNotEmpty() }.forEach { module ->
-            if (module.name !in visited) {
+        modules.filter { it.info!!.depends.isNotEmpty() }.forEach { module ->
+            if (module.info!!.name !in visited) {
                 process(module, moduleMap, visited, sortedModules)
             }
         }
 
-        modules.filter { it.soft.isNotEmpty() }.forEach { module ->
-            if (module.name !in visited) {
+        modules.filter { it.info!!.soft.isNotEmpty() }.forEach { module ->
+            if (module.info!!.name !in visited) {
                 process(module, moduleMap, visited, sortedModules)
             }
         }
@@ -78,23 +80,23 @@ object CloudModuleManager : ModuleManager {
     }
 
     private fun process(
-        module: CloudModuleInfo,
-        moduleMap: Map<String, CloudModuleInfo>,
+        loader: CloudModuleLoader,
+        moduleMap: Map<String, CloudModuleLoader>,
         visited: MutableSet<String>,
-        sortedModules: MutableList<CloudModuleInfo>
+        sortedModules: MutableList<CloudModuleLoader>
     ) {
-        if (module.name !in visited) {
-            visited.add(module.name)
+        if (loader.info!!.name !in visited) {
+            visited.add(loader.info.name)
 
-            module.depends.forEach { dependency ->
+            loader.info.depends.forEach { dependency ->
                 moduleMap[dependency]?.let {
-                    if (it.name !in visited) {
+                    if (it.info!!.name !in visited) {
                         process(it, moduleMap, visited, sortedModules)
                     }
                 }
             }
 
-            sortedModules.add(module)
+            sortedModules.add(loader)
         }
     }
 }
