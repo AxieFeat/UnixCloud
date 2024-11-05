@@ -27,16 +27,13 @@ object CloudModuleManager : ModuleManager {
                 else listOf()
             }
 
-        val sortedLoaders = sortLoadersByCloudModuleInfo(loaders.map { it.info as CloudModuleInfo })
-
+        val sortedLoaders = sortModulesByDependencies(loaders.map { it.info as CloudModuleInfo })
         return sortedLoaders.mapNotNull { info ->
             val module = loaders.find { it.info === info }!!.load()
-
             module?.let {
                 cachedModules[it.info.name] = it
                 it.onLoad()
             }
-
             module
         }
     }
@@ -54,39 +51,37 @@ object CloudModuleManager : ModuleManager {
     override fun unload(module: Module): Boolean = module.loader.unload()
     override fun reload(module: Module): Boolean = module.loader.reload()
 
-    private fun moduleWeight(info: CloudModuleInfo, moduleMap: Map<String, CloudModuleInfo>): Double {
-    var weight = info.priority * 1000
+    fun sortModulesByDependencies(modules: List<CloudModuleInfo>): List<CloudModuleInfo> {
+        val moduleMap = modules.associateBy { it.name }
+        val visited = mutableSetOf<String>()
+        val sortedModules = mutableListOf<CloudModuleInfo>()
 
-    if (info.depends.isEmpty() && info.soft.isEmpty()) {
-        weight += 10000
+        modules.forEach { module ->
+            if (module.name !in visited) {
+                process(module, moduleMap, visited, sortedModules)
+            }
+        }
+
+        return sortedModules
     }
 
-    val hasDepends = info.depends.any { it in moduleMap }
-    if (hasDepends) {
-        weight += 5000
-    }
+    private fun process(
+        module: CloudModuleInfo,
+        moduleMap: Map<String, CloudModuleInfo>,
+        visited: MutableSet<String>,
+        sortedModules: MutableList<CloudModuleInfo>
+    ) {
+        if (module.name !in visited) {
+            visited.add(module.name)
 
-    val dependsWeight = info.depends
-        .filter { it in moduleMap }
-        .sumOf { moduleMap[it]!!.priority }
-    weight -= dependsWeight * 100
-
-    val hasSoftDepends = info.soft.any { it in moduleMap }
-    if (hasSoftDepends && !hasDepends) {
-        weight += 2000
-    }
-
-    val softWeight = info.soft
-        .filter { it in moduleMap }
-        .sumOf { moduleMap[it]!!.priority }
-    weight -= softWeight * 50
-
-    return weight
-    }
-
-    fun sortLoadersByCloudModuleInfo(info: List<CloudModuleInfo>): List<CloudModuleInfo> {
-        val moduleMap = info.associateBy { it.name }
-
-        return info.sortedWith(compareBy({ -moduleWeight(it, moduleMap) }, { -it.priority }, { it.name }))
+            module.depends.forEach { dependency ->
+                moduleMap[dependency]?.let {
+                    if (it.name !in visited) {
+                        process(it, moduleMap, visited, sortedModules)
+                    }
+                }
+            }
+            sortedModules.add(module)
+        }
     }
 }
