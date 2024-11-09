@@ -7,11 +7,8 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import net.unix.api.scheduler.Scheduler
 import net.unix.api.scheduler.SchedulerTask
-import net.unix.api.terminal.logger.Logger
 
-open class CoroutineScheduler(
-    private val logger: Logger
-) : AbstractScheduler() {
+open class CoroutineScheduler : AbstractScheduler() {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -35,7 +32,7 @@ open class CoroutineScheduler(
                         try {
                             task()
                         } catch (throwable: Throwable) {
-                            logger.error("", throwable = throwable)
+                           // logger.error("", throwable = throwable)
                         }
                     }
                 }
@@ -51,7 +48,7 @@ open class CoroutineScheduler(
                 try {
                     task()
                 } catch (throwable: Throwable) {
-                    logger.error("", throwable = throwable)
+                   // logger.error("", throwable = throwable)
                 }
             }.also {
                 it.invokeOnCompletion {
@@ -66,7 +63,7 @@ open class CoroutineScheduler(
             try {
                 task()
             } catch (throwable: Throwable) {
-                logger.error("", throwable = throwable)
+               // logger.error("", throwable = throwable)
             }
             unregisterTask(taskId)
         }

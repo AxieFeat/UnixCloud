@@ -10,31 +10,11 @@ import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
-import net.unix.api.terminal.logger.Logger
-import net.unix.api.terminal.logger.LoggerFactory
 
 /**
  * Builder for Cloud API.
  */
 interface CloudBuilder : Builder<CloudAPI> {
-
-    /**
-     * Set logger factory.
-     *
-     * @param factory Logger factory.
-     *
-     * @return Current instance of [CloudBuilder].
-     */
-    fun loggerFactory(factory: LoggerFactory): CloudBuilder
-
-    /**
-     * Set global logger.
-     *
-     * @param logger Global logger.
-     *
-     * @return Current instance of [CloudBuilder].
-     */
-    fun globalLogger(logger: Logger): CloudBuilder
 
     /**
      * Set terminal.

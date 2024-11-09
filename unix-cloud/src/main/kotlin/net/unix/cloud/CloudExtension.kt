@@ -147,7 +147,7 @@ object CloudExtension {
      * @return Current instance of [T].
      */
     fun <T> T.print(): T {
-        CloudInstance.instance.logger.info(this.toString())
+       // CloudInstance.instance.logger.info(this.toString())
 
         return this
     }

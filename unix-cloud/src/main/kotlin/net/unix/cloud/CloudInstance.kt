@@ -13,8 +13,6 @@ import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
-import net.unix.api.terminal.logger.Logger
-import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.cloud.CloudInstanceBuilder.Companion.builder
 import net.unix.cloud.command.CloudCommandDispatcher
 import net.unix.cloud.event.callEvent
@@ -26,7 +24,6 @@ import net.unix.cloud.scheduler.scheduler
 import net.unix.cloud.service.BasicCloudServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
-import net.unix.cloud.terminal.logger.CloudLoggerFactory
 import kotlin.system.exitProcess
 
 fun main() {
@@ -170,9 +167,6 @@ class CloudInstanceBuilder : CloudBuilder {
 
     private var locationSpace: LocationSpace? = null
 
-    private var loggerFactory: LoggerFactory? = null
-    private var logger: Logger? = null
-
     private var commandDispatcher: CommandDispatcher? = null
     private var terminal: Terminal? = null
 
@@ -191,18 +185,6 @@ class CloudInstanceBuilder : CloudBuilder {
         fun CloudInstance.Companion.builder(): CloudInstanceBuilder {
             return CloudInstanceBuilder()
         }
-    }
-
-    override fun loggerFactory(factory: LoggerFactory): CloudInstanceBuilder {
-        this.loggerFactory = factory
-
-        return this
-    }
-
-    override fun globalLogger(logger: Logger): CloudInstanceBuilder {
-        this.logger = logger
-
-        return this
     }
 
     override fun terminal(terminal: Terminal): CloudInstanceBuilder {
@@ -269,8 +251,6 @@ class CloudInstanceBuilder : CloudBuilder {
         return CloudInstance(
             schedulerManager,
             locationSpace,
-            loggerFactory,
-            logger,
             commandDispatcher,
             terminal,
             cloudTemplateManager,
@@ -287,9 +267,6 @@ class CloudInstance(
     schedulerManager: SchedulerManager? = null,
 
     locationSpace: LocationSpace? = null,
-
-    loggerFactory: LoggerFactory? = null,
-    logger: Logger? = null,
 
     commandDispatcher: CommandDispatcher? = null,
     terminal: Terminal? = null,
@@ -317,15 +294,12 @@ class CloudInstance(
         created = true
     }
 
-    override val loggerFactory: LoggerFactory = loggerFactory ?: CloudLoggerFactory()
-    override val logger: Logger = logger ?: this.loggerFactory.logger
-
-    override val schedulerManager: SchedulerManager = schedulerManager ?: CloudSchedulerManager(this.logger)
+    override val schedulerManager: SchedulerManager = schedulerManager ?: CloudSchedulerManager()
 
     override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace
 
     override val commandDispatcher: CommandDispatcher = commandDispatcher ?: CloudCommandDispatcher
-    override val terminal: Terminal = terminal ?: CloudJLineTerminal(" <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ", this.logger, this.commandDispatcher)
+    override val terminal: Terminal = terminal ?: CloudJLineTerminal(" <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ", this.commandDispatcher)
 
     override val cloudTemplateManager: CloudTemplateManager = cloudTemplateManager ?: BasicCloudTemplateManager
     override val cloudGroupManager: CloudGroupManager = cloudGroupManager ?: BasicCloudGroupManager

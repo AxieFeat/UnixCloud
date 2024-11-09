@@ -3,7 +3,6 @@ package net.unix.cloud.scheduler
 import net.unix.api.scheduler.Scheduler
 import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.scheduler.SchedulerType
-import net.unix.api.terminal.logger.Logger
 import net.unix.cloud.CloudInstance
 
 @DslMarker
@@ -24,12 +23,10 @@ fun scheduler(type: SchedulerType = SchedulerType.COROUTINES, init: Scheduler.()
     return cloudScheduler
 }
 
-class CloudSchedulerManager(
-    private val logger: Logger
-) : SchedulerManager {
+class CloudSchedulerManager : SchedulerManager {
     override fun create(type: SchedulerType): Scheduler {
         return when(type) {
-            SchedulerType.COROUTINES -> CoroutineScheduler(logger)
+            SchedulerType.COROUTINES -> CoroutineScheduler()
             SchedulerType.EXECUTOR -> ExecutorScheduler()
         }
     }

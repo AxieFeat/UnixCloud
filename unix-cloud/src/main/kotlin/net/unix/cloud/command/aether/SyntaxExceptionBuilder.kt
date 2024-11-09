@@ -50,7 +50,7 @@ object SyntaxExceptionBuilder {
      * @param ex Instance of [CommandSyntaxException].
      */
     fun print(ex: CommandSyntaxException) {
-        CloudInstance.instance.logger.error(*ex.formatted.toTypedArray())
+        //CloudInstance.instance.logger.error(*ex.formatted.toTypedArray())
     }
 
     /**

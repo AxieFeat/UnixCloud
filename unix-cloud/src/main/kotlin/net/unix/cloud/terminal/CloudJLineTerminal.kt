@@ -3,7 +3,6 @@ package net.unix.cloud.terminal
 import net.kyori.adventure.text.Component
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.command.sender.CommandSender
-import net.unix.api.terminal.logger.Logger
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.command.brigadier.BrigadierCommandCompleter
@@ -19,13 +18,12 @@ import java.nio.charset.StandardCharsets
 @Suppress("LeakingThis", "MemberVisibilityCanBePrivate")
 open class CloudJLineTerminal(
     prompt: String,
-    logger: Logger,
     dispatcher: CommandDispatcher
 ) : net.unix.api.terminal.Terminal {
 
     override val defaultPrompt = prompt.deserializeComponent()
 
-    override val sender: CommandSender = CloudConsoleCommandSender(logger)
+    override val sender: CommandSender = CloudConsoleCommandSender()
 
     val terminal: org.jline.terminal.Terminal = TerminalBuilder.builder()
         .system(true)

@@ -9,8 +9,6 @@ import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
-import net.unix.api.terminal.logger.Logger
-import net.unix.api.terminal.logger.LoggerFactory
 import net.unix.api.service.CloudService
 import net.unix.api.group.CloudGroup
 import net.unix.api.template.CloudTemplate
@@ -30,16 +28,6 @@ abstract class CloudAPI {
      * Terminal, just a terminal.
      */
     abstract val terminal: Terminal
-
-    /**
-     * Terminal logger.
-     */
-    abstract val logger: Logger
-
-    /**
-     * Factory for creation loggers.
-     */
-    abstract val loggerFactory: LoggerFactory
 
     /**
      * Command dispatcher.
