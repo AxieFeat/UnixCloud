@@ -20,29 +20,33 @@ import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.scheduler.CloudSchedulerManager
-import net.unix.cloud.scheduler.scheduler
 import net.unix.cloud.service.BasicCloudServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
+import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
 fun main() {
 
     var builder: CloudBuilder = CloudInstance.builder()
 
-    scheduler {
-        execute {
-            CloudExtensionManager.loadAll(false)
-        }
-
+//    //scheduler {
+//    //    execute {
+//            CloudExtensionManager.loadAll(false)
+//    //    }
+//
         CloudStartEvent(builder).callEvent().also { builder = it.builder }
+//
+//        builder.build()
+//
+//     //   execute {
+//            CloudInstance.instance.moduleManager.loadAll(false)
+//     //   }
+// //   }
 
-        builder.build()
+    val logger = LoggerFactory.getLogger("main")
 
-        execute {
-            CloudInstance.instance.moduleManager.loadAll(false)
-        }
-    }
+    logger.info("123")
 
 //    AetherCommandBuilder("screen") // <- название команды
 //        .then( // <- указываем какой-то аргумент

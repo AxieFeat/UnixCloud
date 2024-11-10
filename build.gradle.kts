@@ -45,8 +45,10 @@ allprojects {
         implementation("org.ow2.asm:asm-commons:9.0")
         implementation("org.ow2.asm:asm:9.0")
 
-        implementation("org.apache.logging.log4j:log4j-core:2.23.1")
-        implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
+//        implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+//        implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
+        implementation("org.slf4j:slf4j-log4j12:1.7.30")
+        implementation("log4j:log4j:1.2.17")
 
         implementation("net.kyori:adventure-api:4.17.0")
         implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")

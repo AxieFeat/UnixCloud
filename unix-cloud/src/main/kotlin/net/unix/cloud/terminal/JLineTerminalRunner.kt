@@ -6,8 +6,6 @@ import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.CloudExtension.strip
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.cloud.scheduler.scheduler
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
 
@@ -46,9 +44,9 @@ class JLineTerminalRunner(
                     continue
                 }
 
-                execute {
-                    LogManager.getLogger("info").log(Level.getLevel("INFO"), "${strippedPrompt}${line}")
-                }
+//                execute {
+//                    LogManager.getLogger("info").log(Level.getLevel("INFO"), "${strippedPrompt}${line}")
+//                }
 
                 trim = line.trim()
 
