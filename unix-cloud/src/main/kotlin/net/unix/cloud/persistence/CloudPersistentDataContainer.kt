@@ -4,6 +4,7 @@ import net.unix.api.NamespacedKey
 import net.unix.api.persistence.PersistentDataAdapterContext
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.persistence.PersistentDataType
+import net.unix.cloud.modification.extension.CloudExtensionInfo
 
 @Suppress("UNCHECKED_CAST")
 open class CloudPersistentDataContainer : PersistentDataContainer {
@@ -64,7 +65,7 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
     override val adapterContext: PersistentDataAdapterContext = CloudPersistentDataAdapterContext
 
     override fun serialize(): Map<String, Any> {
-        val result = mutableMapOf<String, Any>()
+        val serialized = mutableMapOf<String, Any>()
 
         data.forEach { key ->
             val persistent = mutableMapOf<String, Any>()
@@ -73,9 +74,22 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
                 persistent[data.key.primitiveType.name] = data.value.toString()
             }
 
-            result[key.key] = persistent
+            serialized[key.key] = persistent
         }
 
-        return result
+        return serialized
+    }
+
+    companion object {
+        /**
+         * Deserialize [CloudPersistentDataContainer] from [CloudPersistentDataContainer.serialize].
+         *
+         * @param serialized Serialized data.
+         *
+         * @return Deserialized instance of [CloudPersistentDataContainer].
+         */
+        fun deserialize(serialized: Map<String, Any>): CloudPersistentDataContainer {
+            TODO()
+        }
     }
 }

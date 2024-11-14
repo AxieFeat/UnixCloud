@@ -7,6 +7,10 @@ import java.io.File
 
 /**
  * [CloudTemplate] allow control creation instance of [CloudService]'s.
+ *
+ * These templates allow you to customize the files that will be
+ * used by the CloudService's that are launched.
+ * Use [CloudFile] to specify which files should be used.
  */
 interface CloudTemplate : PersistentDataHolder, Serializable {
 
@@ -14,11 +18,6 @@ interface CloudTemplate : PersistentDataHolder, Serializable {
      * Template name.
      */
     var name: String
-
-    /**
-     * Template location.
-     */
-    val templateFolder: File
 
     /**
      * Files, that will be copied on creation [CloudService].

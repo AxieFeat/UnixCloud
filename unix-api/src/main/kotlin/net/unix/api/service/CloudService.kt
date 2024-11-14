@@ -8,6 +8,9 @@ import java.util.*
 
 /**
  * [CloudService]'s allow to start instances of [CloudGroup].
+ *
+ * The service is some kind of executable program that is controlled by UnixCloud.
+ * You can run almost anything using [CloudExecutable].
  */
 interface CloudService : PersistentDataHolder {
 
@@ -31,6 +34,8 @@ interface CloudService : PersistentDataHolder {
 
     /**
      * Service folder.
+     *
+     * This is where all the runtime files of the service are stored.
      */
     val dataFolder: File
 

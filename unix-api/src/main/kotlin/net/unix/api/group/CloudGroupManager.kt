@@ -1,11 +1,11 @@
 package net.unix.api.group
 
-import net.unix.api.service.CloudService
-import net.unix.api.template.CloudTemplate
 import java.util.UUID
 
 /**
  * Manager for [CloudGroup]'s.
+ *
+ * With this you can manage [CloudGroup]'s.
  */
 interface CloudGroupManager {
 
@@ -15,25 +15,11 @@ interface CloudGroupManager {
     val groups: Set<CloudGroup>
 
     /**
-     * Create instance of [CloudGroup].
+     * Register group in [groups].
      *
-     * @param name Group name.
-     * @param static Is group static.
-     * @param host Group host.
-     * @param availablePorts Ports, which [CloudService] can be started.
-     * @param startupCount Count of [CloudService]'s that will start with UnixCloud.
-     * @param templates [CloudTemplate]'s of group.
-     *
-     * @return Instance of [CloudGroup].
+     * @param group Group to register.
      */
-    fun createGroup(
-        name: String,
-        static: Boolean,
-        host: String,
-        availablePorts: MutableList<Int>,
-        startupCount: Int,
-        templates: MutableList<CloudTemplate>
-    ): CloudGroup
+    fun register(group: CloudGroup)
 
     /**
      * Is exist [CloudGroup]'s with one name.

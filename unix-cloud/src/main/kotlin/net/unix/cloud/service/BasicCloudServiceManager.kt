@@ -4,16 +4,20 @@ import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 object BasicCloudServiceManager : CloudServiceManager {
 
-    override val services: Set<CloudService> = setOf()
+    val cachedServices = mutableMapOf<UUID, CloudService>()
 
-    override fun get(name: String): List<CloudService> {
-        TODO("Not yet implemented")
+    override val services: Set<CloudService>
+        get() = cachedServices.values.toSet()
+
+    override fun register(service: CloudService) {
+        cachedServices[service.uuid] = service
     }
 
-    override fun get(uuid: UUID): CloudService? {
-        TODO("Not yet implemented")
-    }
+    override fun get(name: String): List<CloudService> = cachedServices.values.filter { it.name == name }
+
+    override fun get(uuid: UUID): CloudService? = cachedServices[uuid]
 
 }

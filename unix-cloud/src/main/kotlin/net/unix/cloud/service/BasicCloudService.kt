@@ -3,26 +3,29 @@ package net.unix.cloud.service
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.service.CloudExecutable
-import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.StaticCloudService
 import net.unix.api.service.exception.CloudServiceModificationException
+import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.persistence.CloudPersistentDataContainer
 import java.io.File
 import java.util.*
 import kotlin.jvm.Throws
 
+@Suppress("LeakingThis")
 open class BasicCloudService(
     override val group: CloudGroup,
+    override val uuid: UUID = uniqueUUID(),
     override var name: String,
-    override val uuid: UUID = uniqueUUID()
-) : CloudService {
+    override var static: Boolean = false
+) : StaticCloudService {
 
     private lateinit var executable: CloudExecutable
 
     override val persistentDataContainer: PersistentDataContainer = CloudPersistentDataContainer()
 
-    override val dataFolder: File = TODO()
+    override val dataFolder: File = File(CloudInstance.instance.locationSpace.service, uuid.toString())
     override var status: CloudServiceStatus = CloudServiceStatus.PREPARED
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
@@ -30,24 +33,16 @@ open class BasicCloudService(
         if (status == CloudServiceStatus.DELETED) throw CloudServiceModificationException("You cannot run deleted CloudService!")
         if (status == CloudServiceStatus.STARTED) throw IllegalArgumentException("CloudService already started!")
 
-        if (executable.service != this) {
-            val copy = executable.copy()
+        this.executable = executable
 
-            this.executable = executable
-
-            copy.start()
-        } else {
-            this.executable = executable
-
-            executable.start()
-        }
+        executable.start()
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     override fun stop(delete: Boolean) {
         if (status == CloudServiceStatus.DELETED) throw CloudServiceModificationException("You cannot stop deleted CloudService!")
 
-        executable.stop()
+        executable.kill()
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
@@ -58,22 +53,5 @@ open class BasicCloudService(
         dataFolder.deleteRecursively()
     }
 
-    companion object {
-
-        private val current
-            get() = CloudInstance.instance.cloudServiceManager.services.map { it.uuid }
-
-        /**
-         * Generate unique UUID for [CloudService]. It'll be unique by current session.
-         *
-         * @return Unique UUID.
-         */
-        fun uniqueUUID(): UUID {
-            val random = UUID.randomUUID()
-
-            if (current.contains(random)) return uniqueUUID()
-
-            return random
-        }
-    }
+    companion object
 }

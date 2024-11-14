@@ -1,9 +1,13 @@
 package net.unix.api.service
 
+import net.unix.api.group.CloudGroup
 import java.util.UUID
 
 /**
  * Manager for [CloudService]'s.
+ *
+ * With this you can control the running [CloudService]'s.
+ * To start a new service, use [CloudGroup.create]
  */
 interface CloudServiceManager {
 
@@ -11,6 +15,13 @@ interface CloudServiceManager {
      * List of current run [CloudService]'s.
      */
     val services: Set<CloudService>
+
+    /**
+     * Register service in [services].
+     *
+     * @param service Service to register.
+     */
+    fun register(service: CloudService)
 
     /**
      * Is exist [CloudService]'s with one name.

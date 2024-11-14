@@ -13,6 +13,14 @@ data class CloudExtensionInfo(
 ) : ExtensionInfo {
     
     companion object {
+
+        /**
+         * Deserialize [CloudExtensionInfo] from [CloudExtensionInfo.serialize].
+         *
+         * @param serialized Serialized data.
+         *
+         * @return Deserialized instance of [CloudExtensionInfo].
+         */
         fun deserialize(serialized: Map<String, Any>): CloudExtensionInfo {
 
             val main = serialized["main"].toString()
@@ -27,16 +35,16 @@ data class CloudExtensionInfo(
     }
     
     override fun serialize(): Map<String, Any> {
-        val result = mutableMapOf<String, Any>()
+        val serialized = mutableMapOf<String, Any>()
         
-        result["main"] = main
-        result["name"] = name
-        result["version"] = version
-        result["description"] = description
-        result["website"] = website
-        result["authors"] = authors
+        serialized["main"] = main
+        serialized["name"] = name
+        serialized["version"] = version
+        serialized["description"] = description
+        serialized["website"] = website
+        serialized["authors"] = authors
         
-        return result
+        return serialized
     }
     
 }

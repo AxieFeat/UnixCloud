@@ -15,6 +15,14 @@ data class CloudModuleInfo(
 ) : ModuleInfo {
 
     companion object {
+
+        /**
+         * Deserialize [CloudModuleInfo] from [CloudModuleInfo.serialize].
+         *
+         * @param serialized Serialized data.
+         *
+         * @return Deserialized instance of [CloudModuleInfo].
+         */
         fun deserialize(serialized: Map<String, Any>): CloudModuleInfo {
 
             val main = serialized["main"].toString()
@@ -31,19 +39,19 @@ data class CloudModuleInfo(
     }
 
     override fun serialize(): Map<String, Any> {
-        val result = mutableMapOf<String, Any>()
+        val serialized = mutableMapOf<String, Any>()
 
-        result["main"] = main
-        result["name"] = name
-        result["version"] = version
-        result["description"] = description
-        result["website"] = website
-        result["authors"] = authors
+        serialized["main"] = main
+        serialized["name"] = name
+        serialized["version"] = version
+        serialized["description"] = description
+        serialized["website"] = website
+        serialized["authors"] = authors
 
-        result["depends"] = depends
-        result["soft"] = soft
+        serialized["depends"] = depends
+        serialized["soft"] = soft
 
-        return result
+        return serialized
     }
 
 }

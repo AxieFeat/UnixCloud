@@ -1,10 +1,10 @@
 package net.unix.cloud
 
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import net.unix.api.CloudAPI
 import net.unix.api.CloudBuilder
 import net.unix.api.LocationSpace
 import net.unix.api.command.CommandDispatcher
-import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
@@ -15,7 +15,11 @@ import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
 import net.unix.cloud.CloudInstanceBuilder.Companion.builder
 import net.unix.cloud.command.CloudCommandDispatcher
+import net.unix.cloud.command.aether.argument.CloudGroupArgument
+import net.unix.cloud.command.aether.argument.CloudGroupTypeArgument
+import net.unix.cloud.command.aether.command
 import net.unix.cloud.event.callEvent
+import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.cloud.group.BasicCloudGroupManager
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
@@ -27,6 +31,7 @@ import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
 fun main() {
+    System.setProperty("file.encoding", "UTF-8")
 
     var builder: CloudBuilder = CloudInstance.builder()
 
@@ -164,6 +169,78 @@ fun main() {
 //        }
 //    }
 
+}
+
+fun registerCommands() {
+    /*
+
+    /group
+        list - Список групп
+        create <название> <лимит сервисов> [тип] - Создать группу
+        delete <название> - Удалить группу
+        info <название> - Информация о группе
+
+     */
+    command("group") {
+        literal("list") {
+            execute {
+                // Список групп
+            }
+        }
+
+        literal("create") {
+
+            execute {
+                // Ошибка
+            }
+
+            argument("group", CloudGroupArgument()) {
+
+                execute {
+                    // Ошибка
+                }
+
+                argument("limit", IntegerArgumentType.integer(0, Int.MAX_VALUE)) {
+
+                    execute {
+                        // Создание группы
+                    }
+
+                    argument("type", CloudGroupTypeArgument()) {
+                        execute {
+                            // Создание группы
+                        }
+                    }
+                }
+            }
+        }
+
+        literal("delete") {
+
+            execute {
+                // Ошибка
+            }
+
+            argument("group", CloudGroupArgument()) {
+                execute {
+                    // Удаление группы
+                }
+            }
+        }
+
+        literal("info") {
+
+            execute {
+                // Ошибка
+            }
+
+            argument("group", CloudGroupArgument()) {
+                execute {
+                    // Информация о группе
+                }
+            }
+        }
+    }
 }
 
 @Suppress("unused")

@@ -14,6 +14,15 @@ import net.unix.api.service.CloudExecutable
 @Suppress("LeakingThis")
 abstract class CloudGroupType : CloudExecutable, Serializable {
 
+    /**
+     * The name of type.
+     *
+     * PLEASE USE UPPER CASE IN [name].
+     */
+    abstract val name: String
+
+    override fun serialize(): Map<String, Any> = mapOf("name" to name)
+
     init {
         if (types[name] != null) throw IllegalArgumentException("CloudGroupType with this name already exist!")
 
@@ -37,13 +46,4 @@ abstract class CloudGroupType : CloudExecutable, Serializable {
         operator fun get(name: String): CloudGroupType? = types[name]
 
     }
-
-    /**
-     * The name of type.
-     *
-     * PLEASE USE UPPER CASE IN [name].
-     */
-    abstract val name: String
-
-    override fun serialize(): Map<String, Any> = mapOf("name" to name)
 }

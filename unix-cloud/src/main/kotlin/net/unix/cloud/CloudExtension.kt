@@ -2,17 +2,18 @@
 
 package net.unix.cloud
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.unix.api.CloudAPI
+import net.unix.api.service.CloudService
 import net.unix.cloud.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
-import java.io.Reader
+import java.io.File
 import java.security.MessageDigest
-import java.util.Base64
+import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.regex.Pattern
@@ -22,7 +23,7 @@ import java.util.regex.Pattern
  */
 object CloudExtension {
 
-    private val gson = GsonBuilder()
+    val gson: Gson = GsonBuilder()
         .setPrettyPrinting()
         .create()
 
@@ -32,6 +33,7 @@ object CloudExtension {
     private val ansiSerializer = ANSIComponentSerializer.builder().build()
     private val legacySerializer = LegacyComponentSerializer.builder().character('&').hexColors().build()
     private val formatPattern = Pattern.compile("\\{(\\d+)}")
+    private val usedUUID = mutableListOf<UUID>()
 
     /**
      * Format args in string.
@@ -186,6 +188,47 @@ object CloudExtension {
 
         return result
     }
+
+    /**
+     * Read JSON from file.
+     *
+     * @param T Type of object.
+     *
+     * @return Deserialize result.
+     */
+    inline fun <reified T> File.readJson(): T {
+        val text = this.readText()
+
+        val result = gson.fromJson(text, T::class.java)
+
+        return result
+    }
+
+    fun Any.toJson(file: File) {
+        val text = gson.toJson(this)
+
+        file.writeText(text)
+    }
+
+    /**
+     * Generate unique UUID for [CloudService]. It'll be unique by current session.
+     *
+     * @return Unique UUID.
+     */
+    fun uniqueUUID(): UUID {
+        val random = UUID.randomUUID()
+
+        if (usedUUID.contains(random)) return uniqueUUID() else usedUUID.add(random)
+
+        return random
+    }
+
+    /**
+     * Is uuid in use.
+     *
+     * @return Is uuid in use.
+     */
+    fun UUID.inUse(): Boolean = usedUUID.contains(this)
 
     /**
      * Abbreviation of the if statement for Boolean.

@@ -4,6 +4,8 @@ import net.unix.api.modification.exception.ModificationLoadException
 import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.cloud.CloudLocationSpace
+import net.unix.cloud.event.callEvent
+import net.unix.cloud.event.modification.extension.ExtensionLoadEvent
 import java.io.File
 
 object CloudExtensionManager : ExtensionManager {
@@ -40,7 +42,9 @@ object CloudExtensionManager : ExtensionManager {
         val result = loader.load() ?:
         throw ModificationLoadException("Could not load ${file.name}. Corrupted file?")
 
-        result.onLoad()
+        val event = ExtensionLoadEvent(result).callEvent()
+
+        if (!event.cancelled) result.onLoad()
 
         return result
     }

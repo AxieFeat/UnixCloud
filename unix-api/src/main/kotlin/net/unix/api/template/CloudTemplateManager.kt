@@ -1,9 +1,11 @@
 package net.unix.api.template
 
-import java.io.File
+import net.unix.api.service.CloudService
 
 /**
  * Manager for [CloudTemplate]'s.
+ *
+ * With this, you can control the [CloudTemplate]'s for [CloudService]'s.
  */
 interface CloudTemplateManager {
 
@@ -13,6 +15,13 @@ interface CloudTemplateManager {
     val templates: Set<CloudTemplate>
 
     /**
+     * Register template in [templates].
+     *
+     * @param template Template to register.
+     */
+    fun register(template: CloudTemplate)
+
+    /**
      * Get [CloudTemplate] by name.
      *
      * @param name Template name.
@@ -20,16 +29,6 @@ interface CloudTemplateManager {
      * @return [CloudTemplate] instance or null, if not founded.
      */
     operator fun get(name: String): CloudTemplate?
-
-    /**
-     * Create instance of [CloudTemplate].
-     *
-     * @param folder Template folder.
-     * @param file Files to copy.
-     *
-     * @return Instance of [CloudTemplate].
-     */
-    fun createTemplate(folder: File, vararg file: CloudFile): CloudTemplate
 
     companion object
 }

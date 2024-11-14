@@ -4,6 +4,8 @@ import java.io.File
 
 /**
  * Allow to start [CloudService].
+ *
+ * With this executable, you can run almost anything with any functionality for [CloudService]'s.
  */
 interface CloudExecutable {
 
@@ -28,19 +30,9 @@ interface CloudExecutable {
     fun start()
 
     /**
-     * Stop process.
-     */
-    fun stop()
-
-    /**
      * Kill process.
      */
     fun kill()
-
-    /**
-     * Create a copy of current [CloudExecutable] for other [CloudService].
-     */
-    fun copy(): CloudExecutable
 
     companion object
 }

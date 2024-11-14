@@ -1,19 +1,23 @@
 package net.unix.cloud.template
 
-import net.unix.api.template.CloudFile
 import net.unix.api.template.CloudTemplate
-import net.unix.api.template.CloudTemplateManager
+import net.unix.api.template.SavableCloudTemplate
+import net.unix.api.template.SavableCloudTemplateManager
+import net.unix.cloud.CloudExtension.readJson
 import java.io.File
 
-object BasicCloudTemplateManager : CloudTemplateManager {
+object BasicCloudTemplateManager : SavableCloudTemplateManager {
+
+    private val cachedTemplated = mutableMapOf<String, CloudTemplate>()
+
     override val templates: Set<CloudTemplate>
-        get() = TODO("Not yet implemented")
+        get() = cachedTemplated.values.toSet()
 
-    override fun get(name: String): CloudTemplate? {
-        TODO("Not yet implemented")
+    override fun register(template: CloudTemplate) {
+        cachedTemplated[template.name] = template
     }
 
-    override fun createTemplate(folder: File, vararg file: CloudFile): CloudTemplate {
-        TODO("Not yet implemented")
-    }
+    override fun get(name: String): CloudTemplate? = cachedTemplated[name]
+
+    override fun loadTemplate(file: File): SavableCloudTemplate = file.readJson()
 }

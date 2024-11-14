@@ -10,6 +10,8 @@ import java.util.UUID
 
 /**
  * Generic template for starting instances of [CloudService].
+ *
+ * The group defines the general behavior for [CloudService]'s, their settings, files, and so on.
  */
 interface CloudGroup : PersistentDataHolder, Serializable {
 

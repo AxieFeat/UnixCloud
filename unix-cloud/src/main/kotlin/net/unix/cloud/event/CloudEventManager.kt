@@ -13,7 +13,6 @@ import net.unix.api.event.listener.EventType
 import net.unix.api.event.listener.ListenerPriority
 import net.unix.api.event.listener.ListenerScope
 import net.unix.api.event.scope.ScopeGroup
-import net.unix.cloud.CloudInstance
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList

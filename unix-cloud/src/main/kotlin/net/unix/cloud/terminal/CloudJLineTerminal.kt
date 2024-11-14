@@ -21,6 +21,8 @@ open class CloudJLineTerminal(
     dispatcher: CommandDispatcher
 ) : net.unix.api.terminal.Terminal {
 
+    override val persistentDataContainer = CloudPersistentDataContainer()
+
     override val defaultPrompt = prompt.deserializeComponent()
 
     override val sender: CommandSender = CloudConsoleCommandSender()
@@ -65,8 +67,6 @@ open class CloudJLineTerminal(
         terminal.writer().println(component.serializeAnsi())
         redraw()
     }
-
-    override val persistentDataContainer = CloudPersistentDataContainer()
 
     private fun redraw() {
         if (lineReader.isReading) {
