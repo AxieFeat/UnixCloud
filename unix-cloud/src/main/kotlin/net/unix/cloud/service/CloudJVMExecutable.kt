@@ -13,7 +13,7 @@ import java.io.*
 @Suppress("MemberVisibilityCanBePrivate")
 open class CloudJVMExecutable(
     override val service: CloudService,
-    override val executableFile: File,
+    override val executableFile: File = File(service.dataFolder, "service.jar"),
     properties: List<String>
 ) : CloudExecutable {
 

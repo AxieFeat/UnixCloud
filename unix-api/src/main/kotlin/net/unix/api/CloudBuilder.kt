@@ -80,15 +80,6 @@ interface CloudBuilder : Builder<CloudAPI> {
     fun extensionManager(manager: ExtensionManager): CloudBuilder
 
     /**
-     * Set scheduler manager.
-     *
-     * @param manager Scheduler manager.
-     *
-     * @return Current instance of [CloudBuilder].
-     */
-    fun schedulerManager(manager: SchedulerManager): CloudBuilder
-
-    /**
      * Set server.
      *
      * @param server Server.

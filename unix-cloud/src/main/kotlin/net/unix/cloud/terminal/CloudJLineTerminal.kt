@@ -68,6 +68,8 @@ open class CloudJLineTerminal(
         redraw()
     }
 
+    override fun print(message: String) = print(message.deserializeComponent())
+
     private fun redraw() {
         if (lineReader.isReading) {
             lineReader.callWidget("redraw-line")

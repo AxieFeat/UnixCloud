@@ -9,7 +9,6 @@ import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
-import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
@@ -18,160 +17,54 @@ import net.unix.cloud.command.CloudCommandDispatcher
 import net.unix.cloud.command.aether.argument.CloudGroupArgument
 import net.unix.cloud.command.aether.argument.CloudGroupTypeArgument
 import net.unix.cloud.command.aether.command
+import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.cloud.group.BasicCloudGroupManager
+import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
-import net.unix.cloud.scheduler.CloudSchedulerManager
+import net.unix.cloud.scheduler.scheduler
 import net.unix.cloud.service.BasicCloudServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
-import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
 fun main() {
-    System.setProperty("file.encoding", "UTF-8")
+    System.setProperty("file.encoding", UnixConfiguration.fileEncoding)
 
     var builder: CloudBuilder = CloudInstance.builder()
 
-//    //scheduler {
-//    //    execute {
-//            CloudExtensionManager.loadAll(false)
-//    //    }
-//
+    scheduler {
+        execute {
+           CloudExtensionManager.loadAll(false)
+        }
+
         CloudStartEvent(builder).callEvent().also { builder = it.builder }
-//
-//        builder.build()
-//
-//     //   execute {
-//            CloudInstance.instance.moduleManager.loadAll(false)
-//     //   }
-// //   }
 
-    val logger = LoggerFactory.getLogger("main")
+        builder.build()
 
-    logger.info("123")
+        CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
+        CloudExtensionManager.extensions.forEach {
+            CloudLogger.info("- ${it.info.name} v${it.info.version}")
+        }
 
-//    AetherCommandBuilder("screen") // <- название команды
-//        .then( // <- указываем какой-то аргумент
-//            literal("toggle") // <- обязательный аргумент "toggle".   Полная запись: AetherLiteralBuilder.literal("toggle")
-//                .then( // <- ещё один аргумент, который следует за "toggle"
-//                    argument("service", CloudServiceArgument()) // <- CloudServiceArgument фильтрует ввод пользователя и 100% возвращает существующий объект CloudService
-//                        .execute { // <- Вызывается при выполнении команды с аргументом toggle и service
-//                            val service: CloudService = it["service"] // <- получаем аргумент CloudService по его имени из контекста команды
-//
-//                            println("Screen toggled to ${service.name}")
-//                        }
-//                )
-//        )
-//        .then( // <- указываем ещё какой-то аргумент
-//            literal("switch") // <- Обязательный аргумент "switch"
-//                .then(
-//                    argument("service", CloudServiceArgument())
-//                        .execute {
-//                            val service: CloudService = it["service"]
-//
-//                            println("Screen switched to ${service.name}")
-//                        }
-//                )
-//        )
-//        .register() // <- регистрируем команду
+        execute {
+            CloudInstance.instance.moduleManager.loadAll(false)
+        }
+    }
 
-//    command("screen") { // <- название команды
-//        literal("toggle") { // <- указываем какой-то статичный аргумент
-//            argument("service", CloudServiceArgument()) { // <- аргумент, требующий ввода пользователя
-//                execute { // <- при выполнении команды
-//                    val service: CloudService = it["service"] // <- из контекста команды получаем аргумент
-//
-//                    println("Screen toggled to ${service.name}")
-//                }
-//            }
-//        }
-//        literal("switch") {
-//            argument("service", CloudServiceArgument()) {
-//                execute {
-//                    val service: CloudService = it["service"]
-//
-//                    println("Screen switched to ${service.name}")
-//                }
-//            }
-//        }
-//    }.register() // <- регистрируем команду
-
-//    val server = Server() // <- Создаём объект сервера
-//    server.start(7979) // <- Запускаем сервер
-//
-//    // Создаём слушатель по каналу "fun:example"
-//    server.createListener("fun:example") { conn, packet ->
-//        if (packet == null) return@createListener
-//
-//        Packet.builder() // <- Создаём пакет'
-//            .setChannel("fun:example") // <- Пакет будет отправлен по каналу "fun:example"
-//            .asResponseFor(packet) // <- Помечаем пакет как ответ
-//            .addNamedBoolean("result" to true) // <- Добавляем данные
-//            .send(conn.id, server) // <- Отправляем пакет на клиент
-//    }
-//
-//    val client = Client() // <- Создаём объект клиента
-//    client.connect("localhost", 7979) // <- Подключаемся к серверу
-//
-//    Packet.builder()
-//        .setChannel("fun:example")
-//        .onResponse { conn, packet -> // <- Будет выполнено при получении ответа на этот пакет
-//            // Выполняем какое-то действия
-//        }
-//        .onResponseTimeout(10000) {
-//            // Если в течение 10 секунд пакет не получит ответа - выполнится этот блок кода
-//        }
-//        .send(client) // <- Отправляем пакет на сервер
-
-
-//    val server = Server()
-//    server.start(7777)
-//    println("Сервер запущен!")
-//
-//    server.createListener("fun:auth") { conn, packet ->
-//        if (packet == null) return@createListener
-//
-//        val name: String? = packet["name"]
-//
-//        println("Подключен клиент: $name")
-//    }
-//
-//    server.createListener("fun:counter") { conn, packet ->
-//        if (packet == null) return@createListener
-//
-//        val count: Long? = packet["count"]
-//
-//        println("Число: $count")
-//    }
-//
-//
-//    val client = Client()
-//    client.connect("localhost", 7777)
-//
-//    Packet.builder()
-//        .setChannel("fun:auth")
-//        .addNamedString("name" to "Proxy-1")
-//        .send(client)
-//
-//    scheduler {
-//        var counter = 0L
-//
-//        execute(0, 1000) {
-//            Packet.builder()
-//                .setChannel("fun:counter")
-//                .addNamedLong("count" to counter)
-//                .send(client)
-//
-//            counter++
-//        }
-//    }
-
+    registerCommands()
 }
 
 fun registerCommands() {
+
+    command("exit") {
+        execute {
+            CloudInstance.instance.shutdown()
+        }
+    }.register()
+
     /*
 
     /group
@@ -258,8 +151,6 @@ class CloudInstanceBuilder : CloudBuilder {
     private var moduleManager: ModuleManager? = null
     private var extensionManager: ExtensionManager? = null
 
-    private var schedulerManager: SchedulerManager? = null
-
     private var server: Server? = null
 
     companion object {
@@ -310,12 +201,6 @@ class CloudInstanceBuilder : CloudBuilder {
         return this
     }
 
-    override fun schedulerManager(manager: SchedulerManager): CloudInstanceBuilder {
-        this.schedulerManager = manager
-
-        return this
-    }
-
     override fun server(server: Server): CloudInstanceBuilder {
         this.server = server
 
@@ -330,7 +215,6 @@ class CloudInstanceBuilder : CloudBuilder {
 
     override fun build(): CloudInstance {
         return CloudInstance(
-            schedulerManager,
             locationSpace,
             commandDispatcher,
             terminal,
@@ -345,8 +229,6 @@ class CloudInstanceBuilder : CloudBuilder {
 }
 
 class CloudInstance(
-    schedulerManager: SchedulerManager? = null,
-
     locationSpace: LocationSpace? = null,
 
     commandDispatcher: CommandDispatcher? = null,
@@ -375,12 +257,10 @@ class CloudInstance(
         created = true
     }
 
-    override val schedulerManager: SchedulerManager = schedulerManager ?: CloudSchedulerManager()
-
     override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace
 
     override val commandDispatcher: CommandDispatcher = commandDispatcher ?: CloudCommandDispatcher
-    override val terminal: Terminal = terminal ?: CloudJLineTerminal(" <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ", this.commandDispatcher)
+    override val terminal: Terminal = terminal ?: CloudJLineTerminal(UnixConfiguration.terminal.prompt, this.commandDispatcher)
 
     override val cloudTemplateManager: CloudTemplateManager = cloudTemplateManager ?: BasicCloudTemplateManager
     override val cloudGroupManager: CloudGroupManager = cloudGroupManager ?: BasicCloudGroupManager
@@ -389,7 +269,7 @@ class CloudInstance(
     override val moduleManager: ModuleManager = moduleManager ?: CloudModuleManager
     override val extensionManager: ExtensionManager = extensionManager ?: CloudExtensionManager
 
-    override val server: Server = (server ?: Server()).also { it.start(9191) }
+    override val server: Server = (server ?: Server()).also { it.start(UnixConfiguration.bridge.port) }
 
     init {
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler(this).run() })

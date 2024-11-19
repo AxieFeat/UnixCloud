@@ -2,6 +2,7 @@ package net.unix.api
 
 import net.unix.api.network.server.Server
 import net.unix.api.command.CommandDispatcher
+import net.unix.api.configuration.Configuration
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
@@ -13,6 +14,10 @@ import net.unix.api.service.CloudService
 import net.unix.api.group.CloudGroup
 import net.unix.api.template.CloudTemplate
 import net.unix.api.modification.module.Module
+import java.io.*
+import java.util.jar.JarFile
+import java.util.logging.Level
+import java.util.zip.ZipEntry
 
 /**
  * Unix API.
@@ -58,13 +63,6 @@ abstract class CloudAPI {
      * Manager to control [ExtensionManager]'s.
      */
     abstract val extensionManager: ExtensionManager
-
-    /**
-     * Manager for scheduler.
-     *
-     * For INTERNAL usage only!
-     */
-    abstract val schedulerManager: SchedulerManager
 
     /**
      * Websocket server on port 9191.

@@ -9,6 +9,7 @@ import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
 import net.kyori.adventure.text.Component
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudInstance
+import net.unix.cloud.logging.CloudLogger
 import kotlin.math.max
 
 object SyntaxExceptionBuilder {
@@ -50,7 +51,7 @@ object SyntaxExceptionBuilder {
      * @param ex Instance of [CommandSyntaxException].
      */
     fun print(ex: CommandSyntaxException) {
-        //CloudInstance.instance.logger.error(*ex.formatted.toTypedArray())
+        ex.formatted.toTypedArray().forEach { CloudLogger.severe(it) }
     }
 
     /**

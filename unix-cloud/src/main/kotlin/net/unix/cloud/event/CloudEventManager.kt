@@ -13,6 +13,8 @@ import net.unix.api.event.listener.EventType
 import net.unix.api.event.listener.ListenerPriority
 import net.unix.api.event.listener.ListenerScope
 import net.unix.api.event.scope.ScopeGroup
+import net.unix.cloud.configuration.UnixConfiguration
+import net.unix.cloud.logging.CloudLogger
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
@@ -59,13 +61,6 @@ fun <T> Event<T>.callEvent(): T {
  */
 object CloudEventManager : EventManager {
 
-//    private val logger: Logger?
-//        get() = try {
-//            CloudInstance.instance.logger
-//        } catch (ex: UninitializedPropertyAccessException) {
-//            null
-//        }
-
     /**
      * The error policy determines how exceptions on dispatched events will be handled.
      */
@@ -83,18 +78,18 @@ object CloudEventManager : EventManager {
 
             // illegal parameter count
             if (method.parameterCount != 1) {
-//                logger?.error("Ignoring illegal event handler: " + method.name +
-//                        ": Wrong number of arguments (required: 1)")
+                CloudLogger.severe("<red>Ignoring illegal event handler: " + method.name +
+                        ": Wrong number of arguments (required: 1)")
                 continue
             }
 
 
             // illegal parameter
             if (!Event::class.java.isAssignableFrom(method.parameterTypes[0])) {
-//                logger?.error(
-//                    ("Ignoring illegal event handler: " + method.name + ": Argument must extend " +
-//                            Event::class.java.getName())
-//                )
+                CloudLogger.severe(
+                    ("<red>Ignoring illegal event handler: " + method.name + ": Argument must extend " +
+                            Event::class.java.getName())
+                )
                 continue
             }
 
@@ -104,10 +99,10 @@ object CloudEventManager : EventManager {
             var scope: String = GLOBAL_SCOPE
             if (method.isAnnotationPresent(ListenerScope::class.java)) {
                 if (!Scoped::class.java.isAssignableFrom(eventType)) {
-//                    logger?.error(
-//                        ("Ignoring illegal event handler: " + method.name +
-//                                ": Handler is scoped, but event not.")
-//                    )
+                    CloudLogger.severe(
+                        ("<red>Ignoring illegal event handler: " + method.name +
+                                ": Handler is scoped, but event not.")
+                    )
                     continue
                 }
 
@@ -117,10 +112,10 @@ object CloudEventManager : EventManager {
             var listenedEventType = -1
             if (method.isAnnotationPresent(EventType::class.java)) {
                 if (!Typed::class.java.isAssignableFrom(eventType)) {
-//                    logger?.error(
-//                        ("Ignoring illegal event handler: " + method.name +
-//                                ": Handler is typed, but event not.")
-//                    )
+                    CloudLogger.severe(
+                        ("<red>Ignoring illegal event handler: " + method.name +
+                                ": Handler is typed, but event not.")
+                    )
                     continue
                 }
 
@@ -166,6 +161,11 @@ object CloudEventManager : EventManager {
     }
 
     override fun callEvent(event: Event<*>) {
+
+        if (UnixConfiguration.allowedEvents.events.filter {
+            it.key == event.javaClass.simpleName && it.value
+        }.isNotEmpty()) return
+
         var scoped = false
         var typed = false
 
@@ -219,17 +219,18 @@ object CloudEventManager : EventManager {
                 // depending on error policy, throw an exception or just log and ignore
 
                 when (ERROR_POLICY) {
-                    ErrorPolicy.EXCEPTION -> throw EventDispatchException(
-                        "Could not dispatch event to handler " +
+                    ErrorPolicy.EXCEPTION -> throw
+                        EventDispatchException(
+                            "Could not dispatch event to handler " +
                                 listener.listenerMethod.name, e
-                    )
+                        )
 
                     ErrorPolicy.LOG -> {
-//                        logger?.error(
-//                           "Could not dispatch event to handler " +
-//                                    listener.listenerMethod.name,
-//                            throwable = e
-//                        )
+                        CloudLogger.severe(
+                           "<red>Could not dispatch event to handler " +
+                                    listener.listenerMethod.name,
+                        )
+                        CloudLogger.exception(e)
                     }
                 }
             }

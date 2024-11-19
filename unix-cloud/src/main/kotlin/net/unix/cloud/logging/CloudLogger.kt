@@ -1,0 +1,143 @@
+package net.unix.cloud.logging
+
+import net.kyori.adventure.text.Component
+import net.unix.cloud.CloudExtension.format
+import net.unix.cloud.CloudExtension.serialize
+import net.unix.cloud.CloudInstance
+import net.unix.cloud.configuration.UnixConfiguration
+import java.io.File
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
+import java.util.logging.FileHandler
+import java.util.logging.Level
+import java.util.logging.Logger
+import java.util.logging.SimpleFormatter
+
+object CloudLogger : Logger("UnixCloudLogger", null) {
+
+    private val format = UnixConfiguration.terminal.logger.format
+    private val formatFile = UnixConfiguration.terminal.logger.formatFile
+    private val dataFormat = SimpleDateFormat(UnixConfiguration.terminal.logger.dateFormat)
+
+    private val logsDir = CloudInstance.instance.locationSpace.logs
+
+    private val cacheSize = UnixConfiguration.terminal.logger.cacheSize
+    private val cachedMessages = ArrayList<Pair<String, LogType>>()
+
+    init {
+        level = Level.ALL
+        useParentHandlers = false
+
+        System.setProperty("java.util.logging.SimpleFormatter.format", formatFile)
+
+        if (!logsDir.exists())
+            logsDir.mkdirs()
+
+        val simpleFormatter = SimpleFormatter()
+
+        val fileHandler = FileHandler(logsDir.canonicalPath + "/${
+            SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis()) + "-%g.log"
+        }", 5242880, 100, false)
+        fileHandler.encoding = StandardCharsets.UTF_8.name()
+        fileHandler.level = Level.ALL
+        fileHandler.formatter = simpleFormatter
+
+        addHandler(fileHandler)
+
+        deleteOldLogs()
+        GlobalUncaughtExceptionLogger.register()
+    }
+
+    private fun deleteOldLogs() {
+        val allLogFiles = (logsDir.listFiles() ?: emptyArray()).filterNotNull()
+        allLogFiles.filter { isOlderThanTenDays(it) }.forEach { it.delete() }
+    }
+
+    private fun isOlderThanTenDays(logFile: File): Boolean {
+        val tenDaysInMillis = TimeUnit.DAYS.toMillis(10)
+        return (System.currentTimeMillis() - logFile.lastModified()) > tenDaysInMillis
+    }
+
+    @Synchronized
+    override fun info(msg: String) {
+        super.info(msg)
+        printMessage(msg, LogType.INFO)
+    }
+
+    @Synchronized
+    fun info(msg: Component) {
+        info(msg.serialize())
+    }
+
+    @Synchronized
+    override fun warning(msg: String) {
+        super.warning(msg)
+        printMessage(msg, LogType.WARN)
+    }
+
+    @Synchronized
+    fun warning(msg: Component) {
+        warning(msg.serialize())
+    }
+
+    @Synchronized
+    override fun severe(msg: String) {
+        super.severe(msg)
+        printMessage(msg, LogType.ERROR)
+    }
+
+    @Synchronized
+    fun severe(msg: Component) {
+        severe(msg.serialize())
+    }
+
+    @Synchronized
+    fun printCachedMessages() {
+        cachedMessages.forEach {
+            printMessage(it.first, it.second, false)
+        }
+    }
+
+    private fun printMessage(msg: String, logType: LogType, cache: Boolean = false) {
+        if (cache && logType != LogType.WARN) {
+            if (cachedMessages.size >= cacheSize) {
+                cachedMessages.removeAt(0)
+            }
+
+            cachedMessages.add(Pair(msg, logType))
+        }
+
+        val coloredMessage = formatString(msg, logType)
+
+        CloudInstance.instance.terminal.print(coloredMessage)
+    }
+
+    private fun formatString(text: String, type: LogType): String {
+        return format.format(dataFormat.format(System.currentTimeMillis()), type.name, text)
+    }
+
+    @Synchronized
+    fun exception(cause: Throwable) {
+        val sw = StringWriter()
+        val pw = PrintWriter(sw, true)
+        cause.printStackTrace(pw)
+        val stackTraceMessage = "<red>" + sw.buffer.toString()
+        this.severe(stackTraceMessage)
+    }
+
+}
+
+object GlobalUncaughtExceptionLogger : Thread.UncaughtExceptionHandler {
+
+    override fun uncaughtException(t: Thread, e: Throwable) {
+        CloudLogger.severe("<red>Uncaught exception in a thread ${t.name}:")
+        CloudLogger.exception(e)
+    }
+
+    fun register() {
+        Thread.setDefaultUncaughtExceptionHandler(GlobalUncaughtExceptionLogger)
+    }
+}

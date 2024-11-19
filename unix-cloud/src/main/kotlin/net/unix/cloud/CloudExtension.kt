@@ -11,6 +11,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.unix.api.service.CloudService
 import net.unix.cloud.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
+import net.unix.cloud.logging.CloudLogger
 import java.io.File
 import java.security.MessageDigest
 import java.util.*
@@ -149,7 +150,7 @@ object CloudExtension {
      * @return Current instance of [T].
      */
     fun <T> T.print(): T {
-       // CloudInstance.instance.logger.info(this.toString())
+        CloudLogger.info(this.toString())
 
         return this
     }

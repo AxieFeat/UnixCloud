@@ -3,7 +3,6 @@ package net.unix.cloud.scheduler
 import net.unix.api.scheduler.Scheduler
 import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.scheduler.SchedulerType
-import net.unix.cloud.CloudInstance
 
 @DslMarker
 private annotation class SchedulerMarker
@@ -17,13 +16,13 @@ private annotation class SchedulerMarker
  */
 @SchedulerMarker
 fun scheduler(type: SchedulerType = SchedulerType.COROUTINES, init: Scheduler.() -> Unit): Scheduler {
-    val cloudScheduler = CloudInstance.instance.schedulerManager.create(type)
+    val cloudScheduler = CloudSchedulerManager.create(type)
     cloudScheduler.init()
 
     return cloudScheduler
 }
 
-class CloudSchedulerManager : SchedulerManager {
+object CloudSchedulerManager : SchedulerManager {
     override fun create(type: SchedulerType): Scheduler {
         return when(type) {
             SchedulerType.COROUTINES -> CoroutineScheduler()

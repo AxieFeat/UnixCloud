@@ -1,33 +1,38 @@
 package net.unix.cloud
 
+import net.unix.api.CloudAPI
 import net.unix.api.LocationSpace
+import net.unix.cloud.configuration.UnixConfiguration
 import java.io.File
 
+val mainDirectory = run {
+    val path = File(
+        CloudAPI::class.java.getProtectionDomain().codeSource.location.toURI()
+    ).parentFile.path
+
+    val file = File(path)
+
+    if (!file.exists()) {
+        file.mkdirs()
+    }
+
+    return@run file
+}
 
 @Suppress("MemberVisibilityCanBePrivate")
 object CloudLocationSpace : LocationSpace {
 
-    val main: File
+    override val main: File
+        get() = mainDirectory
 
-    init {
-        val path = File(
-            CloudLocationSpace::class.java.getProtectionDomain().codeSource.location.toURI()
-        ).parentFile.path
+    override val logs = File(main.path + UnixConfiguration.storage.logs)
 
-        val file = File(path)
+    val storage = File(main.path + UnixConfiguration.storage.storage)
 
-        if (!file.exists()) {
-            file.mkdirs()
-        }
+    override val module = File(main.path + UnixConfiguration.storage.module)
+    val extension = File(main.path + UnixConfiguration.storage.extension)
 
-        main = file
-    }
-
-    val storage = File(main.path + "/storage")
-
-    override val module = File(main.path + "/modules")
-    override val extension: File = File(main.path + "/extensions")
-    override val group = File(storage.path + "/groups")
-    override val service = File(storage.path + "/services")
-    override val template = File(storage.path + "/templates")
+    override val group = File(storage.path + UnixConfiguration.storage.group)
+    override val service = File(storage.path + UnixConfiguration.storage.service)
+    override val template = File(storage.path + UnixConfiguration.storage.template)
 }

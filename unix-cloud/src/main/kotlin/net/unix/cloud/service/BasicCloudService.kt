@@ -1,5 +1,6 @@
 package net.unix.cloud.service
 
+import com.google.common.io.Files
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.service.CloudExecutable
@@ -27,6 +28,23 @@ open class BasicCloudService(
 
     override val dataFolder: File = File(CloudInstance.instance.locationSpace.service, uuid.toString())
     override var status: CloudServiceStatus = CloudServiceStatus.PREPARED
+
+    init {
+        val templates = group.templates
+
+        if(!dataFolder.exists()) dataFolder.mkdirs()
+
+        templates.forEach { template ->
+            val files = template.files
+
+            files.forEach {
+                Files.copy(
+                    it.from.toFile(),
+                    it.to.toFile()
+                )
+            }
+        }
+    }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     override fun start(executable: CloudExecutable, overwrite: Boolean) {

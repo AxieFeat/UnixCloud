@@ -38,6 +38,13 @@ interface Terminal : PersistentDataHolder {
      */
     fun print(component: Component)
 
+    /**
+     * Print string in terminal. String will be deserialized with MiniMessage to Component.
+     *
+     * @param message Message to print.
+     */
+    fun print(message: String)
+
     companion object
 
 }

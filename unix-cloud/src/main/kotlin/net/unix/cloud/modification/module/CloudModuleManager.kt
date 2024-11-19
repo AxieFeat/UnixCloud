@@ -10,6 +10,7 @@ import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.modification.module.ModuleLoadEvent
 import net.unix.cloud.event.modification.module.ModuleReloadEvent
 import net.unix.cloud.event.modification.module.ModuleUnloadEvent
+import net.unix.cloud.logging.CloudLogger
 import java.io.File
 
 object CloudModuleManager : ModuleManager {
@@ -39,6 +40,8 @@ object CloudModuleManager : ModuleManager {
 
             val module = loader.load() ?:
             throw ModificationLoadException("Could not load ${loader.info!!.name} extension, corrupted file?")
+
+            CloudLogger.info("Loaded module ${module.info.name} v${module.info.version}")
 
             cachedModules[loader.info!!.name] = module
 
