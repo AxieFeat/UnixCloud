@@ -3,7 +3,6 @@ package net.unix.api.modification.extension
 import net.unix.api.modification.ModificationManager
 import net.unix.api.modification.exception.ModificationExistException
 import net.unix.api.modification.exception.ModificationLoadException
-import net.unix.api.modification.module.Module
 import java.io.File
 
 /**

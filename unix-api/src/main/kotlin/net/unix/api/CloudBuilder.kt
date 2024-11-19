@@ -6,7 +6,6 @@ import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
-import net.unix.api.scheduler.SchedulerManager
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal

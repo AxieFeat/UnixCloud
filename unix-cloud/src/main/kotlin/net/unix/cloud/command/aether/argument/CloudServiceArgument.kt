@@ -4,7 +4,6 @@ import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.unix.api.CloudAPI
 import net.unix.api.command.CommandArgument
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.api.service.CloudService
@@ -14,6 +13,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * Command argument for [CloudService].
  */
+@Suppress("unused")
 class CloudServiceArgument : CommandArgument<CloudService>() {
 
     private var notFoundMessage = "CloudService not found"

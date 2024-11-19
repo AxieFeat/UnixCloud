@@ -1,6 +1,5 @@
 package net.unix.api.modification.module
 
-import net.unix.api.modification.Modification
 import net.unix.api.modification.ModificationManager
 import net.unix.api.modification.exception.ModificationExistException
 import net.unix.api.modification.exception.ModificationLoadException

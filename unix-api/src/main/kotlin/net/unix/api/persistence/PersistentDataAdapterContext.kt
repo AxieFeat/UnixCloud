@@ -1,6 +1,5 @@
 package net.unix.api.persistence
 
-
 /**
  * This interface represents the context in which the [PersistentDataType] can
  * serialize and deserialize the passed values.

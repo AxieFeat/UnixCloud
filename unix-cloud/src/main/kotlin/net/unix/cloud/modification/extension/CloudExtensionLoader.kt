@@ -7,8 +7,6 @@ import net.unix.api.modification.extension.ExtensionClassLoader
 import net.unix.api.modification.extension.ExtensionInfo
 import net.unix.cloud.CloudExtension.deserializeJson
 import net.unix.cloud.CloudInstance
-import net.unix.cloud.event.callEvent
-import net.unix.cloud.event.modification.extension.ExtensionLoadEvent
 import net.unix.cloud.modification.module.CloudModuleManager
 import java.io.File
 import java.net.URLClassLoader

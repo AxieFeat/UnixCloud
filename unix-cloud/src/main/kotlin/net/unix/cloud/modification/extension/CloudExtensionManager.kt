@@ -6,7 +6,6 @@ import net.unix.api.modification.extension.ExtensionManager
 import net.unix.cloud.CloudLocationSpace
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.modification.extension.ExtensionLoadEvent
-import net.unix.cloud.logging.CloudLogger
 import java.io.File
 
 object CloudExtensionManager : ExtensionManager {

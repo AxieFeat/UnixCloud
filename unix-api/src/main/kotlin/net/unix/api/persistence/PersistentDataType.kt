@@ -2,7 +2,6 @@
 
 package net.unix.api.persistence
 
-
 /**
  * This class represents an enum with a generic content type. It defines the
  * types a custom tag can have.

@@ -4,7 +4,6 @@ import net.unix.api.NamespacedKey
 import net.unix.api.persistence.PersistentDataAdapterContext
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.persistence.PersistentDataType
-import net.unix.cloud.modification.extension.CloudExtensionInfo
 
 @Suppress("UNCHECKED_CAST")
 open class CloudPersistentDataContainer : PersistentDataContainer {
