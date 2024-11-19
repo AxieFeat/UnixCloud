@@ -76,7 +76,7 @@ data class TerminalSettings(
 
 data class LoggerSettings(
     val format: String = "<gray> {1}</gray> <dark_gray>|</dark_gray> <gray>{2}</gray><dark_gray> »</dark_gray> <gray>{3}</gray><reset>",
-    val formatFile: String = " %1\$tT | %4$-1s » %5\$s %n",
+    val formatFile: String = " {1} | {2} » {3}",
     val dateFormat: String = "HH:mm:ss",
     val cacheSize: Int = 50
 ) : Serializable {

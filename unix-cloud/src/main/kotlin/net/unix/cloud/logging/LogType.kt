@@ -1,9 +1,22 @@
 package net.unix.cloud.logging
 
-enum class LogType(
-    name: String
-) {
-    ERROR("ERROR"),
-    WARN("WARN"),
-    INFO("INFO")
+import java.util.logging.Level
+
+object LogType {
+    @JvmStatic
+    val ERROR = CloudLevel("ERROR", 1)
+
+    @JvmStatic
+    val WARN = CloudLevel("WARN", 2)
+
+    @JvmStatic
+    val INFO = CloudLevel("INFO", 3)
+
+    @JvmStatic
+    val DEBUG = CloudLevel("DEBUG", 4)
 }
+
+class CloudLevel(
+    name: String,
+    value: Int
+): Level(name, value)

@@ -1,8 +1,12 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package net.unix.cloud.logging
 
 import net.kyori.adventure.text.Component
+import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.format
 import net.unix.cloud.CloudExtension.serialize
+import net.unix.cloud.CloudExtension.strip
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.configuration.UnixConfiguration
 import java.io.File
@@ -18,6 +22,8 @@ import java.util.logging.SimpleFormatter
 
 object CloudLogger : Logger("UnixCloudLogger", null) {
 
+    var debug = false
+
     private val format = UnixConfiguration.terminal.logger.format
     private val formatFile = UnixConfiguration.terminal.logger.formatFile
     private val dataFormat = SimpleDateFormat(UnixConfiguration.terminal.logger.dateFormat)
@@ -25,13 +31,13 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
     private val logsDir = CloudInstance.instance.locationSpace.logs
 
     private val cacheSize = UnixConfiguration.terminal.logger.cacheSize
-    private val cachedMessages = ArrayList<Pair<String, LogType>>()
+    private val cachedMessages = ArrayList<Pair<String, CloudLevel>>()
 
     init {
         level = Level.ALL
         useParentHandlers = false
 
-        System.setProperty("java.util.logging.SimpleFormatter.format", formatFile)
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%5\$s %n")
 
         if (!logsDir.exists())
             logsDir.mkdirs()
@@ -62,8 +68,17 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
     }
 
     @Synchronized
+    fun debug(msg: String) {
+        if(debug) printMessage(msg, LogType.DEBUG)
+    }
+
+    @Synchronized
+    fun debug(msg: Component) {
+        if(debug) debug(msg.serialize())
+    }
+
+    @Synchronized
     override fun info(msg: String) {
-        super.info(msg)
         printMessage(msg, LogType.INFO)
     }
 
@@ -74,7 +89,6 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
 
     @Synchronized
     override fun warning(msg: String) {
-        super.warning(msg)
         printMessage(msg, LogType.WARN)
     }
 
@@ -85,7 +99,6 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
 
     @Synchronized
     override fun severe(msg: String) {
-        super.severe(msg)
         printMessage(msg, LogType.ERROR)
     }
 
@@ -101,21 +114,29 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
         }
     }
 
-    private fun printMessage(msg: String, logType: LogType, cache: Boolean = false) {
-        if (cache && logType != LogType.WARN) {
+    private fun printMessage(msg: String, level: CloudLevel, cache: Boolean = false) {
+        if (cache && level != LogType.WARN) {
             if (cachedMessages.size >= cacheSize) {
                 cachedMessages.removeAt(0)
             }
 
-            cachedMessages.add(Pair(msg, logType))
+            cachedMessages.add(Pair(msg, level))
         }
 
-        val coloredMessage = formatString(msg, logType)
+        val coloredMessage = formatString(msg, level)
 
+        super.log(
+            level,
+            formatFile.format(
+                dataFormat.format(System.currentTimeMillis()),
+                level.name,
+                msg.deserializeComponent().strip()
+            )
+        )
         CloudInstance.instance.terminal.print(coloredMessage)
     }
 
-    private fun formatString(text: String, type: LogType): String {
+    private fun formatString(text: String, type: CloudLevel): String {
         return format.format(dataFormat.format(System.currentTimeMillis()), type.name, text)
     }
 

@@ -63,6 +63,9 @@ class CloudGroupArgument : CommandArgument<CloudGroup>() {
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
         CloudInstance.instance.cloudGroupManager.groups.forEach {
+            if (it.name.contains(" ")) {
+                builder.suggest("\"${it.name}\"")
+            } else
             builder.suggest(it.name)
         }
 

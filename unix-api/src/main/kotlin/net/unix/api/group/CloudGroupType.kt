@@ -24,6 +24,8 @@ abstract class CloudGroupType : CloudExecutable, Serializable {
     override fun serialize(): Map<String, Any> = mapOf("name" to name)
 
     init {
+        if (name == "NONE") throw IllegalArgumentException("You cant use \"NONE\" as name for CloudGroupType!")
+
         if (types[name] != null) throw IllegalArgumentException("CloudGroupType with this name already exist!")
 
         types[name] = this

@@ -4,6 +4,7 @@ import net.unix.api.scheduler.SchedulerType
 import net.unix.api.service.CloudExecutable
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceStatus
+import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.scheduler.scheduler
 import java.io.*
 
@@ -13,8 +14,8 @@ import java.io.*
 @Suppress("MemberVisibilityCanBePrivate")
 open class CloudJVMExecutable(
     override val service: CloudService,
-    override val executableFile: File = File(service.dataFolder, "service.jar"),
-    properties: List<String>
+    override val executableFile: File = File(service.dataFolder, service.group.executableFile),
+    properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar", executableFile.path)
 ) : CloudExecutable {
 
     override var started: Boolean = false
@@ -50,6 +51,7 @@ open class CloudJVMExecutable(
     override fun start() {
         scheduler(SchedulerType.EXECUTOR) {
             execute {
+                CloudLogger.info("Trying to start ${service.name}...")
                 process = processBuilder.start()
                 started = true
 
@@ -59,6 +61,7 @@ open class CloudJVMExecutable(
     }
 
     override fun kill() {
+        CloudLogger.info("Service ${service.name} killed")
         started = false
         process.destroy()
     }

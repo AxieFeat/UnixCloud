@@ -24,5 +24,10 @@ interface CloudTemplate : PersistentDataHolder, Serializable {
      */
     var files: MutableList<CloudFile>
 
+    /**
+     * Delete template.
+     */
+    fun delete()
+
     companion object
 }

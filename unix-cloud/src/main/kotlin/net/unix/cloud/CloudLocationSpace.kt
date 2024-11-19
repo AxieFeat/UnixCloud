@@ -27,12 +27,48 @@ object CloudLocationSpace : LocationSpace {
 
     override val logs = File(main.path + UnixConfiguration.storage.logs)
 
-    val storage = File(main.path + UnixConfiguration.storage.storage)
+    val storage = run {
+        val file = File(main.path + UnixConfiguration.storage.storage)
 
-    override val module = File(main.path + UnixConfiguration.storage.module)
-    val extension = File(main.path + UnixConfiguration.storage.extension)
+        file.mkdirs()
 
-    override val group = File(storage.path + UnixConfiguration.storage.group)
-    override val service = File(storage.path + UnixConfiguration.storage.service)
-    override val template = File(storage.path + UnixConfiguration.storage.template)
+        return@run file
+    }
+
+    override val module = run {
+        val file = File(main.path + UnixConfiguration.storage.module)
+
+        file.mkdirs()
+
+        return@run file
+    }
+    val extension = run {
+        val file = File(main.path + UnixConfiguration.storage.extension)
+
+        file.mkdirs()
+
+        return@run file
+    }
+
+    override val group = run {
+        val file = File(storage.path + UnixConfiguration.storage.group)
+
+        file.mkdirs()
+
+        return@run file
+    }
+    override val service = run {
+        val file = File(storage.path + UnixConfiguration.storage.service)
+
+        file.mkdirs()
+
+        return@run file
+    }
+    override val template = run {
+        val file = File(storage.path + UnixConfiguration.storage.template)
+
+        file.mkdirs()
+
+        return@run file
+    }
 }

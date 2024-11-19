@@ -63,7 +63,10 @@ class CloudServiceArgument : CommandArgument<CloudService>() {
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
         CloudInstance.instance.cloudServiceManager.services.forEach {
-            builder.suggest(it.name)
+            if (it.name.contains(" ")) {
+                builder.suggest("\"${it.name}\"")
+            } else
+                builder.suggest(it.name)
         }
 
         return builder.buildFuture()

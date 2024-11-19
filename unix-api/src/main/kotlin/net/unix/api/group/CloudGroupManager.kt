@@ -1,5 +1,6 @@
 package net.unix.api.group
 
+import net.unix.api.template.CloudTemplate
 import java.util.UUID
 
 /**
@@ -20,6 +21,33 @@ interface CloudGroupManager {
      * @param group Group to register.
      */
     fun register(group: CloudGroup)
+
+    /**
+     * Unregister group from [groups].
+     *
+     * @param group Group to unregister.
+     */
+    fun unregister(group: CloudGroup)
+
+    /**
+     * Create new instance of [CloudGroup]. It will be registered via [register].
+     *
+     * @param uuid UUID of group.
+     * @param name Name of group.
+     * @param serviceLimit Limit of service for group.
+     * @param executableFile Path to executable file in prepared service.
+     * @param templates List of templates.
+     * @param type Type of group.
+     *
+     * @return New instance of [CloudGroup].
+     */
+    fun newInstance(uuid: UUID,
+                    name: String,
+                    serviceLimit: Int,
+                    executableFile: String,
+                    templates: MutableList<CloudTemplate> = mutableListOf(),
+                    type: CloudGroupType? = null
+    ): CloudGroup
 
     /**
      * Is exist [CloudGroup]'s with one name.

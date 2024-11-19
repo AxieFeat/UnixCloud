@@ -22,7 +22,12 @@ interface CloudService : PersistentDataHolder {
     /**
      * Service name. Can be repeated by other services.
      */
-    var name: String
+    val name: String
+
+    /**
+     * Name of service without any formatting.
+     */
+    val clearName: String
 
     /**
      * Service group.
@@ -31,6 +36,11 @@ interface CloudService : PersistentDataHolder {
      */
     @get:Throws(CloudServiceModificationException::class)
     val group: CloudGroup
+
+    /**
+     * Time of creation this service in milliseconds.
+     */
+    val created: Long
 
     /**
      * Service folder.
@@ -45,6 +55,16 @@ interface CloudService : PersistentDataHolder {
      * Change variable only if you KNOW, what a doing.
      */
     var status: CloudServiceStatus
+
+    /**
+     * Uptime of service in seconds.
+     */
+    var uptime: Long
+
+    /**
+     * The service executable.
+     */
+    var executable: CloudExecutable
 
     /**
      * Start [CloudService] with some executable properties.
@@ -71,7 +91,7 @@ interface CloudService : PersistentDataHolder {
     fun stop(delete: Boolean = true)
 
     /**
-     * Delete [CloudService].
+     * Delete [CloudService]. It also unregister via [CloudServiceManager.unregister]
      *
      * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
      * @throws IllegalArgumentException If [status] is [CloudServiceStatus.STARTED].

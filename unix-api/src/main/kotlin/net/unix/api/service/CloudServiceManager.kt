@@ -24,6 +24,13 @@ interface CloudServiceManager {
     fun register(service: CloudService)
 
     /**
+     * Unregister service from [services].
+     *
+     * @param service Service to unregister.
+     */
+    fun unregister(service: CloudService)
+
+    /**
      * Is exist [CloudService]'s with one name.
      *
      * @param name Name for check.

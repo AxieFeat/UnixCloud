@@ -5,6 +5,7 @@ import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
+import net.unix.api.service.CloudExecutable
 import org.jetbrains.annotations.Range
 import java.util.UUID
 
@@ -23,7 +24,12 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     /**
      * Cloud group name. Can be repeated by other groups.
      */
-    var name: String
+    val name: String
+
+    /**
+     * Name of group without any formatting.
+     */
+    val clearName: String
 
     /**
      * The type of group.
@@ -43,9 +49,19 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     val templates: MutableList<CloudTemplate>
 
     /**
+     * Set of services of this group.
+     */
+    val services: Set<CloudService>
+
+    /**
      * Count of all [CloudService]'s of this group.
      */
     val servicesCount: Int
+
+    /**
+     * Path to executable file in prepared service. It will be started via [CloudExecutable].
+     */
+    val executableFile: String
 
     /**
      * Max [CloudService]'s count of this group.

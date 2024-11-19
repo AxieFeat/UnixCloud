@@ -57,7 +57,10 @@ class CloudGroupTypeArgument : CommandArgument<CloudGroupType>() {
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
         CloudGroupType.types.forEach {
-            builder.suggest(it.key)
+            if (it.key.contains(" ")) {
+                builder.suggest("\"${it.key}\"")
+            } else
+                builder.suggest(it.key)
         }
 
         return builder.buildFuture()

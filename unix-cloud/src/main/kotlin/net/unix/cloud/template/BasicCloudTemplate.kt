@@ -8,13 +8,19 @@ import net.unix.cloud.CloudInstance
 import net.unix.cloud.persistence.CloudPersistentDataContainer
 import java.io.File
 
-@Suppress("LeakingThis", "UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 open class BasicCloudTemplate(
     override var name: String,
     override var files: MutableList<CloudFile> = mutableListOf()
 ) : SavableCloudTemplate {
 
-    override val folder: File = File(CloudInstance.instance.locationSpace.template, name)
+    override val folder: File = run {
+        val file = File(CloudInstance.instance.locationSpace.template, name)
+
+        file.mkdirs()
+
+        return@run file
+    }
 
     override val persistentDataContainer: PersistentDataContainer = CloudPersistentDataContainer()
 
@@ -36,6 +42,11 @@ open class BasicCloudTemplate(
         return serialized
     }
 
+    override fun delete() {
+        CloudInstance.instance.cloudTemplateManager.unregister(this)
+        folder.deleteRecursively()
+    }
+
     companion object {
 
         /**
@@ -48,8 +59,8 @@ open class BasicCloudTemplate(
         fun deserialize(serialized: Map<String, Any>): BasicCloudTemplate {
             val name = serialized["name"].toString()
 
-            val files = (serialized["files"] as Map<String, Any>).map {
-                CloudFile.deserialize(it.value as Map<String, Any>)
+            val files = (serialized["files"] as List<Map<String, Any>>).map {
+                CloudFile.deserialize(it)
             }
 
             return BasicCloudTemplate(name, files.toMutableList())

@@ -156,6 +156,35 @@ object CloudExtension {
     }
 
     /**
+     * Copy files.
+     *
+     * @param from From copy.
+     * @param to To paste.
+     */
+    fun copyFile(from: File, to: File) {
+        if (!from.exists()) {
+            throw IllegalArgumentException("File $from not exists!")
+        }
+
+        // Если исходный файл является директорией, то рекурсивно копируем содержимое
+        if (from.isDirectory) {
+            val files = from.listFiles()
+
+            if (files != null) {
+                for (file in files) {
+                    val newTo = File(to, file.name)
+
+                    // Рекурсия для вложенных файлов и директорий
+                    copyFile(file, newTo)
+                }
+            }
+        } else { // Иначе просто копируем файл
+            val targetFile = File(to, from.name)
+            from.copyTo(targetFile, overwrite = true)
+        }
+    }
+
+    /**
      * Hash of string.
      *
      * SHA-256 -> MD5 -> Base64 -> SHA-256

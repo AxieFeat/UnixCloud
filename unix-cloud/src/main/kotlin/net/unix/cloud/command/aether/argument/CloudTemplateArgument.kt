@@ -35,10 +35,10 @@ class CloudTemplateArgument : CommandArgument<CloudTemplate>() {
     }
 
     override fun parse(reader: StringReader): CloudTemplate {
-        val service = CloudInstance.instance.cloudTemplateManager[reader.readString()]
+        val template = CloudInstance.instance.cloudTemplateManager[reader.readString()]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
-        return service
+        return template
     }
 
     /**
@@ -63,7 +63,10 @@ class CloudTemplateArgument : CommandArgument<CloudTemplate>() {
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
         CloudInstance.instance.cloudTemplateManager.templates.forEach {
-            builder.suggest(it.name)
+            if (it.name.contains(" ")) {
+                builder.suggest("\"${it.name}\"")
+            } else
+                builder.suggest(it.name)
         }
 
         return builder.buildFuture()
