@@ -7,7 +7,7 @@ import java.io.File
  *
  * With this executable, you can run almost anything with any functionality for [CloudService]'s.
  */
-interface CloudExecutable {
+interface ServiceExecutable {
 
     /**
      * A [CloudService] that is managed.
@@ -20,7 +20,7 @@ interface CloudExecutable {
     val executableFile: File
 
     /**
-     * Is [CloudExecutable] run.
+     * Is [ServiceExecutable] run.
      */
     var started: Boolean
 

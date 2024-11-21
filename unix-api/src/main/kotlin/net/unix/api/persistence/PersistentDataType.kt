@@ -15,6 +15,13 @@ package net.unix.api.persistence
 interface PersistentDataType<T, Z> {
 
     /**
+     * Name of persistent type.
+     *
+     * @return Persistent name.
+     */
+    val name: String
+
+    /**
      * Returns the primitive data type of this tag.
      *
      * @return The class.
@@ -58,7 +65,10 @@ interface PersistentDataType<T, Z> {
      *
      * @param T The generic type of the primitive objects.
      */
-    class PrimitivePersistentDataType<T> internal constructor(override val primitiveType: Class<T>) : PersistentDataType<T, T> {
+    class PrimitivePersistentDataType<T> internal constructor(
+        override val name: String,
+        override val primitiveType: Class<T>
+    ) : PersistentDataType<T, T> {
 
         override val complexType: Class<T>
             get() = primitiveType
@@ -75,32 +85,40 @@ interface PersistentDataType<T, Z> {
 
     companion object {
 
-        val BYTE: PersistentDataType<Byte, Byte> = PrimitivePersistentDataType(Byte::class.java)
-        val SHORT: PersistentDataType<Short, Short> = PrimitivePersistentDataType(Short::class.java)
-        val INTEGER: PersistentDataType<Int, Int> = PrimitivePersistentDataType(Int::class.java)
-        val LONG: PersistentDataType<Long, Long> = PrimitivePersistentDataType(Long::class.java)
-        val FLOAT: PersistentDataType<Float, Float> = PrimitivePersistentDataType(Float::class.java)
-        val DOUBLE: PersistentDataType<Double, Double> = PrimitivePersistentDataType(Double::class.java)
+        val BYTE: PersistentDataType<Byte, Byte> = PrimitivePersistentDataType("BYTE", Byte::class.java)
+        val SHORT: PersistentDataType<Short, Short> = PrimitivePersistentDataType("SHORT", Short::class.java)
+        val INTEGER: PersistentDataType<Int, Int> = PrimitivePersistentDataType("INTEGER", Int::class.java)
+        val LONG: PersistentDataType<Long, Long> = PrimitivePersistentDataType("LONG", Long::class.java)
+        val FLOAT: PersistentDataType<Float, Float> = PrimitivePersistentDataType("FLOAT", Float::class.java)
+        val DOUBLE: PersistentDataType<Double, Double> = PrimitivePersistentDataType("DOUBLE", Double::class.java)
 
-        val STRING: PersistentDataType<String, String> = PrimitivePersistentDataType(String::class.java)
+        val STRING: PersistentDataType<String, String> = PrimitivePersistentDataType("STRING", String::class.java)
 
-        val BYTE_ARRAY: PersistentDataType<ByteArray, ByteArray> = PrimitivePersistentDataType(ByteArray::class.java)
+        val BYTE_ARRAY: PersistentDataType<ByteArray, ByteArray> = PrimitivePersistentDataType("BYTE_ARRAY", ByteArray::class.java)
         val INTEGER_ARRAY: PersistentDataType<IntArray, IntArray> = PrimitivePersistentDataType(
+            "INTEGER_ARRAY",
             IntArray::class.java
         )
         val LONG_ARRAY: PersistentDataType<LongArray, LongArray> = PrimitivePersistentDataType(
+            "LONG_ARRAY",
             LongArray::class.java
         )
 
         /**
          * Complex Arrays.
          */
-        val TAG_CONTAINER_ARRAY = PrimitivePersistentDataType(Array<PersistentDataContainer>::class.java)
+        val TAG_CONTAINER_ARRAY = PrimitivePersistentDataType(
+            "TAG_CONTAINER_ARRAY",
+            Array<PersistentDataContainer>::class.java
+        )
 
         /**
          * Nested PersistentDataContainer.
          */
-        val TAG_CONTAINER = PrimitivePersistentDataType(PersistentDataContainer::class.java)
+        val TAG_CONTAINER = PrimitivePersistentDataType(
+            "TAG_CONTAINER",
+            PersistentDataContainer::class.java
+        )
 
     }
 

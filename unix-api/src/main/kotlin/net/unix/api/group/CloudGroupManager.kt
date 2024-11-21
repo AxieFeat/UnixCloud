@@ -37,7 +37,7 @@ interface CloudGroupManager {
      * @param serviceLimit Limit of service for group.
      * @param executableFile Path to executable file in prepared service.
      * @param templates List of templates.
-     * @param type Type of group.
+     * @param executable Executable of group.
      *
      * @return New instance of [CloudGroup].
      */
@@ -46,7 +46,7 @@ interface CloudGroupManager {
                     serviceLimit: Int,
                     executableFile: String,
                     templates: MutableList<CloudTemplate> = mutableListOf(),
-                    type: CloudGroupType? = null
+                    executable: GroupExecutable? = null
     ): CloudGroup
 
     /**

@@ -29,6 +29,8 @@ allprojects {
     }
 
     dependencies {
+        implementation(kotlin("reflect"))
+
         implementation("kryonet:kryonet:2.21")
         implementation("com.esotericsoftware:kryo:5.6.0")
         implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
@@ -51,6 +53,9 @@ allprojects {
         implementation("net.kyori:adventure-text-serializer-ansi:4.17.0")
 
         implementation("com.google.code.gson:gson:2.11.0")
+
+        implementation("com.github.docker-java:docker-java:3.4.0")
+        implementation("com.github.docker-java:docker-java-transport-httpclient5:3.4.0")
     }
 }
 

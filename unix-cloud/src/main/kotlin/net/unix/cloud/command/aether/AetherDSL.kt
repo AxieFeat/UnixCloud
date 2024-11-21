@@ -96,6 +96,7 @@ class AetherDSLCommandBuilder(name: String, vararg aliases: String) {
      *
      * @return Current instance of [AetherLiteralBuilder]
      */
+    @CommandDSL3
     fun execute(command: CommandExecutor<CommandSender>): AetherDSLCommandBuilder {
         val command = Command { context ->
             command.run(context)
@@ -154,6 +155,7 @@ class AetherDSLLiteralBuilder(
      *
      * @return Current instance of [AetherLiteralBuilder]
      */
+    @CommandDSL3
     fun execute(command: CommandExecutor<CommandSender>): AetherDSLLiteralBuilder {
         val command = Command { context ->
             command.run(context)
@@ -193,6 +195,7 @@ class AetherDSLArgumentBuilder<T>(
     }
 
     @OptIn(ExperimentalContracts::class)
+    @CommandDSL4
     fun <T> argument(name: String, type: ArgumentType<T>, setup: AetherDSLArgumentBuilder<T>.() -> Unit): AetherDSLArgumentBuilder<T> {
         contract {
             callsInPlace(setup, InvocationKind.EXACTLY_ONCE)

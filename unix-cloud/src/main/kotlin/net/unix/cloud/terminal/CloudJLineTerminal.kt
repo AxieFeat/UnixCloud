@@ -3,6 +3,7 @@ package net.unix.cloud.terminal
 import net.kyori.adventure.text.Component
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.command.sender.CommandSender
+import net.unix.api.service.ConsoleServiceExecutable
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.command.brigadier.BrigadierCommandCompleter
@@ -26,6 +27,8 @@ open class CloudJLineTerminal(
     override val defaultPrompt = prompt.deserializeComponent()
 
     override val sender: CommandSender = CloudConsoleCommandSender()
+
+    override var selectedExecutable: ConsoleServiceExecutable? = null
 
     val terminal: org.jline.terminal.Terminal = TerminalBuilder.builder()
         .system(true)

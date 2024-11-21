@@ -1,9 +1,10 @@
 package net.unix.cloud.service
 
 import net.unix.api.scheduler.SchedulerType
-import net.unix.api.service.CloudExecutable
+import net.unix.api.service.AbstractCloudExecutable
 import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.ConsoleServiceExecutable
+import net.unix.cloud.group.CloudJVMGroup
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.scheduler.scheduler
 import java.io.*
@@ -12,19 +13,15 @@ import java.io.*
  * Executor for JVM executable files.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class CloudJVMExecutable(
+open class ServiceJVMExecutable(
     override val service: CloudService,
     override val executableFile: File = File(service.dataFolder, service.group.executableFile),
-    properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar", executableFile.path)
-) : CloudExecutable {
-
-    override var started: Boolean = false
-        set(value) {
-            field = value
-
-            if (value) service.status = CloudServiceStatus.STARTED
-            else service.status = CloudServiceStatus.PREPARED
-        }
+    val properties: List<String> =
+        if(service.group is CloudJVMGroup)
+            (service.group as CloudJVMGroup).properties.plus(executableFile.path)
+        else
+            listOf("java", "-Xms100M", "-Xmx1G", "-jar", executableFile.path)
+) : AbstractCloudExecutable(service, executableFile), ConsoleServiceExecutable {
 
     /**
      * Builder for service process.
@@ -32,16 +29,21 @@ open class CloudJVMExecutable(
     val processBuilder = run {
         val process = ProcessBuilder(properties)
 
-        process.directory(executableFile.parentFile)
+        process.directory(service.dataFolder)
         process.redirectErrorStream(true)
 
         return@run process
     }
 
-    /**
-     * All service terminal logs.
-     */
-    val logs = mutableListOf<String>()
+    override val logs = mutableListOf<String>()
+
+    override var viewConsole: Boolean = false
+        set(value) {
+            field = value
+
+            if (value)
+                logs.forEach { CloudLogger.service(it) }
+        }
 
     /**
      * Service process.
@@ -71,7 +73,7 @@ open class CloudJVMExecutable(
      *
      * @param command Command to send.
      */
-    fun command(command: String) {
+    override fun command(command: String) {
         scheduler(SchedulerType.EXECUTOR) {
             execute {
                 val writer = PrintWriter(process.outputStream)
@@ -91,6 +93,7 @@ open class CloudJVMExecutable(
 
                 while ((reader.readLine().also { line = it }) != null) {
                     logs.add(line!!)
+                    if(viewConsole) CloudLogger.service(line!!)
                 }
             }
         }

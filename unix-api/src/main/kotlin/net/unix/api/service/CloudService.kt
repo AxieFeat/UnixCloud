@@ -10,7 +10,7 @@ import java.util.*
  * [CloudService]'s allow to start instances of [CloudGroup].
  *
  * The service is some kind of executable program that is controlled by UnixCloud.
- * You can run almost anything using [CloudExecutable].
+ * You can run almost anything using [ServiceExecutable].
  */
 interface CloudService : PersistentDataHolder {
 
@@ -64,23 +64,23 @@ interface CloudService : PersistentDataHolder {
     /**
      * The service executable.
      */
-    var executable: CloudExecutable
+    var executable: ServiceExecutable?
 
     /**
      * Start [CloudService] with some executable properties.
      *
      * @param executable Executable properties.
      * @param overwrite If true - [executable] will be used in any case, else [executable] may
-     * be not used (If [CloudGroup] has some [CloudGroup.type])
+     * be not used (If [CloudGroup] has some [CloudGroup.groupExecutable])
      *
      * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
      * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.PREPARED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    fun start(executable: CloudExecutable, overwrite: Boolean = false)
+    fun start(executable: ServiceExecutable, overwrite: Boolean = false)
 
     /**
-     * Stop [CloudService].
+     * Kill [CloudService].
      *
      * @param delete Delete [CloudService] files after stop?
      *
@@ -88,7 +88,7 @@ interface CloudService : PersistentDataHolder {
      * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.STARTED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    fun stop(delete: Boolean = true)
+    fun kill(delete: Boolean = true)
 
     /**
      * Delete [CloudService]. It also unregister via [CloudServiceManager.unregister]

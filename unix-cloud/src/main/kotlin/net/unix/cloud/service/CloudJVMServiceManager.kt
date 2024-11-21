@@ -8,7 +8,7 @@ import net.unix.cloud.scheduler.scheduler
 import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
-object BasicCloudServiceManager : CloudServiceManager {
+object CloudJVMServiceManager : CloudServiceManager {
 
     val cachedServices = mutableMapOf<UUID, CloudService>()
 

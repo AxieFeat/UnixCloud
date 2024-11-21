@@ -166,22 +166,18 @@ object CloudExtension {
             throw IllegalArgumentException("File $from not exists!")
         }
 
-        // Если исходный файл является директорией, то рекурсивно копируем содержимое
         if (from.isDirectory) {
-            val files = from.listFiles()
+            from.listFiles()?.forEach {
+                val newTo = File(to, it.name)
 
-            if (files != null) {
-                for (file in files) {
-                    val newTo = File(to, file.name)
-
-                    // Рекурсия для вложенных файлов и директорий
-                    copyFile(file, newTo)
-                }
+                copyFile(it, newTo)
             }
-        } else { // Иначе просто копируем файл
-            val targetFile = File(to, from.name)
-            from.copyTo(targetFile, overwrite = true)
+
+            return
         }
+        
+        val targetFile = File(to, from.name)
+        from.copyTo(targetFile, overwrite = true)
     }
 
     /**

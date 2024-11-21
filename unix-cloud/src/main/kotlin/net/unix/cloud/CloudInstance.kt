@@ -1,5 +1,6 @@
 package net.unix.cloud
 
+import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.unix.api.CloudAPI
@@ -10,10 +11,7 @@ import net.unix.api.group.*
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
-import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.CloudServiceStatus
-import net.unix.api.service.StaticCloudService
+import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateManager
@@ -23,7 +21,7 @@ import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.CloudInstanceBuilder.Companion.builder
 import net.unix.cloud.command.CloudCommandDispatcher
 import net.unix.cloud.command.aether.argument.CloudGroupArgument
-import net.unix.cloud.command.aether.argument.CloudGroupTypeArgument
+import net.unix.cloud.command.aether.argument.GroupExecutableArgument
 import net.unix.cloud.command.aether.argument.CloudServiceArgument
 import net.unix.cloud.command.aether.argument.CloudTemplateArgument
 import net.unix.cloud.command.aether.command
@@ -31,11 +29,11 @@ import net.unix.cloud.command.aether.get
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudStartEvent
-import net.unix.cloud.group.BasicCloudGroupManager
+import net.unix.cloud.group.CloudJVMGroupManager
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
-import net.unix.cloud.service.BasicCloudServiceManager
+import net.unix.cloud.service.CloudJVMServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
 import java.text.SimpleDateFormat
@@ -60,7 +58,6 @@ fun main() {
 
     CloudInstance.instance.moduleManager.loadAll(false)
 
-
     val groupManager = CloudInstance.instance.cloudGroupManager
     val templateManager = CloudInstance.instance.cloudTemplateManager
 
@@ -78,6 +75,94 @@ fun registerCommands() {
     command("exit") {
         execute {
             CloudInstance.instance.shutdown()
+        }
+    }.register()
+
+    /*
+
+    /screen
+        list - Список всех сервисов, у которых включён просмотр консоли
+        switch <service> - Переключить отправку команд на этот сервис.
+        toggle <service> - Переключить просмотр консоли сервиса.
+        command <service> <command> - Отправить команду на сервис.
+
+
+     */
+    command("screen") {
+
+        execute {
+            CloudLogger.info("Usage:")
+            CloudLogger.info("  /screen list - List of all services, where are enabled console view")
+            CloudLogger.info("  /screen switch <service> - Switch command sending to this service")
+            CloudLogger.info("  /screen toggle <service> - Switching the service console view")
+            CloudLogger.info("  /screen command <service> <command> - Send command to service")
+        }
+
+        literal("list") {
+            execute {
+                val services = CloudInstance.instance.cloudServiceManager.services
+                    .filter { it.executable is ConsoleServiceExecutable }
+                    .filter { (it.executable as ConsoleServiceExecutable).viewConsole }
+
+                CloudLogger.info("Console view enabled for ${services.size} services")
+                services.forEach {
+                    CloudLogger.info(" - ${it.name}")
+                }
+            }
+        }
+
+        literal("switch") {
+            argument("service", CloudServiceArgument()) {
+                execute {
+                    val service: CloudService = it["service"]
+                    val executable = service.executable
+
+                    if(executable !is ConsoleServiceExecutable) {
+                        CloudLogger.info("Service ${service.name} is not support command sending")
+                        return@execute
+                    }
+                    CloudInstance.instance.terminal.selectedExecutable = service.executable as ConsoleServiceExecutable
+
+                    CloudLogger.info("You are selected ${service.name} for command sending")
+                }
+            }
+        }
+
+        literal("toggle") {
+            argument("service", CloudServiceArgument()) {
+                execute {
+                    val service: CloudService = it["service"]
+                    val executable = service.executable
+
+                    if(executable is ConsoleServiceExecutable) {
+                        executable.viewConsole = !executable.viewConsole
+                        CloudLogger.info("Toggled viewing of ${service.name} console")
+                        return@execute
+                    }
+
+                    CloudLogger.severe("Cant toggle view of ${service.name} console")
+                }
+            }
+        }
+
+        literal("command") {
+            argument("service", CloudServiceArgument()) {
+                argument("command", StringArgumentType.greedyString()) {
+                    execute {
+                        val service: CloudService = it["service"]
+                        val command: String = it["command"]
+                        val executable = service.executable
+
+                        if (executable is ConsoleServiceExecutable) {
+                            executable.command(command)
+                            CloudLogger.info("Command successfully sent to ${service.name}")
+                            return@execute
+                        }
+
+                        CloudLogger.severe("Cant sent command to ${service.name}")
+                    }
+                }
+            }
         }
     }.register()
 
@@ -160,7 +245,7 @@ fun registerCommands() {
         list - Список сервисов
         info <сервис> - Информация о сервисе
         create <группа> [количество] - создать новые сервисы
-        start <сервис> - запустить уже существующий сервис
+        start <сервис> [исполнитель] [перезаписать] - запустить уже существующий сервис
         kill <сервис> - остановить сервис
         delete <сервис> - удалить сервис
 
@@ -172,7 +257,7 @@ fun registerCommands() {
             CloudLogger.info("  /service list - List of all services")
             CloudLogger.info("  /service info <service> - Information about service")
             CloudLogger.info("  /service create <group> [count] - Create new service")
-            CloudLogger.info("  /service start <service> - Start existing service")
+            CloudLogger.info("  /service start <service> [executable] [overwrite] - Start existing service")
             CloudLogger.info("  /service stop <service> - Stop existing service")
             CloudLogger.info("  /service delete <service> - Delete existing service")
         }
@@ -248,9 +333,40 @@ fun registerCommands() {
 
         literal("start") {
             argument("service", CloudServiceArgument()) {
+
                 execute {
                     val service: CloudService = it["service"]
-                    service.executable.start()
+
+                    service.executable?.start() ?: CloudLogger.severe("Cant start ${service.name}, executable not found!")
+                }
+
+                fun start(service: CloudService, executable: GroupExecutable, overwrite: Boolean = true) {
+                    try {
+                        service.start(executable.executableFor(service), overwrite)
+                    } catch (e: CloudServiceModificationException) {
+                        CloudLogger.info("Service ${service.name} deleted!")
+                    } catch (e: IllegalArgumentException) {
+                        CloudLogger.info("Service ${service.name} already started!")
+                    }
+                }
+
+                argument("executable", GroupExecutableArgument()) {
+                    execute {
+                        val service: CloudService = it["service"]
+                        val executable: GroupExecutable = it["executable"]
+
+                        start(service, executable)
+                    }
+
+                    argument("overwrite", BoolArgumentType.bool()) {
+                        execute {
+                            val service: CloudService = it["service"]
+                            val executable: GroupExecutable = it["executable"]
+                            val overwrite: Boolean = it["overwrite"]
+
+                            start(service, executable, overwrite)
+                        }
+                    }
                 }
             }
         }
@@ -261,11 +377,11 @@ fun registerCommands() {
                     val service: CloudService = it["service"]
 
                     try {
-                        service.stop(false)
+                        service.kill(false)
                     } catch (e: CloudServiceModificationException) {
                         CloudLogger.info("Service ${service.name} deleted!")
                     } catch (e: IllegalArgumentException) {
-                        CloudLogger.info("Service ${service.name} already started!")
+                        CloudLogger.info("Service ${service.name} started, stop it before!")
                     }
                 }
             }
@@ -338,12 +454,12 @@ fun registerCommands() {
                             )
                         }
 
-                        argument("type", CloudGroupTypeArgument()) {
+                        argument("type", GroupExecutableArgument()) {
                             execute {
                                 val name: String = it["name"]
                                 val limit: Int = it["limit"]
                                 val executableFile: String = it["executableFile"]
-                                val type: CloudGroupType = it["type"]
+                                val type: GroupExecutable = it["type"]
 
                                 CloudLogger.info("Created new group with name $name")
 
@@ -381,16 +497,16 @@ fun registerCommands() {
 
                     CloudLogger.info("Info about ${group.name}:")
                     CloudLogger.info(" - UUID: ${group.uuid}")
-                    CloudLogger.info(" - Type: ${group.type?.name ?: "NONE"}")
+                    CloudLogger.info(" - Group executable: ${group.groupExecutable?.name ?: "NONE"}")
                     CloudLogger.info(" - Services limit: ${group.serviceLimit}")
                     CloudLogger.info(" - Executable file: ${group.executableFile}")
-                    CloudLogger.info(" - Templates(${group.templates.size})")
+                    CloudLogger.info(" - Templates(${group.templates.size}):")
 
                     group.templates.forEach {
                         CloudLogger.info("    - ${it.name}")
                     }
 
-                    CloudLogger.info(" - Active services(${group.services.size})")
+                    CloudLogger.info(" - Active services(${group.services.size}):")
 
                     group.services.forEach { service ->
                         CloudLogger.info("    - ${service.name}")
@@ -528,8 +644,8 @@ class CloudInstance(
     override val terminal: Terminal = terminal ?: CloudJLineTerminal(UnixConfiguration.terminal.prompt, this.commandDispatcher)
 
     override val cloudTemplateManager: CloudTemplateManager = cloudTemplateManager ?: BasicCloudTemplateManager
-    override val cloudGroupManager: CloudGroupManager = cloudGroupManager ?: BasicCloudGroupManager
-    override val cloudServiceManager: CloudServiceManager = cloudServiceManager ?: BasicCloudServiceManager
+    override val cloudGroupManager: CloudGroupManager = cloudGroupManager ?: CloudJVMGroupManager
+    override val cloudServiceManager: CloudServiceManager = cloudServiceManager ?: CloudJVMServiceManager
 
     override val moduleManager: ModuleManager = moduleManager ?: CloudModuleManager
     override val extensionManager: ExtensionManager = extensionManager ?: CloudExtensionManager

@@ -14,6 +14,9 @@ object LogType {
 
     @JvmStatic
     val DEBUG = CloudLevel("DEBUG", 4)
+
+    @JvmStatic
+    val SERVICE = CloudLevel("SERVICE", 5)
 }
 
 class CloudLevel(

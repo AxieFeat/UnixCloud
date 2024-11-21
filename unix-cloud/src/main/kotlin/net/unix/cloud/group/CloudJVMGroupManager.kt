@@ -9,12 +9,16 @@ import java.io.File
 import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
-object BasicCloudGroupManager : SavableCloudGroupManager {
+object CloudJVMGroupManager : SavableCloudGroupManager {
 
     val cachedGroups = mutableMapOf<UUID, CloudGroup>()
 
     override val groups: Set<CloudGroup>
         get() = cachedGroups.values.toSet()
+
+    init {
+        GroupJVMExecutable.register()
+    }
 
     override fun register(group: CloudGroup) {
         cachedGroups[group.uuid] = group
@@ -44,10 +48,15 @@ object BasicCloudGroupManager : SavableCloudGroupManager {
         serviceLimit: Int,
         executableFile: String,
         templates: MutableList<CloudTemplate>,
-        type: CloudGroupType?
+        executable: GroupExecutable?
     ): CloudGroup {
-        val group = BasicCloudGroup(
-            uuid, name, serviceLimit, executableFile, templates, type
+        val group = CloudJVMGroup(
+            uuid,
+            name,
+            serviceLimit,
+            executableFile,
+            templates = templates,
+            groupExecutable = executable
         )
 
         register(group)
@@ -74,7 +83,7 @@ object BasicCloudGroupManager : SavableCloudGroupManager {
     override fun get(uuid: UUID): CloudGroup? = cachedGroups[uuid]
 
     override fun loadGroup(file: File): SavableCloudGroup {
-        val group = BasicCloudGroup.deserialize(file.readJson<Map<String, Any>>())
+        val group = CloudJVMGroup.deserialize(file.readJson<Map<String, Any>>())
 
         CloudLogger.debug("Loaded group ${group.name}")
 

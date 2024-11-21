@@ -5,35 +5,35 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.command.CommandArgument
-import net.unix.api.group.CloudGroupType
+import net.unix.api.group.GroupExecutable
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import java.util.concurrent.CompletableFuture
 
 /**
- * Command argument for [CloudGroupType].
+ * Command argument for [GroupExecutable].
  */
-class CloudGroupTypeArgument : CommandArgument<CloudGroupType>() {
+class GroupExecutableArgument : CommandArgument<GroupExecutable>() {
 
-    private var notFoundMessage = "CloudGroupType not found"
+    private var notFoundMessage = "GroupExecutable not found"
 
     companion object {
         /**
-         * Get [CloudGroupType] from command context by argument name.
+         * Get [GroupExecutable] from command context by argument name.
          *
          * @param name Argument name.
          *
-         * @return Instance of [CloudGroupType].
+         * @return Instance of [GroupExecutable].
          *
-         * @throws IllegalArgumentException If argument not found or is not [CloudGroupType].
+         * @throws IllegalArgumentException If argument not found or is not [GroupExecutable].
          */
         @Throws(IllegalArgumentException::class)
-        fun CommandContext<*>.getCloudService(name: String): CloudGroupType {
-            return this.getArgument(name, CloudGroupType::class.java)
+        fun CommandContext<*>.getGroupExecutable(name: String): GroupExecutable {
+            return this.getArgument(name, GroupExecutable::class.java)
         }
     }
 
-    override fun parse(reader: StringReader): CloudGroupType {
-        val type = CloudGroupType[reader.readString()] ?:
+    override fun parse(reader: StringReader): GroupExecutable {
+        val type = GroupExecutable[reader.readString()] ?:
             throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return type
@@ -46,7 +46,7 @@ class CloudGroupTypeArgument : CommandArgument<CloudGroupType>() {
      *
      * @return Current instance of [CloudServiceArgument].
      */
-    fun notFound(message: String): CloudGroupTypeArgument {
+    fun notFound(message: String): GroupExecutableArgument {
         this.notFoundMessage = message
 
         return this
@@ -56,7 +56,7 @@ class CloudGroupTypeArgument : CommandArgument<CloudGroupType>() {
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        CloudGroupType.types.forEach {
+        GroupExecutable.executables.forEach {
             if (it.key.contains(" ")) {
                 builder.suggest("\"${it.key}\"")
             } else

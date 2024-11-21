@@ -4,6 +4,7 @@ import net.unix.api.NamespacedKey
 import net.unix.api.persistence.PersistentDataAdapterContext
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.persistence.PersistentDataType
+import kotlin.reflect.KFunction
 
 @Suppress("UNCHECKED_CAST")
 open class CloudPersistentDataContainer : PersistentDataContainer {
@@ -70,7 +71,7 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
             val persistent = mutableMapOf<String, Any>()
 
             key.value.forEach { data ->
-                persistent[data.key.primitiveType.name] = data.value.toString()
+                persistent[data.key.name] = data.value.toString()
             }
 
             serialized[key.key] = persistent
@@ -88,7 +89,48 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
          * @return Deserialized instance of [CloudPersistentDataContainer].
          */
         fun deserialize(serialized: Map<String, Any>): CloudPersistentDataContainer {
-            TODO()
+            val container = CloudPersistentDataContainer()
+
+            for ((key, value) in serialized) {
+                val namespacedKey = NamespacedKey.fromString(key) ?: continue
+
+                if (value !is Map<*, *>) continue
+
+                val mapValues = value as Map<String, String>
+
+                for ((typeName, strValue) in mapValues) {
+                    val type = when (typeName) {
+                        "BYTE" -> PersistentDataType.BYTE
+                        "SHORT" -> PersistentDataType.SHORT
+                        "INT" -> PersistentDataType.INTEGER
+                        "LONG" -> PersistentDataType.LONG
+                        "FLOAT" -> PersistentDataType.FLOAT
+                        "DOUBLE" -> PersistentDataType.DOUBLE
+                        "STRING" -> PersistentDataType.STRING
+
+                        else -> throw IllegalArgumentException("Unknown primitive type $typeName")
+                    }
+
+                    val actualValue = when (type) {
+                        PersistentDataType.BYTE -> strValue.toByte()
+                        PersistentDataType.SHORT -> strValue.toShort()
+                        PersistentDataType.INTEGER -> strValue.toInt()
+                        PersistentDataType.LONG -> strValue.toLong()
+                        PersistentDataType.FLOAT -> strValue.toFloat()
+                        PersistentDataType.DOUBLE -> strValue.toDouble()
+                        PersistentDataType.STRING -> strValue
+
+                        else -> throw IllegalStateException("Unexpected type: $type")
+                    }
+
+                    val method = CloudPersistentDataContainer::class.members
+                        .find { it.name == "set" } as KFunction<*>
+
+                    method.call(container, namespacedKey, type, actualValue)
+                }
+            }
+
+            return container
         }
     }
 }

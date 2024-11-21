@@ -68,6 +68,16 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
     }
 
     @Synchronized
+    fun service(msg: String) {
+        printMessage(msg, LogType.SERVICE)
+    }
+
+    @Synchronized
+    fun service(msg: Component) {
+        debug(msg.serialize())
+    }
+
+    @Synchronized
     fun debug(msg: String) {
         if(debug) printMessage(msg, LogType.DEBUG)
     }
@@ -125,6 +135,12 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
 
         val coloredMessage = formatString(msg, level)
 
+        if (level == LogType.SERVICE) {
+            super.log(level, msg)
+            CloudInstance.instance.terminal.print(msg)
+            return
+        }
+
         super.log(
             level,
             formatFile.format(
@@ -133,6 +149,7 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
                 msg.deserializeComponent().strip()
             )
         )
+
         CloudInstance.instance.terminal.print(coloredMessage)
     }
 

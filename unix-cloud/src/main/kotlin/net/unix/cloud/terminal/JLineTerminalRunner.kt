@@ -4,6 +4,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.unix.api.command.CommandDispatcher
 import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.CloudExtension.strip
+import net.unix.cloud.CloudInstance
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.scheduler.scheduler
@@ -47,21 +48,27 @@ class JLineTerminalRunner(
 
                 trim = line.trim()
 
-                if (trim.isNotEmpty() && !line.startsWith(UnixConfiguration.terminal.serviceCommandPrefix)) {
+                if (trim.isNotEmpty()) {
 
-                    execute {
-                        try {
+                    if (!line.startsWith(UnixConfiguration.terminal.serviceCommandPrefix)) {
+                        execute {
+                            try {
 
-                            dispatcher.dispatchCommand(
-                                dispatcher.parseCommand(
-                                    terminal.sender,
-                                    trim
+                                dispatcher.dispatchCommand(
+                                    dispatcher.parseCommand(
+                                        terminal.sender,
+                                        trim
+                                    )
                                 )
-                            )
 
-                        } catch (e: CommandSyntaxException) {
-                            SyntaxExceptionBuilder.print(e)
+                            } catch (e: CommandSyntaxException) {
+                                SyntaxExceptionBuilder.print(e)
+                            }
                         }
+                    } else {
+                        CloudInstance.instance.terminal.selectedExecutable?.command(
+                            line.replaceFirst(UnixConfiguration.terminal.serviceCommandPrefix, "")
+                        )
                     }
 
                 }

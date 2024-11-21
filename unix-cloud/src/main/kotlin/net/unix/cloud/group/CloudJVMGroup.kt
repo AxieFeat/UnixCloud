@@ -1,6 +1,6 @@
 package net.unix.cloud.group
 
-import net.unix.api.group.CloudGroupType
+import net.unix.api.group.GroupExecutable
 import net.unix.api.group.SavableCloudGroup
 import net.unix.api.group.exception.CloudGroupDeleteException
 import net.unix.api.group.exception.CloudGroupLimitException
@@ -14,18 +14,19 @@ import net.unix.cloud.CloudExtension.toJson
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.persistence.CloudPersistentDataContainer
-import net.unix.cloud.service.BasicCloudService
+import net.unix.cloud.service.CloudJVMService
 import java.io.File
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
-open class BasicCloudGroup(
+open class CloudJVMGroup(
     override val uuid: UUID = uniqueUUID(),
     name: String,
     serviceLimit: Int = 1,
     override val executableFile: String,
+    val properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar"),
     override val templates: MutableList<CloudTemplate> = mutableListOf(),
-    override val type: CloudGroupType? = null,
+    override val groupExecutable: GroupExecutable? = GroupJVMExecutable,
 ) : SavableCloudGroup {
 
     override val clearName: String = name
@@ -82,7 +83,7 @@ open class BasicCloudGroup(
 
         cachedServicesCount+=1
 
-        val service = BasicCloudService(
+        val service = CloudJVMService(
             this,
             name = "$clearName-$servicesCount"
         )
@@ -99,9 +100,9 @@ open class BasicCloudGroup(
         serialized["uuid"] = uuid
         serialized["service-limit"] = serviceLimit
         serialized["executable-file"] = executableFile
+        serialized["properties"] = properties
+        if(groupExecutable?.name != null) serialized["group-executable"] = groupExecutable!!.name
         serialized["templates"] = templates.map { it.name }
-
-        if(type?.name != null) serialized["type"] = type!!.name
 
         return serialized
     }
@@ -136,13 +137,13 @@ open class BasicCloudGroup(
 
     companion object {
         /**
-         * Deserialize [BasicCloudGroup] from [BasicCloudGroup.serialize].
+         * Deserialize [CloudJVMGroup] from [CloudJVMGroup.serialize].
          *
          * @param serialized Serialized data.
          *
-         * @return Deserialized instance of [BasicCloudGroup].
+         * @return Deserialized instance of [CloudJVMGroup].
          */
-        fun deserialize(serialized: Map<String, Any>): BasicCloudGroup {
+        fun deserialize(serialized: Map<String, Any>): CloudJVMGroup {
             var uuid = UUID.fromString(serialized["uuid"].toString())
 
             if (uuid.inUse()) {
@@ -153,19 +154,21 @@ open class BasicCloudGroup(
             val name = serialized["name"].toString()
             val serviceLimit = serialized["service-limit"].toString().toIntOrNull() ?: 1
             val executableFile = serialized["executable-file"].toString()
+            val properties = serialized["properties"] as List<String>
 
             val serializedTemplates = serialized["templates"] as List<String>
             val templates = serializedTemplates.mapNotNull {
                 CloudInstance.instance.cloudTemplateManager[it]
             }.toMutableList()
 
-            val type = CloudGroupType[serialized["type"].toString()]
+            val type = GroupExecutable[serialized["group-executable"].toString()]
 
-            return BasicCloudGroup(
+            return CloudJVMGroup(
                 uuid,
                 name,
                 serviceLimit,
                 executableFile,
+                properties,
                 templates,
                 type
             )

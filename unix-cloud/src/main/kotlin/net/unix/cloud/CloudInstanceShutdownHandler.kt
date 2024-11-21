@@ -16,7 +16,9 @@ class CloudInstanceShutdownHandler(
 
         CloudInstance.instance.cloudServiceManager.services.forEach {
             if (it !is StaticCloudService || !it.static) {
-                it.delete()
+                try {
+                    it.kill(true)
+                } catch (ignore: Exception) {}
             }
         }
         instance.server.close()

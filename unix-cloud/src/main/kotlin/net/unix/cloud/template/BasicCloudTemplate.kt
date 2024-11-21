@@ -11,7 +11,8 @@ import java.io.File
 @Suppress("UNCHECKED_CAST")
 open class BasicCloudTemplate(
     override var name: String,
-    override var files: MutableList<CloudFile> = mutableListOf()
+    override var files: MutableList<CloudFile> = mutableListOf(),
+    override var backFiles: MutableList<CloudFile> = mutableListOf()
 ) : SavableCloudTemplate {
 
     override val folder: File = run {
@@ -38,6 +39,7 @@ open class BasicCloudTemplate(
 
         serialized["name"] = name
         serialized["files"] = files.map { it.serialize() }
+        serialized["back-files"] = files.map { it.serialize() }
 
         return serialized
     }
@@ -61,9 +63,13 @@ open class BasicCloudTemplate(
 
             val files = (serialized["files"] as List<Map<String, Any>>).map {
                 CloudFile.deserialize(it)
-            }
+            }.toMutableList()
 
-            return BasicCloudTemplate(name, files.toMutableList())
+            val backFiles = (serialized["back-files"] as List<Map<String, Any>>).map {
+                CloudFile.deserialize(it)
+            }.toMutableList()
+
+            return BasicCloudTemplate(name, files, backFiles)
         }
     }
 

@@ -24,6 +24,11 @@ interface CloudTemplate : PersistentDataHolder, Serializable {
     var files: MutableList<CloudFile>
 
     /**
+     * Files, that will be copied back, after [CloudService] delete.
+     */
+    var backFiles: MutableList<CloudFile>
+
+    /**
      * Delete template.
      */
     fun delete()

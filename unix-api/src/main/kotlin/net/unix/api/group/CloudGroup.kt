@@ -5,7 +5,7 @@ import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
-import net.unix.api.service.CloudExecutable
+import net.unix.api.service.ServiceExecutable
 import org.jetbrains.annotations.Range
 import java.util.UUID
 
@@ -32,14 +32,14 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     val clearName: String
 
     /**
-     * The type of group.
+     * The executable of group.
      *
-     * If you set type of group - all services will be
-     * started with this executable properties of this type.
+     * If you set executable of group - all services will be
+     * started with this executable properties.
      *
      * If null - type is not set.
      */
-    val type: CloudGroupType?
+    val groupExecutable: GroupExecutable?
 
     /**
      * [CloudTemplate]'s of group.
@@ -59,7 +59,7 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     val servicesCount: Int
 
     /**
-     * Path to executable file in prepared service. It will be started via [CloudExecutable].
+     * Path to executable file in prepared service. It will be started via [ServiceExecutable].
      */
     val executableFile: String
 
