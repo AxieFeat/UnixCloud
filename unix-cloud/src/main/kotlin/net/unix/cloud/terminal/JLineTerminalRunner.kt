@@ -7,7 +7,7 @@ import net.unix.cloud.CloudExtension.strip
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.cloud.configuration.UnixConfiguration
-import net.unix.cloud.scheduler.scheduler
+import net.unix.scheduler.impl.scheduler
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
 

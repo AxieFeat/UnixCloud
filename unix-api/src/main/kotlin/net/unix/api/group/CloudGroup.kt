@@ -27,7 +27,7 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     val name: String
 
     /**
-     * Name of group without any formatting.
+     * Name of group without any formatting. Can not contain spaces.
      */
     val clearName: String
 

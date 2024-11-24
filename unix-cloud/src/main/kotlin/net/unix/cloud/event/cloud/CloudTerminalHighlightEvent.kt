@@ -1,6 +1,6 @@
 package net.unix.cloud.event.cloud
 
-import net.unix.api.event.Event
+import net.unix.event.Event
 import org.jline.reader.LineReader
 import org.jline.utils.AttributedStringBuilder
 

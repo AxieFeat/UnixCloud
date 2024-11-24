@@ -29,6 +29,10 @@ open class CloudJVMGroup(
     override val groupExecutable: GroupExecutable? = GroupJVMExecutable,
 ) : SavableCloudGroup {
 
+    init {
+        if(name.contains(" ")) throw IllegalArgumentException("Name of group can not contain spaces!")
+    }
+
     override val clearName: String = name
 
     override val name: String
@@ -70,6 +74,9 @@ open class CloudJVMGroup(
         get() = CloudInstance.instance.cloudServiceManager.services.filter { it.group.uuid == this.uuid }.toSet()
 
     override fun create(count: Int): List<CloudService> {
+        if (count < 1) throw IllegalArgumentException("Count of services can not be less 1!")
+        if((servicesCount + count) > serviceLimit) throw CloudGroupLimitException("Limit of services for group $name is $serviceLimit!")
+
         val result = mutableListOf<CloudService>()
 
         for (i in 0 until count) {
@@ -80,6 +87,7 @@ open class CloudJVMGroup(
     }
 
     override fun create(): CloudService {
+        if(servicesCount >= serviceLimit) throw CloudGroupLimitException("Limit of services for group $name is $serviceLimit!")
 
         cachedServicesCount+=1
 

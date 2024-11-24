@@ -1,7 +1,7 @@
 package net.unix.cloud.event.cloud
 
-import net.unix.api.event.Cancellable
-import net.unix.api.event.Event
+import net.unix.event.Event
+import net.unix.event.Cancellable
 import org.jline.reader.Candidate
 import org.jline.reader.LineReader
 import org.jline.reader.ParsedLine

@@ -6,11 +6,14 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import net.unix.api.CloudAPI
 import net.unix.api.CloudBuilder
 import net.unix.api.LocationSpace
+import net.unix.api.bridge.CloudBridge
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.*
+import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
+import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.api.template.CloudTemplate
@@ -19,6 +22,7 @@ import net.unix.api.template.SavableCloudTemplateManager
 import net.unix.api.terminal.Terminal
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.CloudInstanceBuilder.Companion.builder
+import net.unix.cloud.bridge.JVMBridge
 import net.unix.cloud.command.CloudCommandDispatcher
 import net.unix.cloud.command.aether.argument.CloudGroupArgument
 import net.unix.cloud.command.aether.argument.GroupExecutableArgument
@@ -51,15 +55,19 @@ fun main() {
 
     builder.build()
 
+    val instance = CloudInstance.instance
+
     CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
     CloudExtensionManager.extensions.forEach {
         CloudLogger.info("- ${it.info.name} v${it.info.version}")
     }
 
-    CloudInstance.instance.moduleManager.loadAll(false)
+    instance.moduleManager.loadAll(false)
 
-    val groupManager = CloudInstance.instance.cloudGroupManager
-    val templateManager = CloudInstance.instance.cloudTemplateManager
+    instance.bridge.configure(instance.server)
+
+    val groupManager = instance.cloudGroupManager
+    val templateManager = instance.cloudTemplateManager
 
     if (templateManager is SavableCloudTemplateManager)
         templateManager.loadAllTemplates()
@@ -296,6 +304,13 @@ fun registerCommands() {
                     CloudLogger.info(" - UUID: ${service.uuid}")
                     CloudLogger.info(" - Status: ${service.status}")
                     CloudLogger.info(" - Group: ${service.group.name}")
+                    CloudLogger.info(" - Memory: ${
+                        (service.persistentDataContainer[JVMBridge.serviceUsedMemory, PersistentDataType.LONG] ?: 0L)
+                        / 1000000
+                    }/${
+                        (service.persistentDataContainer[JVMBridge.serviceMaxMemory, PersistentDataType.LONG] ?: 0L)
+                        / 1000000
+                    } MB")
                     CloudLogger.info(" - Create date: ${format.format(service.created)}")
                     if (service.status == CloudServiceStatus.STARTED)
                         CloudLogger.info(" - Uptime: ${formatSeconds(service.uptime)}")
@@ -311,7 +326,12 @@ fun registerCommands() {
                 execute {
                     val group: CloudGroup = it["group"]
 
-                    val service = group.create()
+                    val service = try {
+                        group.create()
+                    } catch (e: CloudGroupLimitException) {
+                        CloudLogger.info("Can not create service of group ${group.name}! Limit is ${group.serviceLimit}.")
+                        return@execute
+                    }
 
                     CloudLogger.info("Created service ${service.name} from group ${group.name}")
                 }
@@ -321,7 +341,12 @@ fun registerCommands() {
                         val group: CloudGroup = it["group"]
                         val count: Int = it["count"]
 
-                        val services = group.create(count)
+                        val services = try {
+                            group.create(count)
+                        } catch (e: CloudGroupLimitException) {
+                            CloudLogger.info("Can not create service of group ${group.name}! Limit is ${group.serviceLimit}.")
+                            return@execute
+                        }
 
                         CloudLogger.info("Created ${services.size} services from group ${group.name}")
                     }
@@ -441,6 +466,12 @@ fun registerCommands() {
                         execute {
 
                             val name: String = it["name"]
+
+                            if(name.contains(" ")) {
+                                CloudLogger.info("Name of group can not contain spaces!")
+                                return@execute
+                            }
+
                             val limit: Int = it["limit"]
                             val executableFile: String = it["executableFile"]
 
@@ -457,6 +488,12 @@ fun registerCommands() {
                         argument("type", GroupExecutableArgument()) {
                             execute {
                                 val name: String = it["name"]
+
+                                if(name.contains(" ")) {
+                                    CloudLogger.info("Name of group can not contain spaces!")
+                                    return@execute
+                                }
+
                                 val limit: Int = it["limit"]
                                 val executableFile: String = it["executableFile"]
                                 val type: GroupExecutable = it["type"]
@@ -506,10 +543,33 @@ fun registerCommands() {
                         CloudLogger.info("    - ${it.name}")
                     }
 
-                    CloudLogger.info(" - Active services(${group.services.size}):")
+                    CloudLogger.info(" - Sum memory usage: ${
+                        run {
+                            var result = 0L
+
+                            group.services.forEach { service ->
+                                result += service.persistentDataContainer[JVMBridge.serviceUsedMemory, PersistentDataType.LONG] ?: 0L
+                            }
+
+                            return@run result / 1000000
+                        }
+                    } MB")
+                    CloudLogger.info(" - Services(${group.services.size}):")
 
                     group.services.forEach { service ->
-                        CloudLogger.info("    - ${service.name}")
+                        CloudLogger.info("    - ${service.name}, ${service.status}${
+                            run {
+                                
+                                if (service.status != CloudServiceStatus.STARTED) {
+                                    return@run ""
+                                }
+
+                                val memory =
+                                    (service.persistentDataContainer[JVMBridge.serviceUsedMemory, PersistentDataType.LONG] ?: 0L) / 1000000
+
+                                return@run ", Usage $memory MB"
+                            }
+                        }")
                     }
                 }
             }
@@ -533,6 +593,8 @@ class CloudInstanceBuilder : CloudBuilder {
     private var extensionManager: ExtensionManager? = null
 
     private var server: Server? = null
+
+    private var bridge: CloudBridge? = null
 
     companion object {
         fun CloudInstance.Companion.builder(): CloudInstanceBuilder {
@@ -588,6 +650,12 @@ class CloudInstanceBuilder : CloudBuilder {
         return this
     }
 
+    override fun bridge(bridge: CloudBridge): CloudBuilder {
+        this.bridge = bridge
+
+        return this
+    }
+
     override fun locationSpace(space: LocationSpace): CloudInstanceBuilder {
         this.locationSpace = space
         
@@ -604,7 +672,8 @@ class CloudInstanceBuilder : CloudBuilder {
             cloudServiceManager,
             moduleManager,
             extensionManager,
-            server
+            server,
+            bridge
         )
     }
 }
@@ -622,7 +691,8 @@ class CloudInstance(
     moduleManager: ModuleManager? = null,
     extensionManager: ExtensionManager? = null,
 
-    server: Server? = null
+    server: Server? = null,
+    bridge: CloudBridge? = null
 ) : CloudAPI() {
 
     companion object {
@@ -651,6 +721,7 @@ class CloudInstance(
     override val extensionManager: ExtensionManager = extensionManager ?: CloudExtensionManager
 
     override val server: Server = (server ?: Server()).also { it.start(UnixConfiguration.bridge.port) }
+    override val bridge: CloudBridge = bridge ?: JVMBridge
 
     init {
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler(this).run() })

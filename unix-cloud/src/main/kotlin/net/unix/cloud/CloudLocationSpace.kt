@@ -5,12 +5,10 @@ import net.unix.api.LocationSpace
 import net.unix.cloud.configuration.UnixConfiguration
 import java.io.File
 
-val mainDirectory = run {
-    val path = File(
+val mainDirectory: File = run {
+    val file = File(
         CloudAPI::class.java.getProtectionDomain().codeSource.location.toURI()
-    ).parentFile.path
-
-    val file = File(path)
+    ).parentFile
 
     if (!file.exists()) {
         file.mkdirs()

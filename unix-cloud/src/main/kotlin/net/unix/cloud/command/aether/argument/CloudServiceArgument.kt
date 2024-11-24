@@ -8,6 +8,7 @@ import net.unix.api.command.CommandArgument
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.api.service.CloudService
 import net.unix.cloud.CloudInstance
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -35,7 +36,19 @@ class CloudServiceArgument : CommandArgument<CloudService>() {
     }
 
     override fun parse(reader: StringReader): CloudService {
-        val service = CloudInstance.instance.cloudServiceManager[reader.readString()].firstOrNull()
+        val rawName = reader.readString()
+
+        val uuid = if(rawName.contains(" ")) {
+            UUID.fromString(
+                rawName.split(" ")[1]
+                    .replace("(", "")
+                    .replace(")", "")
+            )
+        } else {
+            CloudInstance.instance.cloudServiceManager[rawName].first().uuid
+        }
+
+        val service = CloudInstance.instance.cloudServiceManager[uuid]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return service

@@ -1,6 +1,6 @@
 package net.unix.cloud.event.modification.extension
 
-import net.unix.api.event.Cancellable
+import net.unix.event.Cancellable
 import net.unix.api.modification.extension.Extension
 import net.unix.cloud.event.modification.ModificationEvent
 

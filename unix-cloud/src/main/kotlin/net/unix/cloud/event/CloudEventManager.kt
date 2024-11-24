@@ -2,19 +2,19 @@
 
 package net.unix.cloud.event
 
-import net.unix.api.event.Event
-import net.unix.api.event.EventManager
-import net.unix.api.event.Scoped
-import net.unix.api.event.Typed
-import net.unix.api.event.exception.ErrorPolicy
-import net.unix.api.event.exception.EventDispatchException
-import net.unix.api.event.listener.EventHandler
-import net.unix.api.event.listener.EventType
-import net.unix.api.event.listener.ListenerPriority
-import net.unix.api.event.listener.ListenerScope
-import net.unix.api.event.scope.ScopeGroup
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.logging.CloudLogger
+import net.unix.event.Event
+import net.unix.event.EventManager
+import net.unix.event.Scoped
+import net.unix.event.Typed
+import net.unix.event.exception.ErrorPolicy
+import net.unix.event.exception.EventDispatchException
+import net.unix.event.listener.EventHandler
+import net.unix.event.listener.EventType
+import net.unix.event.listener.ListenerPriority
+import net.unix.event.listener.ListenerScope
+import net.unix.event.scope.ScopeGroup
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
@@ -214,7 +214,8 @@ object CloudEventManager : EventManager {
                 listener.listenerMethod.isAccessible = true
                 listener.listenerMethod.invoke(listener.listenerClassInstance, event)
             } catch (e: IllegalAccessException) {
-              //  logger.error("Could not access event handler method:", throwable = e)
+                CloudLogger.severe("Could not access event handler method")
+                CloudLogger.exception(e)
             } catch (e: InvocationTargetException) {
                 // depending on error policy, throw an exception or just log and ignore
 

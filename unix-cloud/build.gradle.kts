@@ -12,6 +12,8 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":unix-api"))
     implementation(project(":unix-network"))
+    implementation(project(":unix-scheduler"))
+    implementation(project(":unix-event-system"))
 }
 
 tasks.test {

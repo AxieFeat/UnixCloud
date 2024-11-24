@@ -1,10 +1,10 @@
 package net.unix.cloud.service
 
-import net.unix.api.scheduler.SchedulerType
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.service.CloudServiceStatus
-import net.unix.cloud.scheduler.scheduler
+import net.unix.scheduler.SchedulerType
+import net.unix.scheduler.impl.scheduler
 import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")

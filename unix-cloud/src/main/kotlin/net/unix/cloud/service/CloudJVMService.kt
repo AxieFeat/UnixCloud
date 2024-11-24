@@ -6,7 +6,6 @@ import net.unix.api.service.ServiceExecutable
 import net.unix.api.service.CloudServiceStatus
 import net.unix.api.service.StaticCloudService
 import net.unix.api.service.exception.CloudServiceModificationException
-import net.unix.cloud.CloudExtension.copyFile
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.logging.CloudLogger
@@ -60,10 +59,10 @@ open class CloudJVMService(
             val files = template.files
 
             files.forEach {
-                copyFile(
-                    File(mainDirectory, it.from.toString()),
-                    File(dataFolder, it.to.toString())
-                )
+                val from = File(mainDirectory, it.from.toString())
+                val to = File(dataFolder, it.to.toString())
+
+                from.copyRecursively(to, overwrite = true)
             }
         }
     }
@@ -105,10 +104,10 @@ open class CloudJVMService(
             val files = template.backFiles
 
             files.forEach {
-                copyFile(
-                    File(dataFolder, it.from.toString()),
-                    File(mainDirectory, it.to.toString())
-                )
+                val from = File(dataFolder, it.from.toString())
+                val to = File(mainDirectory, it.to.toString())
+
+                from.copyRecursively(to, overwrite = true)
             }
         }
 

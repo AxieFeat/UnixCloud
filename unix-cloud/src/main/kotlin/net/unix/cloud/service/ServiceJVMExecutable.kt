@@ -1,12 +1,12 @@
 package net.unix.cloud.service
 
-import net.unix.api.scheduler.SchedulerType
 import net.unix.api.service.AbstractCloudExecutable
 import net.unix.api.service.CloudService
 import net.unix.api.service.ConsoleServiceExecutable
 import net.unix.cloud.group.CloudJVMGroup
 import net.unix.cloud.logging.CloudLogger
-import net.unix.cloud.scheduler.scheduler
+import net.unix.scheduler.SchedulerType
+import net.unix.scheduler.impl.scheduler
 import java.io.*
 
 /**

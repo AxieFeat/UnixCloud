@@ -40,7 +40,10 @@ interface CloudGroupManager {
      * @param executable Executable of group.
      *
      * @return New instance of [CloudGroup].
+     *
+     * @throws IllegalArgumentException If [name] contain spaces.
      */
+    @Throws(IllegalArgumentException::class)
     fun newInstance(uuid: UUID,
                     name: String,
                     serviceLimit: Int,

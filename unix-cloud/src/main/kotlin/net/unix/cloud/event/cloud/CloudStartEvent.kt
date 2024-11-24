@@ -1,7 +1,7 @@
 package net.unix.cloud.event.cloud
 
 import net.unix.api.CloudBuilder
-import net.unix.api.event.Event
+import net.unix.event.Event
 
 /**
  * Calls when UnixCloud start. You can change used classes by [CloudBuilder].

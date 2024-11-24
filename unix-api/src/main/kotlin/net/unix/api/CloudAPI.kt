@@ -1,5 +1,6 @@
 package net.unix.api
 
+import net.unix.api.bridge.CloudBridge
 import net.unix.api.network.server.Server
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.CloudGroupManager
@@ -62,6 +63,11 @@ abstract class CloudAPI {
      * Websocket server on port 9191.
      */
     abstract val server: Server
+
+    /**
+     * Unix bridge for messaging.
+     */
+    abstract val bridge: CloudBridge
 
     /**
      * Shutdown.

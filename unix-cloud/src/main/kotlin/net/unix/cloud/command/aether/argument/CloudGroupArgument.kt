@@ -8,6 +8,7 @@ import net.unix.api.command.CommandArgument
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.api.group.CloudGroup
 import net.unix.cloud.CloudInstance
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -35,10 +36,22 @@ class CloudGroupArgument : CommandArgument<CloudGroup>() {
     }
 
     override fun parse(reader: StringReader): CloudGroup {
-        val service = CloudInstance.instance.cloudGroupManager[reader.readString()].firstOrNull()
+        val rawName = reader.readString()
+
+        val uuid = if(rawName.contains(" ")) {
+            UUID.fromString(
+                rawName.split(" ")[1]
+                    .replace("(", "")
+                    .replace(")", "")
+            )
+        } else {
+            CloudInstance.instance.cloudGroupManager[rawName].first().uuid
+        }
+
+        val group = CloudInstance.instance.cloudGroupManager[uuid]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
-        return service
+        return group
     }
 
     /**

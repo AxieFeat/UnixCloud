@@ -2,6 +2,7 @@
 
 package net.unix.cloud
 
+import com.google.common.io.Files
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.kyori.adventure.text.Component
@@ -153,31 +154,6 @@ object CloudExtension {
         CloudLogger.info(this.toString())
 
         return this
-    }
-
-    /**
-     * Copy files.
-     *
-     * @param from From copy.
-     * @param to To paste.
-     */
-    fun copyFile(from: File, to: File) {
-        if (!from.exists()) {
-            throw IllegalArgumentException("File $from not exists!")
-        }
-
-        if (from.isDirectory) {
-            from.listFiles()?.forEach {
-                val newTo = File(to, it.name)
-
-                copyFile(it, newTo)
-            }
-
-            return
-        }
-        
-        val targetFile = File(to, from.name)
-        from.copyTo(targetFile, overwrite = true)
     }
 
     /**
