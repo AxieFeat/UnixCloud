@@ -5,11 +5,11 @@ import net.unix.api.LocationSpace
 import java.io.File
 
 /**
- * Represents manager for [SavableCloudGroup].
+ * Represents manager for [SaveableCloudGroup].
  *
  * @see CloudGroupManager
  */
-interface SavableCloudGroupManager : CloudGroupManager {
+interface SaveableCloudGroupManager : CloudGroupManager {
 
     /**
      * Load all groups from [LocationSpace.group] file.
@@ -23,7 +23,7 @@ interface SavableCloudGroupManager : CloudGroupManager {
      *
      * @param file File to be loaded from.
      */
-    fun loadGroup(file: File): SavableCloudGroup
+    fun loadGroup(file: File): SaveableCloudGroup
 
     /**
      * Delete specific group.
@@ -33,6 +33,6 @@ interface SavableCloudGroupManager : CloudGroupManager {
      * @throws CloudGroupLimitException If group has active services.
      */
     @Throws(CloudGroupLimitException::class)
-    fun delete(group: SavableCloudGroup)
+    fun delete(group: SaveableCloudGroup)
 
 }

@@ -15,6 +15,8 @@ subprojects {
         compileOnly(project(":unix-cloud"))
         compileOnly(project(":unix-api"))
         compileOnly(project(":unix-network"))
+        compileOnly(project(":unix-scheduler"))
+        compileOnly(project(":unix-event-system"))
     }
 
 }

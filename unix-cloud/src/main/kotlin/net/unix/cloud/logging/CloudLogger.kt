@@ -3,12 +3,15 @@
 package net.unix.cloud.logging
 
 import net.kyori.adventure.text.Component
+import net.unix.api.LocationSpace
+import net.unix.api.terminal.Terminal
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.format
 import net.unix.cloud.CloudExtension.serialize
 import net.unix.cloud.CloudExtension.strip
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.configuration.UnixConfiguration
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -20,7 +23,10 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.logging.SimpleFormatter
 
-object CloudLogger : Logger("UnixCloudLogger", null) {
+object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
+
+    private val locationSpace: LocationSpace by inject()
+    private val terminal: Terminal by inject()
 
     var debug = false
 
@@ -28,7 +34,7 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
     private val formatFile = UnixConfiguration.terminal.logger.formatFile
     private val dataFormat = SimpleDateFormat(UnixConfiguration.terminal.logger.dateFormat)
 
-    private val logsDir = CloudInstance.instance.locationSpace.logs
+    private val logsDir = locationSpace.logs
 
     private val cacheSize = UnixConfiguration.terminal.logger.cacheSize
     private val cachedMessages = ArrayList<Pair<String, CloudLevel>>()
@@ -52,6 +58,8 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
         fileHandler.formatter = simpleFormatter
 
         addHandler(fileHandler)
+
+        System.setOut(UnixPrintStream)
 
         deleteOldLogs()
         GlobalUncaughtExceptionLogger.register()
@@ -137,7 +145,7 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
 
         if (level == LogType.SERVICE) {
             super.log(level, msg)
-            CloudInstance.instance.terminal.print(msg)
+            terminal.print(msg)
             return
         }
 
@@ -150,7 +158,7 @@ object CloudLogger : Logger("UnixCloudLogger", null) {
             )
         )
 
-        CloudInstance.instance.terminal.print(coloredMessage)
+        terminal.print(coloredMessage)
     }
 
     private fun formatString(text: String, type: CloudLevel): String {

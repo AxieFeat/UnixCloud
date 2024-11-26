@@ -1,4 +1,4 @@
-package net.unix.api
+package net.unix.api.pattern
 
 /**
  * Mark object as serializable.

@@ -30,6 +30,10 @@ object CloudExtensionManager : ExtensionManager {
                 val extension = loader.load() ?:
                 throw ModificationLoadException("Could not load ${loader.info!!.name} extension, corrupted file?")
 
+                val event = ExtensionLoadEvent(extension).callEvent()
+
+                if (!event.cancelled) extension.onLoad()
+
                 cachedExtensions[extension.info.name] = extension
 
                 extension

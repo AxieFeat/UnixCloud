@@ -1,5 +1,6 @@
 package net.unix.api.template
 
+import net.unix.api.pattern.Saveable
 import java.io.File
 
 /**
@@ -7,7 +8,7 @@ import java.io.File
  *
  * @see [CloudTemplate]
  */
-interface SavableCloudTemplate : CloudTemplate {
+interface SaveableCloudTemplate : CloudTemplate, Saveable {
 
     /**
      * Folder of template.
@@ -19,6 +20,6 @@ interface SavableCloudTemplate : CloudTemplate {
      *
      * @param file Where to keep the properties.
      */
-    fun save(file: File)
+    override fun save(file: File)
 
 }

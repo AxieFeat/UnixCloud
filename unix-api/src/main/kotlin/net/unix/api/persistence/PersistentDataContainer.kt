@@ -1,7 +1,7 @@
 package net.unix.api.persistence
 
-import net.unix.api.NamespacedKey
-import net.unix.api.Serializable
+import net.kyori.adventure.key.Key
+import net.unix.api.pattern.Serializable
 
 /**
  * This interface represents a map like object, capable of storing custom tags
@@ -27,7 +27,7 @@ interface PersistentDataContainer : Serializable {
      * @throws IllegalArgumentException If no suitable adapter will be found for the [PersistentDataType.primitiveType].
      */
     @Throws(IllegalArgumentException::class)
-    operator fun <T, Z> set(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z)
+    operator fun <T, Z> set(key: Key, type: PersistentDataType<T, Z>, value: Z)
 
     /**
      * Returns if the persistent metadata provider has metadata registered
@@ -57,7 +57,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @return If a value found.
      */
-    fun <T, Z> has(key: NamespacedKey, type: PersistentDataType<T, Z>): Boolean
+    fun <T, Z> has(key: Key, type: PersistentDataType<T, Z>): Boolean
 
     /**
      * Returns the metadata value that is stored on the
@@ -76,7 +76,7 @@ interface PersistentDataContainer : Serializable {
      * the [PersistentDataType.primitiveType].
      */
     @Throws(IllegalArgumentException::class)
-    operator fun <T, Z> get(key: NamespacedKey, type: PersistentDataType<T, Z>): Z?
+    operator fun <T, Z> get(key: Key, type: PersistentDataType<T, Z>): Z?
 
     /**
      * Returns the metadata value that is stored on the
@@ -99,7 +99,7 @@ interface PersistentDataContainer : Serializable {
      * the [PersistentDataType.primitiveType].
      */
     @Throws(IllegalArgumentException::class)
-    fun <T, Z> getOrDefault(key: NamespacedKey, type: PersistentDataType<T, Z>, defaultValue: Z): Z
+    fun <T, Z> getOrDefault(key: Key, type: PersistentDataType<T, Z>, defaultValue: Z): Z
 
     /**
      * Get a set of keys present on this [PersistentDataContainer].
@@ -110,14 +110,14 @@ interface PersistentDataContainer : Serializable {
      *
      * @return The key set.
      */
-    val keys: Set<NamespacedKey?>
+    val keys: Set<Key?>
 
     /**
      * Removes a custom key from the [PersistentDataHolder] instance.
      *
      * @param key The key.
      */
-    fun remove(key: NamespacedKey)
+    fun remove(key: Key)
 
     /**
      * Returns if the container instance is empty, therefore has no entries

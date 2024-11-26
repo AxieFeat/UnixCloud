@@ -1,4 +1,4 @@
-package net.unix.api.builder
+package net.unix.api
 
 /**
  * This interface represents a builder pattern for creating objects of type [T].

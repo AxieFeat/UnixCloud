@@ -2,15 +2,19 @@
 
 package net.unix.cloud.bridge
 
-import net.unix.api.NamespacedKey
 import net.unix.api.bridge.CloudBridge
 import net.unix.api.network.server.Server
 import net.unix.api.persistence.PersistentDataType
-import net.unix.cloud.CloudInstance
+import net.unix.api.service.CloudServiceManager
+import net.unix.cloud.NamespacedKey
 import net.unix.cloud.logging.CloudLogger
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.UUID
 
-object JVMBridge : CloudBridge {
+object JVMBridge : CloudBridge, KoinComponent {
+
+    private val serviceManager: CloudServiceManager by inject()
 
     private val cachedClients = mutableMapOf<Int, UUID>()
     override val clients: Map<Int, UUID>
@@ -29,7 +33,7 @@ object JVMBridge : CloudBridge {
 
             cachedClients[id] = uuid
 
-            val service = CloudInstance.instance.cloudServiceManager[uuid] ?: run {
+            val service = serviceManager[uuid] ?: run {
                 cachedClients.remove(id)
                 return@createListener
             }
@@ -41,7 +45,7 @@ object JVMBridge : CloudBridge {
             if(packet == null) return@createListener
 
             val id = conn.id
-            val service = CloudInstance.instance.cloudServiceManager[
+            val service = serviceManager[
                 cachedClients[id] ?: return@createListener
             ] ?: run {
                 cachedClients.remove(id)
@@ -56,7 +60,7 @@ object JVMBridge : CloudBridge {
             if(packet == null) return@createListener
 
             val id = conn.id
-            val service = CloudInstance.instance.cloudServiceManager[
+            val service = serviceManager[
                 cachedClients[id] ?: return@createListener
             ] ?: run {
                 cachedClients.remove(id)
@@ -71,7 +75,7 @@ object JVMBridge : CloudBridge {
             if(packet == null) return@createListener
 
             val id = conn.id
-            val service = CloudInstance.instance.cloudServiceManager[
+            val service = serviceManager[
                 cachedClients[id] ?: return@createListener
             ] ?: run {
                 cachedClients.remove(id)

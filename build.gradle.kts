@@ -31,6 +31,8 @@ allprojects {
     dependencies {
         implementation(kotlin("reflect"))
 
+        implementation("io.insert-koin:koin-core:4.0.0")
+
         implementation("kryonet:kryonet:2.21")
         implementation("com.esotericsoftware:kryo:5.6.0")
         implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")

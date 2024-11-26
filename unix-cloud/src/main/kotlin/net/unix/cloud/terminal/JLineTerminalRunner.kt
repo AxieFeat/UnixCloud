@@ -4,17 +4,19 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.unix.api.command.CommandDispatcher
 import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.CloudExtension.strip
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.scheduler.impl.scheduler
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class JLineTerminalRunner(
-    private val terminal: CloudJLineTerminal,
-    private val dispatcher: CommandDispatcher
-) : Thread() {
+    val terminal: CloudJLineTerminal
+) : Thread(), KoinComponent {
+
+    private val dispatcher: CommandDispatcher by inject()
 
     private var strippedPrompt = terminal.currentPrompt.strip()
     private var ansiPrompt = terminal.currentPrompt.serializeAnsi()
@@ -28,7 +30,6 @@ class JLineTerminalRunner(
         isDaemon = false
         name = "TerminalRunner"
         priority = 1
-        start()
     }
 
     override fun run() {
@@ -66,7 +67,7 @@ class JLineTerminalRunner(
                             }
                         }
                     } else {
-                        CloudInstance.instance.terminal.selectedExecutable?.command(
+                        terminal.selectedExecutable?.command(
                             line.replaceFirst(UnixConfiguration.terminal.serviceCommandPrefix, "")
                         )
                     }

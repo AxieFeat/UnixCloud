@@ -1,11 +1,12 @@
 package net.unix.api.modification
 
-import net.unix.api.Serializable
+import net.unix.api.pattern.Serializable
+import net.unix.api.pattern.Nameable
 
 /**
  * Info about some [Modification].
  */
-interface ModificationInfo : Serializable {
+interface ModificationInfo : Serializable, Nameable {
 
     /**
      * Path to [Modification] main class.
@@ -15,7 +16,7 @@ interface ModificationInfo : Serializable {
     /**
      * Modification name.
      */
-    val name: String
+    override val name: String
 
     /**
      * Modification version.

@@ -1,6 +1,7 @@
 package net.unix.api.group
 
-import net.unix.api.Serializable
+import net.unix.api.pattern.Serializable
+import net.unix.api.pattern.Nameable
 import net.unix.api.service.CloudService
 import net.unix.api.service.ServiceExecutable
 
@@ -12,12 +13,12 @@ import net.unix.api.service.ServiceExecutable
  *
  * @throws IllegalArgumentException If type with this name already exist.
  */
-abstract class GroupExecutable : Serializable {
+abstract class GroupExecutable : Serializable, Nameable {
 
     /**
      * The name of executable.
      */
-    abstract val name: String
+    abstract override val name: String
 
     /**
      * Create executable for service.

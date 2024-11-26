@@ -8,9 +8,11 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
 import net.unix.api.command.CommandBuilder
+import net.unix.api.command.CommandDispatcher
 import net.unix.api.command.CommandExecutor
 import net.unix.api.command.sender.CommandSender
-import net.unix.cloud.CloudInstance
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.function.Predicate
 
 /**
@@ -37,8 +39,10 @@ class AetherCommandBuilder(
         this.aliases = aliases.toMutableList()
     }
 
-    companion object {
-        val dispatcher = CloudInstance.instance.commandDispatcher.dispatcher
+    companion object : KoinComponent {
+        private val unixDispatcher: CommandDispatcher by inject()
+
+        val dispatcher = unixDispatcher.dispatcher
     }
 
     override fun register(): LiteralCommandNode<CommandSender> {

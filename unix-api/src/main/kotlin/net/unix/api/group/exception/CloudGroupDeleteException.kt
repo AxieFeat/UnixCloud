@@ -1,9 +1,9 @@
 package net.unix.api.group.exception
 
-import net.unix.api.group.SavableCloudGroup
+import net.unix.api.group.SaveableCloudGroup
 
 /**
- * Throw if used [SavableCloudGroup.delete] with active cloud services.
+ * Throw if used [SaveableCloudGroup.delete] with active cloud services.
  */
 class CloudGroupDeleteException(
     message: String? = null,

@@ -1,11 +1,14 @@
 package net.unix.cloud.template
 
+import net.unix.api.LocationSpace
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.template.CloudFile
-import net.unix.api.template.SavableCloudTemplate
+import net.unix.api.template.CloudTemplateManager
+import net.unix.api.template.SaveableCloudTemplate
 import net.unix.cloud.CloudExtension.toJson
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.persistence.CloudPersistentDataContainer
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
 
 @Suppress("UNCHECKED_CAST")
@@ -13,10 +16,13 @@ open class BasicCloudTemplate(
     override var name: String,
     override var files: MutableList<CloudFile> = mutableListOf(),
     override var backFiles: MutableList<CloudFile> = mutableListOf()
-) : SavableCloudTemplate {
+) : SaveableCloudTemplate, KoinComponent {
+
+    private val locationSpace: LocationSpace by inject()
+    private val cloudTemplateManager: CloudTemplateManager by inject()
 
     override val folder: File = run {
-        val file = File(CloudInstance.instance.locationSpace.template, name)
+        val file = File(locationSpace.template, name)
 
         file.mkdirs()
 
@@ -45,7 +51,7 @@ open class BasicCloudTemplate(
     }
 
     override fun delete() {
-        CloudInstance.instance.cloudTemplateManager.unregister(this)
+        cloudTemplateManager.unregister(this)
         folder.deleteRecursively()
     }
 

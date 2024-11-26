@@ -1,13 +1,9 @@
 package net.unix.cloud.event.cloud
 
-import net.unix.api.CloudBuilder
+import net.unix.cloud.CloudInstance
 import net.unix.event.Event
 
 /**
- * Calls when UnixCloud start. You can change used classes by [CloudBuilder].
- *
- * @param builder Cloud instance builder. You can change any value.
+ * Calls when used [CloudInstance.start].
  */
-class CloudStartEvent(
-    var builder: CloudBuilder
-) : Event<CloudStartEvent>()
+class CloudStartEvent : Event<CloudStartEvent>()

@@ -1,9 +1,15 @@
 package net.unix.api.configuration
 
-interface Configuration {
+import net.unix.api.pattern.Serializable
 
+/**
+ * This interface represents basic configuration.
+ */
+interface Configuration : Serializable {
+
+    /**
+     * Path to file configuration.
+     */
     val location: String
-
-    fun save(): Map<String, Any>
 
 }

@@ -1,7 +1,8 @@
 package net.unix.api.group
 
-import net.unix.api.Serializable
+import net.unix.api.pattern.Serializable
 import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.pattern.Nameable
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
@@ -14,7 +15,7 @@ import java.util.UUID
  *
  * The group defines the general behavior for [CloudService]'s, their settings, files, and so on.
  */
-interface CloudGroup : PersistentDataHolder, Serializable {
+interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
 
     /**
      * The unique id of [CloudGroup].
@@ -24,7 +25,7 @@ interface CloudGroup : PersistentDataHolder, Serializable {
     /**
      * Cloud group name. Can be repeated by other groups.
      */
-    val name: String
+    override val name: String
 
     /**
      * Name of group without any formatting. Can not contain spaces.

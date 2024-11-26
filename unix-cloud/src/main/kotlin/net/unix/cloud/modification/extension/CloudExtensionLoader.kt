@@ -6,8 +6,6 @@ import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionClassLoader
 import net.unix.api.modification.extension.ExtensionInfo
 import net.unix.cloud.CloudExtension.deserializeJson
-import net.unix.cloud.CloudInstance
-import net.unix.cloud.modification.module.CloudModuleManager
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
@@ -46,7 +44,7 @@ class CloudExtensionLoader(
     private fun CloudExtension.init(info: ExtensionInfo) {
         this.loader = this@CloudExtensionLoader
         this.info = info
-        this.folder = File(CloudModuleManager.folder, "")
+        this.folder = File(CloudExtensionManager.folder, "")
         this.executable = file
 
         cachedExtension = this
@@ -57,7 +55,7 @@ class CloudExtensionLoader(
 
         val info = (info ?: throw ModificationLoadException("File \"extension.json\" not found in ${file.name} or it corrupted!"))
             .also { info ->
-                val loaded = CloudInstance.instance.extensionManager.extensions.map { it.info.name }
+                val loaded = CloudExtensionManager.extensions.map { it.info.name }
 
                 if(loaded.contains(info.name)) throw ModificationExistException("Extension with name \"${info.name}\" already loaded!")
             }

@@ -3,8 +3,8 @@ package net.unix.cloud.command.brigadier
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.context.ParsedCommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
+import net.unix.api.command.CommandDispatcher
 import net.unix.api.command.sender.CommandSender
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudTerminalHighlightEvent
 import org.jline.reader.Highlighter
@@ -12,13 +12,17 @@ import org.jline.reader.LineReader
 import org.jline.utils.AttributedString
 import org.jline.utils.AttributedStringBuilder
 import org.jline.utils.AttributedStyle
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.regex.Pattern
 import kotlin.math.min
 
 @Suppress("UNCHECKED_CAST")
 open class BrigadierCommandHighlighter(
     private val sender: CommandSender
-) : Highlighter {
+) : Highlighter, KoinComponent {
+
+    private val dispatcher: CommandDispatcher by inject()
 
     override fun highlight(reader: LineReader, buffer: String): AttributedString {
 
@@ -28,7 +32,7 @@ open class BrigadierCommandHighlighter(
         builder = event.builder
 
         val results: ParseResults<CommandSender> =
-            CloudInstance.instance.commandDispatcher.dispatcher.parse(
+            dispatcher.dispatcher.parse(
                 BrigadierCommandCompleter.prepareStringReader(buffer),
                 sender
             )
@@ -67,13 +71,13 @@ open class BrigadierCommandHighlighter(
             } else {
 
                 component++
-                if (component >= COLORS.size) {
+                if (component >= colors.size) {
                     component = 0
                 }
 
                 builder.append(
                     buffer.substring(start, end), AttributedStyle.DEFAULT.foreground(
-                        COLORS[component]
+                        colors[component]
                     )
                 )
 
@@ -96,5 +100,7 @@ open class BrigadierCommandHighlighter(
 
     }
 
-    private val COLORS = intArrayOf(6, 3, 2, 5, 4)
+    private val colors = intArrayOf(6, 3, 2, 5, 4)
+
+    companion object
 }

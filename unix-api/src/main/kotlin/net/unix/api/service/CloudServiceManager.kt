@@ -12,7 +12,7 @@ import java.util.UUID
 interface CloudServiceManager {
 
     /**
-     * List of current run [CloudService]'s.
+     * Set of current [CloudService]'s.
      */
     val services: Set<CloudService>
 

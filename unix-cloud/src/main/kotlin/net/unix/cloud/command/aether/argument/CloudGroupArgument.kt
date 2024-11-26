@@ -7,7 +7,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.command.CommandArgument
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.api.group.CloudGroup
-import net.unix.cloud.CloudInstance
+import net.unix.api.group.CloudGroupManager
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +21,10 @@ class CloudGroupArgument : CommandArgument<CloudGroup>() {
 
     private var notFoundMessage = "CloudGroup not found"
 
-    companion object {
+    companion object : KoinComponent {
+
+        private val cloudGroupManager: CloudGroupManager by inject()
+
         /**
          * Get [CloudGroup] from command context by argument name.
          *
@@ -45,10 +50,10 @@ class CloudGroupArgument : CommandArgument<CloudGroup>() {
                     .replace(")", "")
             )
         } else {
-            CloudInstance.instance.cloudGroupManager[rawName].first().uuid
+            cloudGroupManager[rawName].first().uuid
         }
 
-        val group = CloudInstance.instance.cloudGroupManager[uuid]
+        val group = cloudGroupManager[uuid]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return group
@@ -68,14 +73,14 @@ class CloudGroupArgument : CommandArgument<CloudGroup>() {
     }
 
     override fun getExamples(): List<String> {
-        return CloudInstance.instance.cloudGroupManager.groups.map { it.name }
+        return cloudGroupManager.groups.map { it.name }
     }
 
     override fun <S> listSuggestions(
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        CloudInstance.instance.cloudGroupManager.groups.forEach {
+        cloudGroupManager.groups.forEach {
             if (it.name.contains(" ")) {
                 builder.suggest("\"${it.name}\"")
             } else

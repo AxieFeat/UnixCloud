@@ -1,6 +1,8 @@
 package net.unix.api.template
 
-import net.unix.api.Serializable
+import net.unix.api.pattern.Deletable
+import net.unix.api.pattern.Serializable
+import net.unix.api.pattern.Nameable
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.CloudService
 
@@ -11,12 +13,12 @@ import net.unix.api.service.CloudService
  * used by the CloudService's that are launched.
  * Use [CloudFile] to specify which files should be used.
  */
-interface CloudTemplate : PersistentDataHolder, Serializable {
+interface CloudTemplate : PersistentDataHolder, Serializable, Nameable, Deletable {
 
     /**
      * Template name.
      */
-    var name: String
+    override var name: String
 
     /**
      * Files, that will be copied on creation [CloudService].
@@ -31,7 +33,7 @@ interface CloudTemplate : PersistentDataHolder, Serializable {
     /**
      * Delete template.
      */
-    fun delete()
+    override fun delete()
 
     companion object
 }

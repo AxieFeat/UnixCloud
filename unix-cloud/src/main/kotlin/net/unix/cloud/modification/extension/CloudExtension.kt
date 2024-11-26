@@ -25,7 +25,9 @@ abstract class CloudExtension : Extension {
     final override lateinit var executable: File
     final override lateinit var info: ExtensionInfo
 
-    final override var modification: ModificationInfo = info
+    final override var modification: ModificationInfo
+        get() = info
+        set(value) { info = value as ExtensionInfo }
 
     override fun registerListener(listener: Any) {
         CloudEventManager.registerListeners(listener)

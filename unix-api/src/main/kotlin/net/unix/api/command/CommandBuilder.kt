@@ -2,6 +2,7 @@ package net.unix.api.command
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
+import net.unix.api.pattern.Nameable
 
 /**
  * Builder for commands.
@@ -10,8 +11,8 @@ import com.mojang.brigadier.tree.LiteralCommandNode
  */
 @Suppress("LeakingThis")
 abstract class CommandBuilder<T>(
-    val name: String
-) : LiteralArgumentBuilder<T>(name) {
+   override val name: String
+) : LiteralArgumentBuilder<T>(name), Nameable {
 
     /**
      * List of all aliases

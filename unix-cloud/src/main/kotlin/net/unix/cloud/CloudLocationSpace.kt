@@ -40,6 +40,7 @@ object CloudLocationSpace : LocationSpace {
 
         return@run file
     }
+
     val extension = run {
         val file = File(main.path + UnixConfiguration.storage.extension)
 

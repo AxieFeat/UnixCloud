@@ -3,8 +3,6 @@ package net.unix.cloud
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
-import net.unix.api.CloudAPI
-import net.unix.api.CloudBuilder
 import net.unix.api.LocationSpace
 import net.unix.api.bridge.CloudBridge
 import net.unix.api.command.CommandDispatcher
@@ -13,15 +11,15 @@ import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
+import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateManager
-import net.unix.api.template.SavableCloudTemplateManager
+import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.api.terminal.Terminal
 import net.unix.cloud.CloudExtension.uniqueUUID
-import net.unix.cloud.CloudInstanceBuilder.Companion.builder
 import net.unix.cloud.bridge.JVMBridge
 import net.unix.cloud.command.CloudCommandDispatcher
 import net.unix.cloud.command.aether.argument.CloudGroupArgument
@@ -33,6 +31,7 @@ import net.unix.cloud.command.aether.get
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudStartEvent
+import net.unix.cloud.event.koin.KoinStartEvent
 import net.unix.cloud.group.CloudJVMGroupManager
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.modification.extension.CloudExtensionManager
@@ -40,49 +39,54 @@ import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.service.CloudJVMServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 import java.text.SimpleDateFormat
+import javax.inject.Inject
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
 fun main() {
     System.setProperty("file.encoding", UnixConfiguration.fileEncoding)
 
-    var builder: CloudBuilder = CloudInstance.builder()
-
     CloudExtensionManager.loadAll(false)
 
-    CloudStartEvent(builder).callEvent().also { builder = it.builder }
+    startKoin {
+        KoinStartEvent(this).callEvent()
 
-    builder.build()
+        val module = module {
+            single<LocationSpace> { CloudLocationSpace }
+            single<Terminal> { CloudJLineTerminal() }
+            single<CommandDispatcher> { CloudCommandDispatcher }
+            single<CloudServiceManager> { CloudJVMServiceManager }
+            single<CloudTemplateManager> { BasicCloudTemplateManager }
+            single<CloudGroupManager> { CloudJVMGroupManager }
+            single<ModuleManager> { CloudModuleManager }
+            single<ExtensionManager> { CloudExtensionManager }
+            single<Server> { Server() }
+            single<CloudBridge> { JVMBridge }
+        }
 
-    val instance = CloudInstance.instance
-
-    CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
-    CloudExtensionManager.extensions.forEach {
-        CloudLogger.info("- ${it.info.name} v${it.info.version}")
+        modules(module)
     }
 
-    instance.moduleManager.loadAll(false)
-
-    instance.bridge.configure(instance.server)
-
-    val groupManager = instance.cloudGroupManager
-    val templateManager = instance.cloudTemplateManager
-
-    if (templateManager is SavableCloudTemplateManager)
-        templateManager.loadAllTemplates()
-
-    if (groupManager is SavableCloudGroupManager)
-        groupManager.loadAllGroups()
-
-    registerCommands()
+    CloudInstance.start()
 }
 
-fun registerCommands() {
+fun registerCommands(
+    terminal: Terminal,
+    cloudServiceManager: CloudServiceManager,
+    cloudGroupManager: CloudGroupManager,
+    cloudTemplateManager: CloudTemplateManager
+) {
 
     command("exit") {
         execute {
-            CloudInstance.instance.shutdown()
+            CloudInstance.shutdown()
         }
     }.register()
 
@@ -108,7 +112,7 @@ fun registerCommands() {
 
         literal("list") {
             execute {
-                val services = CloudInstance.instance.cloudServiceManager.services
+                val services = cloudServiceManager.services
                     .filter { it.executable is ConsoleServiceExecutable }
                     .filter { (it.executable as ConsoleServiceExecutable).viewConsole }
 
@@ -129,7 +133,7 @@ fun registerCommands() {
                         CloudLogger.info("Service ${service.name} is not support command sending")
                         return@execute
                     }
-                    CloudInstance.instance.terminal.selectedExecutable = service.executable as ConsoleServiceExecutable
+                    terminal.selectedExecutable = service.executable as ConsoleServiceExecutable
 
                     CloudLogger.info("You are selected ${service.name} for command sending")
                 }
@@ -195,7 +199,7 @@ fun registerCommands() {
 
         literal("list") {
             execute {
-                val templates = CloudInstance.instance.cloudTemplateManager.templates
+                val templates = cloudTemplateManager.templates
 
                 CloudLogger.info("List of templates(${templates.size}):")
                 templates.forEach {
@@ -211,7 +215,7 @@ fun registerCommands() {
 
                     CloudLogger.info("Created template $name")
 
-                    CloudInstance.instance.cloudTemplateManager.newInstance(
+                    cloudTemplateManager.newInstance(
                         name,
                         mutableListOf()
                     )
@@ -272,7 +276,7 @@ fun registerCommands() {
 
         literal("list") {
             execute {
-                val services = CloudInstance.instance.cloudServiceManager.services
+                val services = cloudServiceManager.services
 
                 CloudLogger.info("List of services(${services.size}):")
                 services.forEach {
@@ -449,7 +453,7 @@ fun registerCommands() {
 
         literal("list") {
             execute {
-                val groups = CloudInstance.instance.cloudGroupManager.groups
+                val groups = cloudGroupManager.groups
 
                 CloudLogger.info("List of groups(${groups.size}):")
                 groups.forEach {
@@ -477,7 +481,7 @@ fun registerCommands() {
 
                             CloudLogger.info("Created new group with name $name. Setting it in settings.json file")
 
-                            CloudInstance.instance.cloudGroupManager.newInstance(
+                            cloudGroupManager.newInstance(
                                 uniqueUUID(),
                                 name,
                                 limit,
@@ -500,7 +504,7 @@ fun registerCommands() {
 
                                 CloudLogger.info("Created new group with name $name")
 
-                                CloudInstance.instance.cloudGroupManager.newInstance(
+                                cloudGroupManager.newInstance(
                                     uniqueUUID(),
                                     name,
                                     limit,
@@ -520,7 +524,7 @@ fun registerCommands() {
                 execute {
                     val group: CloudGroup = it["group"]
 
-                    if (group is SavableCloudGroup) group.delete()
+                    if (group is SaveableCloudGroup) group.delete()
 
                     CloudLogger.info("Group ${group.uuid} deleted!")
                 }
@@ -577,157 +581,44 @@ fun registerCommands() {
     }.register()
 }
 
-@Suppress("unused")
-class CloudInstanceBuilder : CloudBuilder {
+object CloudInstance : KoinComponent, Startable {
 
-    private var locationSpace: LocationSpace? = null
+    private val terminal: Terminal by inject()
 
-    private var commandDispatcher: CommandDispatcher? = null
-    private var terminal: Terminal? = null
+    private val cloudTemplateManager: CloudTemplateManager by inject()
+    private val cloudGroupManager: CloudGroupManager by inject()
+    private val cloudServiceManager: CloudServiceManager by inject()
 
-    private var cloudTemplateManager: CloudTemplateManager? = null
-    private var cloudGroupManager: CloudGroupManager? = null
-    private var cloudServiceManager: CloudServiceManager? = null
+    private val moduleManager: ModuleManager by inject()
 
-    private var moduleManager: ModuleManager? = null
-    private var extensionManager: ExtensionManager? = null
+    private  val server: Server by inject()
+    private val bridge: CloudBridge by inject()
 
-    private var server: Server? = null
+    override fun start() {
+        CloudStartEvent().callEvent()
 
-    private var bridge: CloudBridge? = null
+        terminal.start()
 
-    companion object {
-        fun CloudInstance.Companion.builder(): CloudInstanceBuilder {
-            return CloudInstanceBuilder()
+        server.start(UnixConfiguration.bridge.port)
+        Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler.run() })
+
+        CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
+        CloudExtensionManager.extensions.forEach {
+            CloudLogger.info("- ${it.info.name} v${it.info.version}")
         }
+
+        moduleManager.loadAll(false)
+
+        bridge.configure(server)
+
+        (cloudTemplateManager as? SaveableCloudTemplateManager)?.loadAllTemplates()
+
+        (cloudGroupManager as? SaveableCloudGroupManager)?.loadAllGroups()
+
+        registerCommands(terminal, cloudServiceManager, cloudGroupManager, cloudTemplateManager)
     }
 
-    override fun terminal(terminal: Terminal): CloudInstanceBuilder {
-        this.terminal = terminal
-
-        return this
-    }
-
-    override fun commandDispatcher(dispatcher: CommandDispatcher): CloudInstanceBuilder {
-        this.commandDispatcher = dispatcher
-
-        return this
-    }
-
-    override fun commandTemplateManager(manager: CloudTemplateManager): CloudInstanceBuilder {
-        this.cloudTemplateManager = manager
-
-        return this
-    }
-
-    override fun cloudGroupManager(manager: CloudGroupManager): CloudInstanceBuilder {
-        this.cloudGroupManager = manager
-
-        return this
-    }
-
-    override fun cloudServiceManager(manager: CloudServiceManager): CloudInstanceBuilder {
-        this.cloudServiceManager = manager
-
-        return this
-    }
-
-    override fun moduleManager(manager: ModuleManager): CloudInstanceBuilder {
-        this.moduleManager = manager
-
-        return this
-    }
-
-    override fun extensionManager(manager: ExtensionManager): CloudInstanceBuilder {
-        this.extensionManager = manager
-
-        return this
-    }
-
-    override fun server(server: Server): CloudInstanceBuilder {
-        this.server = server
-
-        return this
-    }
-
-    override fun bridge(bridge: CloudBridge): CloudBuilder {
-        this.bridge = bridge
-
-        return this
-    }
-
-    override fun locationSpace(space: LocationSpace): CloudInstanceBuilder {
-        this.locationSpace = space
-        
-        return this
-    }
-
-    override fun build(): CloudInstance {
-        return CloudInstance(
-            locationSpace,
-            commandDispatcher,
-            terminal,
-            cloudTemplateManager,
-            cloudGroupManager,
-            cloudServiceManager,
-            moduleManager,
-            extensionManager,
-            server,
-            bridge
-        )
-    }
-}
-
-class CloudInstance(
-    locationSpace: LocationSpace? = null,
-
-    commandDispatcher: CommandDispatcher? = null,
-    terminal: Terminal? = null,
-
-    cloudTemplateManager: CloudTemplateManager? = null,
-    cloudGroupManager: CloudGroupManager? = null,
-    cloudServiceManager: CloudServiceManager? = null,
-
-    moduleManager: ModuleManager? = null,
-    extensionManager: ExtensionManager? = null,
-
-    server: Server? = null,
-    bridge: CloudBridge? = null
-) : CloudAPI() {
-
-    companion object {
-        private var created = false
-
-        lateinit var instance: CloudAPI
-    }
-
-    init {
-        if (created) throw Error("CloudInstance already created! Use CloudInstance.instance to get it!")
-
-        instance = this
-        created = true
-    }
-
-    override val locationSpace: LocationSpace = locationSpace ?: CloudLocationSpace
-
-    override val commandDispatcher: CommandDispatcher = commandDispatcher ?: CloudCommandDispatcher
-    override val terminal: Terminal = terminal ?: CloudJLineTerminal(UnixConfiguration.terminal.prompt, this.commandDispatcher)
-
-    override val cloudTemplateManager: CloudTemplateManager = cloudTemplateManager ?: BasicCloudTemplateManager
-    override val cloudGroupManager: CloudGroupManager = cloudGroupManager ?: CloudJVMGroupManager
-    override val cloudServiceManager: CloudServiceManager = cloudServiceManager ?: CloudJVMServiceManager
-
-    override val moduleManager: ModuleManager = moduleManager ?: CloudModuleManager
-    override val extensionManager: ExtensionManager = extensionManager ?: CloudExtensionManager
-
-    override val server: Server = (server ?: Server()).also { it.start(UnixConfiguration.bridge.port) }
-    override val bridge: CloudBridge = bridge ?: JVMBridge
-
-    init {
-        Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler(this).run() })
-    }
-
-    override fun shutdown() {
+    fun shutdown() {
         exitProcess(0)
     }
 }

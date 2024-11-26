@@ -1,6 +1,8 @@
 package net.unix.api.group
 
 import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.pattern.Deletable
+import net.unix.api.pattern.Saveable
 import java.io.File
 
 /**
@@ -8,7 +10,7 @@ import java.io.File
  *
  * @see CloudGroup
  */
-interface SavableCloudGroup : CloudGroup {
+interface SaveableCloudGroup : CloudGroup, Deletable, Saveable {
 
     /**
      * Folder of group.
@@ -20,7 +22,7 @@ interface SavableCloudGroup : CloudGroup {
      *
      * @param file Where to keep the properties.
      */
-    fun save(file: File)
+    override fun save(file: File)
 
     /**
      * Delete current group. It will delete all services of this group.
@@ -28,6 +30,6 @@ interface SavableCloudGroup : CloudGroup {
      * @throws CloudGroupLimitException If group has active services.
      */
     @Throws(CloudGroupLimitException::class)
-    fun delete()
+    override fun delete()
 
 }

@@ -7,7 +7,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.command.CommandArgument
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
 import net.unix.api.service.CloudService
-import net.unix.cloud.CloudInstance
+import net.unix.api.service.CloudServiceManager
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +21,10 @@ class CloudServiceArgument : CommandArgument<CloudService>() {
 
     private var notFoundMessage = "CloudService not found"
 
-    companion object {
+    companion object : KoinComponent {
+
+        private val cloudServiceManager: CloudServiceManager by inject()
+
         /**
          * Get [CloudService] from command context by argument name.
          *
@@ -45,10 +50,10 @@ class CloudServiceArgument : CommandArgument<CloudService>() {
                     .replace(")", "")
             )
         } else {
-            CloudInstance.instance.cloudServiceManager[rawName].first().uuid
+            cloudServiceManager[rawName].first().uuid
         }
 
-        val service = CloudInstance.instance.cloudServiceManager[uuid]
+        val service = cloudServiceManager[uuid]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return service
@@ -68,14 +73,14 @@ class CloudServiceArgument : CommandArgument<CloudService>() {
     }
 
     override fun getExamples(): List<String> {
-        return CloudInstance.instance.cloudServiceManager.services.map { it.name }
+        return cloudServiceManager.services.map { it.name }
     }
 
     override fun <S> listSuggestions(
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        CloudInstance.instance.cloudServiceManager.services.forEach {
+        cloudServiceManager.services.forEach {
             if (it.name.contains(" ")) {
                 builder.suggest("\"${it.name}\"")
             } else

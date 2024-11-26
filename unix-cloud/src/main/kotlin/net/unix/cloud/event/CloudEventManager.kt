@@ -161,10 +161,9 @@ object CloudEventManager : EventManager {
     }
 
     override fun callEvent(event: Event<*>) {
-
-        if (UnixConfiguration.allowedEvents.events.filter {
-            it.key == event.javaClass.simpleName && it.value
-        }.isNotEmpty()) return
+        if (UnixConfiguration.allowedEvents.events.any {
+            it.key == event.javaClass.simpleName && !it.value
+        }) return
 
         var scoped = false
         var typed = false

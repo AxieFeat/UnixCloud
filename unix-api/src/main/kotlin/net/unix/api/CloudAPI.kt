@@ -73,4 +73,6 @@ abstract class CloudAPI {
      * Shutdown.
      */
     abstract fun shutdown()
+
+    companion object
 }

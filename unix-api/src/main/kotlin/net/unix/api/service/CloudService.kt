@@ -1,6 +1,8 @@
 package net.unix.api.service
 
+import net.unix.api.pattern.Deletable
 import net.unix.api.group.CloudGroup
+import net.unix.api.pattern.Nameable
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.exception.CloudServiceModificationException
 import java.io.File
@@ -12,7 +14,7 @@ import java.util.*
  * The service is some kind of executable program that is controlled by UnixCloud.
  * You can run almost anything using [ServiceExecutable].
  */
-interface CloudService : PersistentDataHolder {
+interface CloudService : PersistentDataHolder, Nameable, Deletable {
 
     /**
      * Unique service id.
@@ -22,7 +24,7 @@ interface CloudService : PersistentDataHolder {
     /**
      * Service name. Can be repeated by other services.
      */
-    val name: String
+    override val name: String
 
     /**
      * Name of service without any formatting.
@@ -97,7 +99,7 @@ interface CloudService : PersistentDataHolder {
      * @throws IllegalArgumentException If [status] is [CloudServiceStatus.STARTED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    fun delete()
+    override fun delete()
 
     companion object
 }

@@ -1,23 +1,27 @@
 package net.unix.cloud.modification.module
 
+import net.unix.api.LocationSpace
 import net.unix.api.modification.exception.ModificationLoadException
 import net.unix.api.modification.module.Module
 import net.unix.api.modification.module.ModuleManager
 import net.unix.cloud.CloudExtension.or
 import net.unix.cloud.CloudExtension.rem
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.modification.module.ModuleLoadEvent
 import net.unix.cloud.event.modification.module.ModuleReloadEvent
 import net.unix.cloud.event.modification.module.ModuleUnloadEvent
 import net.unix.cloud.logging.CloudLogger
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
 
-object CloudModuleManager : ModuleManager {
+object CloudModuleManager : ModuleManager, KoinComponent {
+
+    private val locationSpace: LocationSpace by inject()
 
     private val cachedModules = mutableMapOf<String, Module>()
 
-    override var folder: File = CloudInstance.instance.locationSpace.module
+    override var folder: File = locationSpace.module
 
     override val modules: List<Module>
         get() = cachedModules.values.toList()

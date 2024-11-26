@@ -1,20 +1,25 @@
 package net.unix.cloud.group
 
+import net.unix.api.LocationSpace
+import net.unix.api.group.CloudGroupManager
 import net.unix.api.group.GroupExecutable
-import net.unix.api.group.SavableCloudGroup
+import net.unix.api.group.SaveableCloudGroup
 import net.unix.api.group.exception.CloudGroupDeleteException
 import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.service.CloudService
+import net.unix.api.service.CloudServiceManager
 import net.unix.api.service.CloudServiceStatus
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.api.template.CloudTemplate
+import net.unix.api.template.CloudTemplateManager
 import net.unix.cloud.CloudExtension.inUse
 import net.unix.cloud.CloudExtension.toJson
 import net.unix.cloud.CloudExtension.uniqueUUID
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.persistence.CloudPersistentDataContainer
 import net.unix.cloud.service.CloudJVMService
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
 import java.util.*
 
@@ -27,17 +32,21 @@ open class CloudJVMGroup(
     val properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar"),
     override val templates: MutableList<CloudTemplate> = mutableListOf(),
     override val groupExecutable: GroupExecutable? = GroupJVMExecutable,
-) : SavableCloudGroup {
+) : SaveableCloudGroup {
 
     init {
         if(name.contains(" ")) throw IllegalArgumentException("Name of group can not contain spaces!")
     }
 
+    private val cloudGroupManager: CloudGroupManager by inject()
+    private val cloudServiceManager: CloudServiceManager by inject()
+    private val locationSpace: LocationSpace by inject()
+
     override val clearName: String = name
 
     override val name: String
         get() {
-            val any = CloudInstance.instance.cloudGroupManager[clearName].any { it != this }
+            val any = cloudGroupManager[clearName].any { it != this }
 
             if (any) {
                 return "$clearName ($uuid)"
@@ -63,7 +72,7 @@ open class CloudJVMGroup(
         }
 
     override val folder: File = run {
-        val file = File(CloudInstance.instance.locationSpace.group, "$name ($uuid)")
+        val file = File(locationSpace.group, "$name ($uuid)")
 
         file.mkdirs()
 
@@ -71,7 +80,7 @@ open class CloudJVMGroup(
     }
 
     override val services: Set<CloudService>
-        get() = CloudInstance.instance.cloudServiceManager.services.filter { it.group.uuid == this.uuid }.toSet()
+        get() = cloudServiceManager.services.filter { it.group.uuid == this.uuid }.toSet()
 
     override fun create(count: Int): List<CloudService> {
         if (count < 1) throw IllegalArgumentException("Count of services can not be less 1!")
@@ -96,7 +105,7 @@ open class CloudJVMGroup(
             name = "$clearName-$servicesCount"
         )
 
-        CloudInstance.instance.cloudServiceManager.register(service)
+        cloudServiceManager.register(service)
 
         return service
     }
@@ -139,11 +148,14 @@ open class CloudJVMGroup(
                 throw ex
             }
         }
-        CloudInstance.instance.cloudGroupManager.unregister(this)
+        cloudGroupManager.unregister(this)
         folder.deleteRecursively()
     }
 
-    companion object {
+    companion object : KoinComponent {
+
+        private val cloudTemplateManager: CloudTemplateManager by inject()
+
         /**
          * Deserialize [CloudJVMGroup] from [CloudJVMGroup.serialize].
          *
@@ -166,7 +178,7 @@ open class CloudJVMGroup(
 
             val serializedTemplates = serialized["templates"] as List<String>
             val templates = serializedTemplates.mapNotNull {
-                CloudInstance.instance.cloudTemplateManager[it]
+                cloudTemplateManager[it]
             }.toMutableList()
 
             val type = GroupExecutable[serialized["group-executable"].toString()]

@@ -1,15 +1,20 @@
 package net.unix.cloud.template
 
+import net.unix.api.LocationSpace
 import net.unix.api.template.CloudFile
 import net.unix.api.template.CloudTemplate
-import net.unix.api.template.SavableCloudTemplate
-import net.unix.api.template.SavableCloudTemplateManager
+import net.unix.api.template.SaveableCloudTemplate
+import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.cloud.CloudExtension.readJson
 import net.unix.cloud.CloudInstance
 import net.unix.cloud.logging.CloudLogger
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
 
-object BasicCloudTemplateManager : SavableCloudTemplateManager {
+object BasicCloudTemplateManager : SaveableCloudTemplateManager, KoinComponent {
+
+    private val locationSpace: LocationSpace by inject()
 
     private val cachedTemplates = mutableMapOf<String, CloudTemplate>()
 
@@ -33,8 +38,8 @@ object BasicCloudTemplateManager : SavableCloudTemplateManager {
         cachedTemplates[template.name] = template
         CloudLogger.debug("Registered template ${template.name}")
 
-        if (template is SavableCloudTemplate) {
-            val file = File(CloudInstance.instance.locationSpace.template, "${template.name}/settings.json")
+        if (template is SaveableCloudTemplate) {
+            val file = File(locationSpace.template, "${template.name}/settings.json")
 
             template.save(file)
         }
@@ -43,8 +48,8 @@ object BasicCloudTemplateManager : SavableCloudTemplateManager {
     override fun unregister(template: CloudTemplate) {
         cachedTemplates.remove(template.name)
 
-        if (template is SavableCloudTemplate) {
-            val file = File(CloudInstance.instance.locationSpace.template, "${template.name}/settings.json")
+        if (template is SaveableCloudTemplate) {
+            val file = File(locationSpace.template, "${template.name}/settings.json")
 
             template.save(file)
         }
@@ -53,7 +58,7 @@ object BasicCloudTemplateManager : SavableCloudTemplateManager {
     override fun get(name: String): CloudTemplate? = cachedTemplates[name]
 
     override fun loadAllTemplates() {
-        CloudInstance.instance.locationSpace.template.listFiles()?.forEach {
+        locationSpace.template.listFiles()?.forEach {
             val settings = File(it.path,"settings.json")
 
             if (settings.exists())
@@ -66,7 +71,7 @@ object BasicCloudTemplateManager : SavableCloudTemplateManager {
         }
     }
 
-    override fun loadTemplate(file: File): SavableCloudTemplate {
+    override fun loadTemplate(file: File): SaveableCloudTemplate {
         val template = BasicCloudTemplate.deserialize(file.readJson<Map<String, Any>>())
 
         CloudLogger.debug("Loaded template ${template.name}")

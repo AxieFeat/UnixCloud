@@ -1,7 +1,6 @@
 package net.unix.api
 
 import net.unix.api.bridge.CloudBridge
-import net.unix.api.builder.Builder
 import net.unix.api.command.CommandDispatcher
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager

@@ -1,6 +1,6 @@
 package net.unix.api.template
 
-import net.unix.api.Serializable
+import net.unix.api.pattern.Serializable
 import java.nio.file.Path
 import java.nio.file.Paths
 

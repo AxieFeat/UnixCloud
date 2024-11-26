@@ -41,7 +41,7 @@ open class ServiceJVMExecutable(
         set(value) {
             field = value
 
-            if (value)
+            if (value && !field)
                 logs.forEach { CloudLogger.service(it) }
         }
 
@@ -74,9 +74,9 @@ open class ServiceJVMExecutable(
      * @param command Command to send.
      */
     override fun command(command: String) {
-        scheduler(SchedulerType.EXECUTOR) {
+        scheduler {
             execute {
-                val writer = PrintWriter(process.outputStream)
+                val writer = PrintStream(process.outputStream)
 
                 writer.println(command)
                 writer.flush()

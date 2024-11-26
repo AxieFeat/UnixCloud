@@ -2,13 +2,15 @@ package net.unix.api.terminal
 
 import net.kyori.adventure.text.Component
 import net.unix.api.command.sender.CommandSender
+import net.unix.api.pattern.Closeable
+import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.ConsoleServiceExecutable
 
 /**
  * Terminal, just terminal.
  */
-interface Terminal : PersistentDataHolder {
+interface Terminal : PersistentDataHolder, Closeable, Startable {
 
     /**
      * Terminal command sender.
@@ -33,9 +35,14 @@ interface Terminal : PersistentDataHolder {
     fun setPrompt(component: Component?)
 
     /**
+     * Start terminal
+     */
+    override fun start()
+
+    /**
      * Close terminal.
      */
-    fun close()
+    override fun close()
 
     /**
      * Print [Component] in terminal.

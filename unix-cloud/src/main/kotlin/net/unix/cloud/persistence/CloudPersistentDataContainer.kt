@@ -1,9 +1,10 @@
 package net.unix.cloud.persistence
 
-import net.unix.api.NamespacedKey
+import net.kyori.adventure.key.Key
 import net.unix.api.persistence.PersistentDataAdapterContext
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.persistence.PersistentDataType
+import net.unix.cloud.NamespacedKey
 import kotlin.reflect.KFunction
 
 @Suppress("UNCHECKED_CAST")
@@ -12,7 +13,7 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
     private val data = mutableMapOf<String, MutableMap<PersistentDataType<*, *>, Any>>()
 
     @Throws(IllegalArgumentException::class)
-    override operator fun <T, Z> set(key: NamespacedKey, type: PersistentDataType<T, Z>, value: Z) {
+    override operator fun <T, Z> set(key: Key, type: PersistentDataType<T, Z>, value: Z) {
         val stringKey = key.toString()
 
         val values = data[stringKey] ?: mutableMapOf()
@@ -22,7 +23,7 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
         data[stringKey] = values
     }
 
-    override fun <T, Z> has(key: NamespacedKey, type: PersistentDataType<T, Z>): Boolean {
+    override fun <T, Z> has(key: Key, type: PersistentDataType<T, Z>): Boolean {
         val stringKey = key.toString()
 
         val result = data.filter { it.key == stringKey }.filter { it.value.contains(type) }
@@ -31,20 +32,20 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
     }
 
     @Throws(IllegalArgumentException::class)
-    override operator fun <T, Z> get(key: NamespacedKey, type: PersistentDataType<T, Z>): Z? {
+    override operator fun <T, Z> get(key: Key, type: PersistentDataType<T, Z>): Z? {
         val result = data[key.toString()]?.get(type) ?: return null
 
         return result as Z
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun <T, Z> getOrDefault(key: NamespacedKey, type: PersistentDataType<T, Z>, defaultValue: Z): Z {
+    override fun <T, Z> getOrDefault(key: Key, type: PersistentDataType<T, Z>, defaultValue: Z): Z {
         val z = this[key, type]
 
         return z ?: defaultValue
     }
 
-    override val keys: Set<NamespacedKey?>
+    override val keys: Set<Key?>
         get() {
             val keys = hashSetOf<String>()
 
@@ -55,7 +56,7 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
             return keys.map { NamespacedKey.fromString(it) }.toSet()
         }
 
-    override fun remove(key: NamespacedKey) {
+    override fun remove(key: Key) {
         data.remove(key.toString())
     }
 

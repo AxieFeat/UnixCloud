@@ -2,7 +2,7 @@
 
 package net.unix.cloud.configuration
 
-import net.unix.api.Serializable
+import net.unix.api.pattern.Serializable
 
 object UnixConfiguration : CloudConfiguration("/config.json") {
 
@@ -12,7 +12,7 @@ object UnixConfiguration : CloudConfiguration("/config.json") {
     val storage = LocationSettings.deserialize(values["storage"])
     val allowedEvents = EventSettings.deserialize(values["allowed-events"])
 
-    override fun save(): Map<String, Any> {
+    override fun serialize(): Map<String, Any> {
         val serialized = mutableMapOf<String, Any>()
 
         serialized["file-encoding"] = fileEncoding

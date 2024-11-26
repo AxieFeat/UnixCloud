@@ -2,6 +2,8 @@
 
 package net.unix.api.persistence
 
+import net.unix.api.pattern.Nameable
+
 /**
  * This class represents an enum with a generic content type. It defines the
  * types a custom tag can have.
@@ -12,14 +14,14 @@ package net.unix.api.persistence
  * @param T The primary object type that is stored in the given tag.
  * @param Z The retrieved object type when applying this tag type.
  */
-interface PersistentDataType<T, Z> {
+interface PersistentDataType<T, Z> : Nameable {
 
     /**
      * Name of persistent type.
      *
      * @return Persistent name.
      */
-    val name: String
+    override val name: String
 
     /**
      * Returns the primitive data type of this tag.

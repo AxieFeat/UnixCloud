@@ -1,16 +1,17 @@
 package net.unix.api.command.sender
 
 import net.kyori.adventure.text.Component
+import net.unix.api.pattern.Nameable
 
 /**
  * General representation of the command sender.
  */
-interface CommandSender {
+interface CommandSender : Nameable {
 
     /**
      * Sender name.
      */
-    val name: String
+    override val name: String
 
     /**
      * Send message to command sender.

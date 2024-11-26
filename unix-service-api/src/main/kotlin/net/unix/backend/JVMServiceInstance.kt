@@ -26,13 +26,19 @@ object JVMServiceInstance {
     val uuid: UUID = UUID.fromString(dataFolder.name)
 
     fun install() {
+        println("Service instance installing...")
+
         val client = Client()
         client.connect("0.0.0.0", 9191)
+
+        println("Service connected to node!")
 
         Packet.builder()
             .setChannel("fun:service:auth")
             .addNamedString("uuid" to uuid.toString())
             .send(client)
+
+        println("Service started.")
 
         scheduler(SchedulerType.EXECUTOR) {
             execute(0, 1000) {
@@ -61,8 +67,6 @@ object JVMServiceInstance {
                         .addNamedLong("memory" to free)
                         .send(client)
                 }
-
-                println("Memory usage updated!")
             }
         }
     }

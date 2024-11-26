@@ -4,11 +4,11 @@ import net.unix.api.LocationSpace
 import java.io.File
 
 /**
- * Represents manager for [SavableCloudTemplate].
+ * Represents manager for [SaveableCloudTemplate].
  *
- * @see SavableCloudTemplate
+ * @see SaveableCloudTemplate
  */
-interface SavableCloudTemplateManager : CloudTemplateManager {
+interface SaveableCloudTemplateManager : CloudTemplateManager {
 
     /**
      * Load all templates from [LocationSpace.template] file.
@@ -20,5 +20,5 @@ interface SavableCloudTemplateManager : CloudTemplateManager {
      *
      * @param file File to be loaded from.
      */
-    fun loadTemplate(file: File): SavableCloudTemplate
+    fun loadTemplate(file: File): SaveableCloudTemplate
 }

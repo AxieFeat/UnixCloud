@@ -1,16 +1,19 @@
 package net.unix.cloud.service
 
+import net.unix.api.LocationSpace
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
+import net.unix.api.service.CloudServiceManager
 import net.unix.api.service.ServiceExecutable
 import net.unix.api.service.CloudServiceStatus
 import net.unix.api.service.StaticCloudService
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.cloud.CloudExtension.uniqueUUID
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.mainDirectory
 import net.unix.cloud.persistence.CloudPersistentDataContainer
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.File
 import java.util.*
 import kotlin.jvm.Throws
@@ -21,13 +24,16 @@ open class CloudJVMService(
     override val uuid: UUID = uniqueUUID(),
     name: String,
     override var static: Boolean = false
-) : StaticCloudService {
+) : StaticCloudService, KoinComponent {
+
+    private val cloudServiceManager: CloudServiceManager by inject()
+    private val locationSpace: LocationSpace by inject()
 
     override val clearName: String = name
 
     override val name: String
         get() {
-            val any = CloudInstance.instance.cloudServiceManager[clearName].any { it != this }
+            val any = cloudServiceManager[clearName].any { it != this }
 
             if (any) {
                 return "$clearName ($uuid)"
@@ -39,7 +45,7 @@ open class CloudJVMService(
     override val persistentDataContainer: PersistentDataContainer = CloudPersistentDataContainer()
 
     override val dataFolder: File = run {
-        val file = File(CloudInstance.instance.locationSpace.service, uuid.toString())
+        val file = File(locationSpace.service, uuid.toString())
 
         file.mkdirs()
 
@@ -96,7 +102,7 @@ open class CloudJVMService(
 
         CloudLogger.info("Trying to delete $name...")
 
-        CloudInstance.instance.cloudServiceManager.unregister(this)
+        cloudServiceManager.unregister(this)
 
         val templates = group.templates
 
