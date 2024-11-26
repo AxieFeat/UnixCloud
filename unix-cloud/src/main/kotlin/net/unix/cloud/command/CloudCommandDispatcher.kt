@@ -2,8 +2,8 @@ package net.unix.cloud.command
 
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.unix.api.command.CommandDispatcher
-import net.unix.api.command.sender.CommandSender
+import net.unix.command.CommandDispatcher
+import net.unix.command.sender.CommandSender
 
 object CloudCommandDispatcher : CommandDispatcher {
 

@@ -1,4 +1,4 @@
-package net.unix.api.command
+package net.unix.command
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException

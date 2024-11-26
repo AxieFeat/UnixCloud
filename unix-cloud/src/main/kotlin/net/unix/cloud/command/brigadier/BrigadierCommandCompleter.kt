@@ -3,9 +3,9 @@ package net.unix.cloud.command.brigadier
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.StringReader
-import net.unix.api.command.sender.CommandSender
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudTerminalCompleteEvent
+import net.unix.command.sender.CommandSender
 import org.jline.reader.Candidate
 import org.jline.reader.Completer
 import org.jline.reader.LineReader
@@ -17,7 +17,7 @@ open class BrigadierCommandCompleter(
     private val sender: CommandSender
 ) : Completer {
 
-    private val dispatcher: net.unix.api.command.CommandDispatcher by inject()
+    private val dispatcher: net.unix.command.CommandDispatcher by inject()
 
     companion object : KoinComponent {
         fun prepareStringReader(line: String): StringReader {

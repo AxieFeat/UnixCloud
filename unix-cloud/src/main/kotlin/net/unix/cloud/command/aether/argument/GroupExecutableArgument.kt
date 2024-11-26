@@ -4,9 +4,9 @@ import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.unix.api.command.CommandArgument
 import net.unix.api.group.GroupExecutable
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
+import net.unix.command.CommandArgument
 import java.util.concurrent.CompletableFuture
 
 /**

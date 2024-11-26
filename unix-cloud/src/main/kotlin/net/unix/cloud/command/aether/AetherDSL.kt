@@ -5,9 +5,9 @@ package net.unix.cloud.command.aether
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.tree.LiteralCommandNode
-import net.unix.api.command.CommandExecutor
 import net.unix.cloud.command.aether.AetherCommandBuilder.Companion.dispatcher
-import net.unix.api.command.sender.CommandSender
+import net.unix.command.CommandExecutor
+import net.unix.command.sender.CommandSender
 import java.util.function.Predicate
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind

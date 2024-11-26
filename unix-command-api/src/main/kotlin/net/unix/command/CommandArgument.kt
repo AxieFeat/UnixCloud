@@ -1,4 +1,4 @@
-package net.unix.api.command
+package net.unix.command
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext

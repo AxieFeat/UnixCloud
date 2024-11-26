@@ -1,13 +1,12 @@
 package net.unix.cloud
 
-import net.unix.api.CloudAPI
 import net.unix.api.LocationSpace
 import net.unix.cloud.configuration.UnixConfiguration
 import java.io.File
 
 val mainDirectory: File = run {
     val file = File(
-        CloudAPI::class.java.getProtectionDomain().codeSource.location.toURI()
+        CloudInstance::class.java.getProtectionDomain().codeSource.location.toURI()
     ).parentFile
 
     if (!file.exists()) {

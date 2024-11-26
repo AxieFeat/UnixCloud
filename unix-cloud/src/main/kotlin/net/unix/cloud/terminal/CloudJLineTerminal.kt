@@ -1,7 +1,6 @@
 package net.unix.cloud.terminal
 
 import net.kyori.adventure.text.Component
-import net.unix.api.command.sender.CommandSender
 import net.unix.api.service.ConsoleServiceExecutable
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.serializeAnsi
@@ -10,6 +9,7 @@ import net.unix.cloud.command.brigadier.BrigadierCommandHighlighter
 import net.unix.cloud.command.sender.CloudConsoleCommandSender
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.persistence.CloudPersistentDataContainer
+import net.unix.command.sender.CommandSender
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder

@@ -1,4 +1,4 @@
-package net.unix.api.command.sender
+package net.unix.command.sender
 
 /**
  * Console [CommandSender].

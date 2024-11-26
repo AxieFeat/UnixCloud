@@ -1,11 +1,11 @@
 @file:Suppress("SpellCheckingInspection")
 
-package net.unix.api.command
+package net.unix.command
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.unix.api.command.sender.CommandSender
+import net.unix.command.sender.CommandSender
 
 /**
  * Console command dispatcher.

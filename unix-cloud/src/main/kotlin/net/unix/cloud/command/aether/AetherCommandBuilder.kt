@@ -7,10 +7,10 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.CommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
-import net.unix.api.command.CommandBuilder
-import net.unix.api.command.CommandDispatcher
-import net.unix.api.command.CommandExecutor
-import net.unix.api.command.sender.CommandSender
+import net.unix.command.CommandBuilder
+import net.unix.command.CommandDispatcher
+import net.unix.command.CommandExecutor
+import net.unix.command.sender.CommandSender
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.function.Predicate

@@ -1,4 +1,4 @@
-package net.unix.api.command
+package net.unix.command
 
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.suggestion.SuggestionProvider

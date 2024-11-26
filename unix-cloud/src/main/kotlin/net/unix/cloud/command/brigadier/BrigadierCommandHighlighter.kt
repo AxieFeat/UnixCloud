@@ -3,10 +3,10 @@ package net.unix.cloud.command.brigadier
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.context.ParsedCommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
-import net.unix.api.command.CommandDispatcher
-import net.unix.api.command.sender.CommandSender
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudTerminalHighlightEvent
+import net.unix.command.CommandDispatcher
+import net.unix.command.sender.CommandSender
 import org.jline.reader.Highlighter
 import org.jline.reader.LineReader
 import org.jline.utils.AttributedString

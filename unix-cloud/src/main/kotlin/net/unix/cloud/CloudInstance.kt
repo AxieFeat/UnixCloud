@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.unix.api.LocationSpace
 import net.unix.api.bridge.CloudBridge
-import net.unix.api.command.CommandDispatcher
+import net.unix.command.CommandDispatcher
 import net.unix.api.group.*
 import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.modification.extension.ExtensionManager
@@ -42,11 +42,8 @@ import net.unix.cloud.terminal.CloudJLineTerminal
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.text.SimpleDateFormat
-import javax.inject.Inject
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
@@ -600,6 +597,7 @@ object CloudInstance : KoinComponent, Startable {
         terminal.start()
 
         server.start(UnixConfiguration.bridge.port)
+
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler.run() })
 
         CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")

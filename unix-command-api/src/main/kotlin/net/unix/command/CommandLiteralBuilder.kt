@@ -1,13 +1,12 @@
-package net.unix.api.command
+package net.unix.command
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import net.unix.api.pattern.Nameable
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class CommandLiteralBuilder<T>(
-    override val name: String
-) : LiteralArgumentBuilder<T>(name), Nameable {
+    val name: String
+) : LiteralArgumentBuilder<T>(name) {
 
     /**
      * Command executor

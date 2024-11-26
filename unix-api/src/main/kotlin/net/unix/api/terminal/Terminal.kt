@@ -1,11 +1,11 @@
 package net.unix.api.terminal
 
 import net.kyori.adventure.text.Component
-import net.unix.api.command.sender.CommandSender
 import net.unix.api.pattern.Closeable
 import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.service.ConsoleServiceExecutable
+import net.unix.command.sender.CommandSender
 
 /**
  * Terminal, just terminal.

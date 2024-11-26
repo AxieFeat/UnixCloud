@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":unix-network"))
     implementation(project(":unix-scheduler"))
     implementation(project(":unix-event-system"))
+    implementation(project(":unix-command-api"))
 }
 
 tasks.test {

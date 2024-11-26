@@ -1,8 +1,8 @@
 package net.unix.cloud.command.aether
 
 import com.mojang.brigadier.Command
-import net.unix.api.command.CommandLiteralBuilder
-import net.unix.api.command.sender.CommandSender
+import net.unix.command.CommandLiteralBuilder
+import net.unix.command.sender.CommandSender
 
 @Suppress("NAME_SHADOWING")
 class AetherLiteralBuilder(
