@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation(project(":unix-service-api"))
+    implementation(project(":unix-driver"))
 }
 
 tasks.test {

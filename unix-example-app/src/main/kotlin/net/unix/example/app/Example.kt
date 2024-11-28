@@ -1,6 +1,6 @@
 package net.unix.example.app
 
-import net.unix.backend.JVMServiceInstance
+import net.unix.driver.JVMServiceInstance
 import java.util.Scanner
 
 fun main() {

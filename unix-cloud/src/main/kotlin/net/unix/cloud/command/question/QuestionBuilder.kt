@@ -55,7 +55,7 @@ class QuestionBuilder<T>(
     }
 
     override fun close() {
-        CloudQuestionManager.closeQuestion(this as Question<Any>)
+        CloudQuestionManager.closeQuestion()
     }
 
     override fun restart() {

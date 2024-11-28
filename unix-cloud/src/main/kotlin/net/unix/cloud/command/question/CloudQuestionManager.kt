@@ -10,7 +10,7 @@ object CloudQuestionManager : QuestionManager {
         activeQuestion = question
     }
 
-    override fun closeQuestion(question: Question<Any>) {
+    override fun closeQuestion() {
         activeQuestion = null
     }
 }

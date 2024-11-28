@@ -18,9 +18,7 @@ interface QuestionManager {
     fun startQuestion(question: Question<Any>)
 
     /**
-     * Close the question.
-     *
-     * @param question Question to close.
+     * Close current active question.
      */
-    fun closeQuestion(question: Question<Any>)
+    fun closeQuestion()
 }

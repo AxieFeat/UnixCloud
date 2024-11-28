@@ -631,6 +631,7 @@ private fun createGroup(cloudGroupManager: CloudGroupManager) {
                             if (name == null || groupExecutable == null) {
                                 CloudLogger.info("You are exit from group create mode.")
                                 kill()
+                                @Suppress("LABEL_NAME_CLASH")
                                 return@answer
                             }
 

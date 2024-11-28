@@ -9,6 +9,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.Callable
 
+@Suppress("UNCHECKED_CAST")
 class NextQuestionBuilder<T>(
     override val previous: Question<*>,
     override val argument: QuestionArgument<T>
@@ -50,7 +51,7 @@ class NextQuestionBuilder<T>(
     }
 
     override fun close() {
-        CloudQuestionManager.closeQuestion(this as Question<Any>)
+        CloudQuestionManager.closeQuestion()
     }
 
     override fun kill() {
