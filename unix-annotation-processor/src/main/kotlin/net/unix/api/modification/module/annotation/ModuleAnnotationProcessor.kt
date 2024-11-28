@@ -1,11 +1,9 @@
 package net.unix.api.modification.module.annotation
 
+import com.google.gson.GsonBuilder
 import net.unix.api.modification.CloudAnnotationProcessor
 import net.unix.api.modification.createByAnnotation
 import net.unix.api.modification.module.Module
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedSourceVersion
@@ -73,25 +71,19 @@ class ModuleAnnotationProcessor : CloudAnnotationProcessor() {
                             processingEnv.filer.createResource(
                                 StandardLocation.CLASS_OUTPUT,
                                 "",
-                                "module.yml",
-                                *arrayOfNulls(0)
+                                "module.json"
                             )
 
                         val writer = file.openWriter()
 
-                        writer.append("# Auto-generated module.txt, generated at ").append(
-                            LocalDateTime.now().format(
-                                DateTimeFormatter.ofPattern(
-                                    "yyyy/MM/dd HH:mm:ss",
-                                    Locale.ENGLISH
-                                ))
-                        ).append(" by ").append(
-                            this.javaClass.name
-                        ).append("\n\n")
+                        val gson = GsonBuilder().setPrettyPrinting().create()
+                        writer.write(
+                            gson.toJson(
+                                net.unix.api.modification.module.ModuleInfo.createByAnnotation(mainName, annotation).serialize()
+                            )
+                        )
 
-                        writer.append(net.unix.api.modification.module.ModuleInfo.createByAnnotation(mainName, annotation).toString())
                         writer.flush()
-
                         writer.close()
 
                         return true

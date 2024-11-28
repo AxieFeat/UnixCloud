@@ -13,11 +13,6 @@ import java.io.File
 interface SaveableCloudGroup : CloudGroup, Deletable, Saveable {
 
     /**
-     * Folder of group.
-     */
-    val folder: File
-
-    /**
      * Save group properties to file.
      *
      * @param file Where to keep the properties.

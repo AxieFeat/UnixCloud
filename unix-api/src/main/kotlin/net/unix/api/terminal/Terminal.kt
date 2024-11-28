@@ -45,6 +45,11 @@ interface Terminal : PersistentDataHolder, Closeable, Startable {
     override fun close()
 
     /**
+     * Clear the terminal.
+     */
+    fun clear()
+
+    /**
      * Print [Component] in terminal.
      *
      * @param component [Component] to print.

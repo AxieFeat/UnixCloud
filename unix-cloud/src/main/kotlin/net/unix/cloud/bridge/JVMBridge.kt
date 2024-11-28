@@ -85,5 +85,6 @@ object JVMBridge : CloudBridge, KoinComponent {
 
             service.persistentDataContainer[serviceFreeMemory, PersistentDataType.LONG] = memory
         }
+        CloudLogger.info("Registered JVMBridge in ${server.port} TCP/IP")
     }
 }

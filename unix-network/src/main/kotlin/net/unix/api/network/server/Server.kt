@@ -8,12 +8,16 @@ import net.unix.api.network.universe.Packet
 import net.unix.api.network.universe.ResponsePacket
 import net.unix.api.network.universe.listener.Listener
 import net.unix.api.network.universe.listener.PacketListener
+import kotlin.properties.Delegates
 
 /**
  * Network server
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class Server : com.esotericsoftware.kryonet.Server(), Network {
+
+    var port by Delegates.notNull<Int>()
+        private set
 
     // TODO crypto
     //val keyPair = CryptoUtil.generateKeyPair()
@@ -52,6 +56,8 @@ open class Server : com.esotericsoftware.kryonet.Server(), Network {
      */
     fun start(port: Int): Server {
         start()
+
+        this.port = port
 
         registerClass(
             String::class.java,

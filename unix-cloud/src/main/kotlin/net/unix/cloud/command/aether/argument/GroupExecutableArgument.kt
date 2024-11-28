@@ -33,10 +33,10 @@ class GroupExecutableArgument : CommandArgument<GroupExecutable>() {
     }
 
     override fun parse(reader: StringReader): GroupExecutable {
-        val type = GroupExecutable[reader.readString()] ?:
+        val executable = GroupExecutable[reader.readString()] ?:
             throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
-        return type
+        return executable
     }
 
     /**

@@ -1,8 +1,11 @@
-package net.unix.cloud.command.brigadier
+package net.unix.cloud.command.format
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.StringReader
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import net.unix.api.terminal.Terminal
+import net.unix.cloud.command.question.CloudQuestionManager
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudTerminalCompleteEvent
 import net.unix.command.sender.CommandSender
@@ -13,10 +16,11 @@ import org.jline.reader.ParsedLine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-open class BrigadierCommandCompleter(
+open class CloudCommandCompleter(
     private val sender: CommandSender
 ) : Completer {
 
+    private val terminal: Terminal by inject()
     private val dispatcher: net.unix.command.CommandDispatcher by inject()
 
     companion object : KoinComponent {
@@ -36,6 +40,24 @@ open class BrigadierCommandCompleter(
         val event = CloudTerminalCompleteEvent(reader, line, candidates).callEvent()
 
         if (event.cancelled) {
+            return
+        }
+
+        val activeQuestion = CloudQuestionManager.activeQuestion
+
+        if(activeQuestion != null) {
+
+            val result = activeQuestion.argument.suggestion(
+                terminal.sender,
+                SuggestionsBuilder(
+                    line.line(),
+                    line.line().lowercase(),
+                    0
+                )
+            ).join().list.map { Candidate(it.text) }
+
+            candidates.addAll(result)
+
             return
         }
 

@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.unix.api.LocationSpace
 import net.unix.api.bridge.CloudBridge
-import net.unix.command.CommandDispatcher
 import net.unix.api.group.*
 import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.modification.extension.ExtensionManager
@@ -23,11 +22,16 @@ import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.bridge.JVMBridge
 import net.unix.cloud.command.CloudCommandDispatcher
 import net.unix.cloud.command.aether.argument.CloudGroupArgument
-import net.unix.cloud.command.aether.argument.GroupExecutableArgument
 import net.unix.cloud.command.aether.argument.CloudServiceArgument
 import net.unix.cloud.command.aether.argument.CloudTemplateArgument
+import net.unix.cloud.command.aether.argument.GroupExecutableArgument
 import net.unix.cloud.command.aether.command
 import net.unix.cloud.command.aether.get
+import net.unix.cloud.command.question.argument.QuestionGroupExecutableArgument
+import net.unix.cloud.command.question.argument.primitive.QuestionStringArgument
+import net.unix.cloud.command.question.argument.primitive.QuestionNumberArgument
+import net.unix.cloud.command.question.argument.QuestionTemplateArgument
+import net.unix.cloud.command.question.question
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudStartEvent
@@ -39,6 +43,7 @@ import net.unix.cloud.modification.module.CloudModuleManager
 import net.unix.cloud.service.CloudJVMServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
+import net.unix.command.CommandDispatcher
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
@@ -46,6 +51,7 @@ import org.koin.dsl.module
 import java.text.SimpleDateFormat
 import kotlin.math.floor
 import kotlin.system.exitProcess
+
 
 fun main() {
     System.setProperty("file.encoding", UnixConfiguration.fileEncoding)
@@ -75,6 +81,7 @@ fun main() {
 }
 
 fun registerCommands(
+    commandDispatcher: CommandDispatcher,
     terminal: Terminal,
     cloudServiceManager: CloudServiceManager,
     cloudGroupManager: CloudGroupManager,
@@ -434,7 +441,7 @@ fun registerCommands(
 
     /group
         list - Список групп
-        create <название> <лимит сервисов> <исполняемый файл> [тип] - Создать группу
+        create - Создать группу
         delete <название> - Удалить группу
         info <название> - Информация о группе
 
@@ -460,59 +467,9 @@ fun registerCommands(
         }
 
         literal("create") {
-            argument("name", StringArgumentType.string()) {
-                argument("limit", IntegerArgumentType.integer(0, Int.MAX_VALUE)) {
-                    argument("executableFile", StringArgumentType.string()) {
 
-                        execute {
-
-                            val name: String = it["name"]
-
-                            if(name.contains(" ")) {
-                                CloudLogger.info("Name of group can not contain spaces!")
-                                return@execute
-                            }
-
-                            val limit: Int = it["limit"]
-                            val executableFile: String = it["executableFile"]
-
-                            CloudLogger.info("Created new group with name $name. Setting it in settings.json file")
-
-                            cloudGroupManager.newInstance(
-                                uniqueUUID(),
-                                name,
-                                limit,
-                                executableFile
-                            )
-                        }
-
-                        argument("type", GroupExecutableArgument()) {
-                            execute {
-                                val name: String = it["name"]
-
-                                if(name.contains(" ")) {
-                                    CloudLogger.info("Name of group can not contain spaces!")
-                                    return@execute
-                                }
-
-                                val limit: Int = it["limit"]
-                                val executableFile: String = it["executableFile"]
-                                val type: GroupExecutable = it["type"]
-
-                                CloudLogger.info("Created new group with name $name")
-
-                                cloudGroupManager.newInstance(
-                                    uniqueUUID(),
-                                    name,
-                                    limit,
-                                    executableFile,
-                                    mutableListOf(),
-                                    type
-                                )
-                            }
-                        }
-                    }
-                }
+            execute {
+                createGroup(cloudGroupManager)
             }
         }
 
@@ -576,11 +533,130 @@ fun registerCommands(
             }
         }
     }.register()
+
+    CloudLogger.info("Registered ${commandDispatcher.dispatcher.root.children.size} commands")
+}
+
+private fun createGroup(cloudGroupManager: CloudGroupManager) {
+    question(QuestionNumberArgument.int(1, 6)) {
+
+        var name: String? = null
+        var limit: Int? = null
+        var templates: MutableSet<CloudTemplate>? = null
+        var executableFile: String? = null
+        var groupExecutable: GroupExecutable? = null
+
+        fun sendMainMessage() {
+            CloudLogger.info("You in group create mode.")
+            CloudLogger.info("#################################")
+            CloudLogger.info("	Current group settings:")
+            CloudLogger.info("	 [1] Name: ${name ?: "-"}")
+            CloudLogger.info("	 [2] Service limit: ${limit ?: "-"}")
+            CloudLogger.info("	 [3] Templates: ${templates?.map { it.name } ?: "-"}")
+            CloudLogger.info("	 [4] Executable file: ${executableFile ?: "-"}")
+            CloudLogger.info("	 [5] Group executable: ${groupExecutable?.name ?: "-"}")
+            CloudLogger.info("	 [6] Save and exit")
+            CloudLogger.info("#################################")
+        }
+
+        create {
+            sendMainMessage()
+        }
+
+        answer {
+            when(it) {
+                1 -> next(QuestionStringArgument()) {
+                    create {
+                        CloudLogger.info("You in group create mode.")
+                        CloudLogger.info("Select group name")
+                    }
+                    answer { answer ->
+                        name = answer
+                    }
+                }.start()
+                2 -> next(QuestionNumberArgument.int(0)) {
+                    create {
+                        CloudLogger.info("You in group create mode.")
+                        CloudLogger.info("Set service limit")
+                    }
+                    answer { answer ->
+                        limit = answer.toInt()
+                    }
+                }.start()
+                3 -> next(QuestionTemplateArgument()) {
+                    create {
+                        CloudLogger.info("You in group create mode.")
+                        CloudLogger.info("Add template")
+                    }
+                    answer { answer ->
+                        templates?.add(answer) ?: run {
+                            templates = mutableSetOf(answer)
+                        }
+                    }
+                }.start()
+                4 -> next(QuestionStringArgument()) {
+                    create {
+                        CloudLogger.info("You in group create mode.")
+                        CloudLogger.info("Set executable file name")
+                    }
+                    answer { answer ->
+                        executableFile = answer
+                    }
+                }.start()
+                5 -> next(QuestionGroupExecutableArgument()) {
+                    create {
+                        CloudLogger.info("You in group create mode.")
+                        CloudLogger.info("Set group executable")
+                    }
+                    answer { answer ->
+                        groupExecutable = answer
+                    }
+                }.start()
+                6 -> next(QuestionNumberArgument.int(1, 2)) {
+                    create {
+                        CloudLogger.info("You in group create mode.")
+                        CloudLogger.info("Do you want exit?")
+                        CloudLogger.info("  [1] - Yes")
+                        CloudLogger.info("  [2] - No")
+                        if(name == null || groupExecutable == null) {
+                            CloudLogger.warning("<yellow>Attention! You no set one of this required params:")
+                            CloudLogger.warning("<yellow> - Name")
+                            CloudLogger.warning("<yellow> - Executable file")
+                            CloudLogger.warning("<yellow>If you exit - group will not be created!")
+                        }
+                    }
+
+                    answer {
+                        if(answer == 1) {
+                            if (name == null || groupExecutable == null) {
+                                CloudLogger.info("You are exit from group create mode.")
+                                kill()
+                                return@answer
+                            }
+
+                            cloudGroupManager.newInstance(
+                                uniqueUUID(),
+                                name!!,
+                                limit ?: 1,
+                                executableFile!!,
+                                templates?.toMutableList() ?: mutableListOf(),
+                                groupExecutable
+                            )
+
+                            CloudLogger.info("You are created group $name!")
+                            kill()
+                        }
+                    }
+                }.start()
+            }
+        }
+    }.start()
 }
 
 object CloudInstance : KoinComponent, Startable {
 
     private val terminal: Terminal by inject()
+    private val commandDispatcher: CommandDispatcher by inject()
 
     private val cloudTemplateManager: CloudTemplateManager by inject()
     private val cloudGroupManager: CloudGroupManager by inject()
@@ -588,7 +664,7 @@ object CloudInstance : KoinComponent, Startable {
 
     private val moduleManager: ModuleManager by inject()
 
-    private  val server: Server by inject()
+    private val server: Server by inject()
     private val bridge: CloudBridge by inject()
 
     override fun start() {
@@ -609,11 +685,17 @@ object CloudInstance : KoinComponent, Startable {
 
         bridge.configure(server)
 
+        registerCommands(
+            commandDispatcher,
+            terminal,
+            cloudServiceManager,
+            cloudGroupManager,
+            cloudTemplateManager
+        )
+
         (cloudTemplateManager as? SaveableCloudTemplateManager)?.loadAllTemplates()
 
         (cloudGroupManager as? SaveableCloudGroupManager)?.loadAllGroups()
-
-        registerCommands(terminal, cloudServiceManager, cloudGroupManager, cloudTemplateManager)
     }
 
     fun shutdown() {

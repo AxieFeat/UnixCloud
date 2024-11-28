@@ -11,7 +11,7 @@ package net.unix.api.modification.module.annotation
  * @param depends Module required dependencies
  * @param softDepends Module optional dependencies
  */
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ModuleInfo(
     val name: String,
     val version: String,

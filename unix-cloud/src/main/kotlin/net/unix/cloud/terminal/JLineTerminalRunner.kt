@@ -1,11 +1,15 @@
 package net.unix.cloud.terminal
 
+import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.CloudExtension.strip
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
+import net.unix.cloud.command.question.CloudQuestionManager
 import net.unix.cloud.configuration.UnixConfiguration
+import net.unix.cloud.logging.CloudLogger
 import net.unix.command.CommandDispatcher
+import net.unix.command.question.exception.QuestionParseException
 import net.unix.scheduler.impl.scheduler
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
@@ -50,6 +54,17 @@ class JLineTerminalRunner(
                 trim = line.trim()
 
                 if (trim.isNotEmpty()) {
+
+                    val activeQuestion = CloudQuestionManager.activeQuestion
+
+                    if (activeQuestion != null) {
+                        try {
+                            activeQuestion.answer = activeQuestion.argument.parse(StringReader(line))
+                        } catch (e: QuestionParseException) {
+                            e.message?.let { CloudLogger.severe(it) }
+                        }
+                        continue
+                    }
 
                     if (!line.startsWith(UnixConfiguration.terminal.serviceCommandPrefix)) {
                         execute {

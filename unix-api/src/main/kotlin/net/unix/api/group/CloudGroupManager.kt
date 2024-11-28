@@ -53,6 +53,31 @@ interface CloudGroupManager {
     ): CloudGroup
 
     /**
+     * Create new instance of [AutoCloudGroup]. It will be registered via [register].
+     *
+     * @param uuid UUID of group.
+     * @param name Name of group.
+     * @param serviceLimit Limit of service for group.
+     * @param executableFile Path to executable file in prepared service.
+     * @param templates List of templates.
+     * @param executable Executable of group.
+     * @param rules Rules of group.
+     *
+     * @return New instance of [AutoCloudGroup].
+     *
+     * @throws IllegalArgumentException If [name] contain spaces.
+     */
+    @Throws(IllegalArgumentException::class)
+    fun newInstance(uuid: UUID,
+                    name: String,
+                    serviceLimit: Int,
+                    executableFile: String,
+                    templates: MutableList<CloudTemplate> = mutableListOf(),
+                    executable: GroupExecutable? = null,
+                    rules: MutableSet<CloudGroupRule<Any>>
+    ): AutoCloudGroup
+
+    /**
      * Is exist [CloudGroup]'s with one name.
      *
      * @param name Name for check.

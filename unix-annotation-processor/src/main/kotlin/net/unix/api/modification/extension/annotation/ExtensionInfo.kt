@@ -9,7 +9,7 @@ package net.unix.api.modification.extension.annotation
  * @param website Extension website
  * @param authors Extension authors
  */
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ExtensionInfo(
     val name: String,
     val version: String,

@@ -78,6 +78,7 @@ data class LoggerSettings(
     val format: String = "<gray> {1}</gray> <dark_gray>|</dark_gray> <gray>{2}</gray><dark_gray> »</dark_gray> <gray>{3}</gray><reset>",
     val formatFile: String = " {1} | {2} » {3}",
     val dateFormat: String = "HH:mm:ss",
+    val warnSTDOUT: Boolean = true,
     val cacheSize: Int = 50
 ) : Serializable {
     override fun serialize(): Map<String, Any> {
@@ -86,6 +87,7 @@ data class LoggerSettings(
         serialized["format"] = format
         serialized["format-file"] = formatFile
         serialized["date-format"] = dateFormat
+        serialized["warn-stdout"] = warnSTDOUT
         serialized["cache-size"] = 50
 
         return serialized
@@ -96,9 +98,10 @@ data class LoggerSettings(
             val format = serialized["format"].toString()
             val formatFile = serialized["format-file"].toString()
             val dateFormat = serialized["date-format"].toString()
+            val warnSTDOUT = serialized["warn-stdout"].toString().toBoolean()
             val cacheSize = serialized["cache-size"].toString().toIntOrNull() ?: 50
 
-            return LoggerSettings(format, formatFile, dateFormat, cacheSize)
+            return LoggerSettings(format, formatFile, dateFormat, warnSTDOUT, cacheSize)
         }
 
         fun deserialize(any: Any?) = deserialize(any as Map<String, Any>)

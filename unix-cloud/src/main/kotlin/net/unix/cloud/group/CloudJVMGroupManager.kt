@@ -22,6 +22,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
 
     init {
         GroupJVMExecutable.register()
+        CloudRuleHandler.start()
     }
 
     override fun register(group: CloudGroup) {
@@ -30,7 +31,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         CloudLogger.debug("Registered group ${group.clearName}")
 
         if (group is SaveableCloudGroup) {
-            val file = File(locationSpace.group, "${group.clearName} (${group.uuid})/settings.json")
+            val file = File(locationSpace.group, "${group.clearName} (${group.uuid}).json")
 
             group.save(file)
         }
@@ -40,7 +41,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         cachedGroups.remove(group.uuid)
 
         if (group is SaveableCloudGroup) {
-            val file = File(locationSpace.group, "${group.clearName} (${group.uuid})/settings.json")
+            val file = File(locationSpace.group, "${group.clearName} (${group.uuid}).json")
 
             group.save(file)
         }
@@ -53,14 +54,27 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         executableFile: String,
         templates: MutableList<CloudTemplate>,
         executable: GroupExecutable?
-    ): CloudGroup {
+    ): CloudGroup = newInstance(
+        uuid, name, serviceLimit, executableFile, templates, executable, mutableSetOf()
+    )
+
+    override fun newInstance(
+        uuid: UUID,
+        name: String,
+        serviceLimit: Int,
+        executableFile: String,
+        templates: MutableList<CloudTemplate>,
+        executable: GroupExecutable?,
+        rules: MutableSet<CloudGroupRule<Any>>
+    ): AutoCloudGroup {
         val group = CloudJVMGroup(
             uuid,
             name,
             serviceLimit,
             executableFile,
             templates = templates,
-            groupExecutable = executable
+            groupExecutable = executable,
+            rules = rules
         )
 
         register(group)
@@ -69,11 +83,8 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
     }
 
     override fun loadAllGroups() {
-        locationSpace.group.listFiles()?.forEach {
-            val settings = File(it, "/settings.json")
-
-            if (settings.exists())
-                loadGroup(settings)
+        locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
+            loadGroup(it)
         }
 
         CloudLogger.info("Loaded ${cachedGroups.size} groups:")

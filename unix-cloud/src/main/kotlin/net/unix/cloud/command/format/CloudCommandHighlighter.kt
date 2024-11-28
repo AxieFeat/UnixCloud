@@ -1,11 +1,14 @@
-package net.unix.cloud.command.brigadier
+package net.unix.cloud.command.format
 
 import com.mojang.brigadier.ParseResults
+import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.context.ParsedCommandNode
 import com.mojang.brigadier.tree.LiteralCommandNode
+import net.unix.cloud.command.question.CloudQuestionManager
 import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudTerminalHighlightEvent
 import net.unix.command.CommandDispatcher
+import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
 import org.jline.reader.Highlighter
 import org.jline.reader.LineReader
@@ -18,7 +21,7 @@ import java.util.regex.Pattern
 import kotlin.math.min
 
 @Suppress("UNCHECKED_CAST")
-open class BrigadierCommandHighlighter(
+open class CloudCommandHighlighter(
     private val sender: CommandSender
 ) : Highlighter, KoinComponent {
 
@@ -31,11 +34,20 @@ open class BrigadierCommandHighlighter(
         val event = CloudTerminalHighlightEvent(reader, buffer, builder).callEvent()
         builder = event.builder
 
-        val results: ParseResults<CommandSender> =
-            dispatcher.dispatcher.parse(
-                BrigadierCommandCompleter.prepareStringReader(buffer),
-                sender
-            )
+        val activeQuestion = CloudQuestionManager.activeQuestion
+
+        if(activeQuestion != null) {
+            val answerType = activeQuestion.argument
+
+            try {
+                answerType.parse(StringReader(buffer))
+                builder.append(buffer, AttributedStyle.DEFAULT)
+            } catch (e: QuestionParseException) {
+                builder.append(buffer, AttributedStyle.DEFAULT.foreground(1))
+            }
+
+            return builder.toAttributedString()
+        }
 
         var pos = 0
 
@@ -46,6 +58,12 @@ open class BrigadierCommandHighlighter(
             builder.append(buffer.substring(pos, buffer.length), AttributedStyle.DEFAULT)
             return builder.toAttributedString()
         }
+
+        val results: ParseResults<CommandSender> =
+            dispatcher.dispatcher.parse(
+                CloudCommandCompleter.prepareStringReader(buffer),
+                sender
+            )
 
         var component = -1
 

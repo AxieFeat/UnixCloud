@@ -1,9 +1,7 @@
 package net.unix.cloud.group
 
 import net.unix.api.LocationSpace
-import net.unix.api.group.CloudGroupManager
-import net.unix.api.group.GroupExecutable
-import net.unix.api.group.SaveableCloudGroup
+import net.unix.api.group.*
 import net.unix.api.group.exception.CloudGroupDeleteException
 import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.persistence.PersistentDataContainer
@@ -31,8 +29,9 @@ open class CloudJVMGroup(
     override val executableFile: String,
     val properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar"),
     override val templates: MutableList<CloudTemplate> = mutableListOf(),
+    override val rules: MutableSet<CloudGroupRule<Any>> = mutableSetOf(),
     override val groupExecutable: GroupExecutable? = GroupJVMExecutable,
-) : SaveableCloudGroup {
+) : SaveableCloudGroup, AutoCloudGroup {
 
     init {
         if(name.contains(" ")) throw IllegalArgumentException("Name of group can not contain spaces!")
@@ -57,10 +56,8 @@ open class CloudJVMGroup(
 
     override val persistentDataContainer: PersistentDataContainer = CloudPersistentDataContainer()
 
-    private var cachedServicesCount = 0
-
     override val servicesCount: Int
-        get() = cachedServicesCount
+        get() = services.size
 
     override var serviceLimit: Int = serviceLimit
         set(value) {
@@ -71,13 +68,16 @@ open class CloudJVMGroup(
             field = value
         }
 
-    override val folder: File = run {
-        val file = File(locationSpace.group, "$name ($uuid)")
+    override var startUpCount: Int = 0
+        set(value) {
+            if(value > serviceLimit)
+                throw CloudGroupLimitException("Startup service count can not be more, than service limit.")
 
-        file.mkdirs()
+            if(value < 0)
+                throw IllegalArgumentException("Startup service count can not be less 0.")
 
-        return@run file
-    }
+            field = value
+        }
 
     override val services: Set<CloudService>
         get() = cloudServiceManager.services.filter { it.group.uuid == this.uuid }.toSet()
@@ -97,8 +97,6 @@ open class CloudJVMGroup(
 
     override fun create(): CloudService {
         if(servicesCount >= serviceLimit) throw CloudGroupLimitException("Limit of services for group $name is $serviceLimit!")
-
-        cachedServicesCount+=1
 
         val service = CloudJVMService(
             this,
@@ -149,7 +147,7 @@ open class CloudJVMGroup(
             }
         }
         cloudGroupManager.unregister(this)
-        folder.deleteRecursively()
+        File(locationSpace.group, "$clearName ($uuid).json").delete()
     }
 
     companion object : KoinComponent {
@@ -181,7 +179,7 @@ open class CloudJVMGroup(
                 cloudTemplateManager[it]
             }.toMutableList()
 
-            val type = GroupExecutable[serialized["group-executable"].toString()]
+            val groupExecutable = GroupExecutable[serialized["group-executable"].toString()]
 
             return CloudJVMGroup(
                 uuid,
@@ -190,7 +188,7 @@ open class CloudJVMGroup(
                 executableFile,
                 properties,
                 templates,
-                type
+                groupExecutable = groupExecutable
             )
         }
     }

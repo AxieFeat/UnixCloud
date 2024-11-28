@@ -14,6 +14,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    compileOnly(project(":unix-annotation-processor"))
+    annotationProcessor(project(":unix-annotation-processor"))
 }
 
 tasks.test {

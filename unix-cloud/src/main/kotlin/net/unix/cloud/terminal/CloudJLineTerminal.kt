@@ -4,14 +4,15 @@ import net.kyori.adventure.text.Component
 import net.unix.api.service.ConsoleServiceExecutable
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.serializeAnsi
-import net.unix.cloud.command.brigadier.BrigadierCommandCompleter
-import net.unix.cloud.command.brigadier.BrigadierCommandHighlighter
+import net.unix.cloud.command.format.CloudCommandCompleter
+import net.unix.cloud.command.format.CloudCommandHighlighter
 import net.unix.cloud.command.sender.CloudConsoleCommandSender
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.persistence.CloudPersistentDataContainer
 import net.unix.command.sender.CommandSender
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
+import org.jline.reader.impl.LineReaderImpl
 import org.jline.terminal.TerminalBuilder
 import org.jline.utils.InfoCmp
 import java.nio.charset.StandardCharsets
@@ -40,8 +41,8 @@ open class CloudJLineTerminal : net.unix.api.terminal.Terminal {
 
     val lineReader: LineReader = LineReaderBuilder.builder()
         .terminal(terminal)
-        .completer(BrigadierCommandCompleter(sender))
-        .highlighter(BrigadierCommandHighlighter(sender))
+        .completer(CloudCommandCompleter(sender))
+        .highlighter(CloudCommandHighlighter(sender))
         .option(LineReader.Option.DISABLE_EVENT_EXPANSION, true)
         .option(LineReader.Option.AUTO_PARAM_SLASH, false)
         .option(LineReader.Option.AUTO_GROUP, false)
@@ -58,6 +59,14 @@ open class CloudJLineTerminal : net.unix.api.terminal.Terminal {
     override fun close() {
         runner.interrupt()
         terminal.close()
+    }
+
+    override fun clear() {
+
+        repeat((1..100).count()) {
+            terminal.writer().println(" ")
+        }
+
     }
 
     override fun setPrompt(component: Component?) {

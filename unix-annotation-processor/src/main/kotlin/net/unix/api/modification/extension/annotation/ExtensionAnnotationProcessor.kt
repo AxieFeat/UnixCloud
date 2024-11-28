@@ -1,11 +1,9 @@
 package net.unix.api.modification.extension.annotation
 
+import com.google.gson.GsonBuilder
 import net.unix.api.modification.CloudAnnotationProcessor
 import net.unix.api.modification.createByAnnotation
 import net.unix.api.modification.extension.Extension
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedSourceVersion
@@ -59,7 +57,7 @@ class ExtensionAnnotationProcessor : CloudAnnotationProcessor() {
                                 )
                             )
                         ) {
-                            this.raiseError("Main extension class is not an subclass of JavaPlugin!", mainModuleElement)
+                            this.raiseError("Main extension class is not an subclass of Extension!", mainModuleElement)
                         }
 
                         if (mainModuleElement.modifiers.contains(Modifier.ABSTRACT)) {
@@ -76,25 +74,20 @@ class ExtensionAnnotationProcessor : CloudAnnotationProcessor() {
                             processingEnv.filer.createResource(
                                 StandardLocation.CLASS_OUTPUT,
                                 "",
-                                "extension.yml",
+                                "extension.json",
                                 *arrayOfNulls(0)
                             )
 
                         val writer = file.openWriter()
 
-                        writer.append("# Auto-generated extension.txt, generated at ").append(
-                            LocalDateTime.now().format(
-                                DateTimeFormatter.ofPattern(
-                                    "yyyy/MM/dd HH:mm:ss",
-                                    Locale.ENGLISH
-                                ))
-                        ).append(" by ").append(
-                            this.javaClass.name
-                        ).append("\n\n")
+                        val gson = GsonBuilder().setPrettyPrinting().create()
+                        writer.write(
+                            gson.toJson(
+                                net.unix.api.modification.extension.ExtensionInfo.createByAnnotation(mainName, annotation).serialize()
+                            )
+                        )
 
-                        writer.append(net.unix.api.modification.extension.ExtensionInfo.createByAnnotation(mainName, annotation).toString())
                         writer.flush()
-
                         writer.close()
 
                         return true
