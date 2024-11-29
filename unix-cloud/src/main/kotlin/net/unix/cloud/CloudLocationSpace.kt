@@ -32,6 +32,14 @@ object CloudLocationSpace : LocationSpace {
         return@run file
     }
 
+    override val language = run {
+        val file = File(main.path + UnixConfiguration.storage.language)
+
+        file.mkdirs()
+
+        return@run file
+    }
+
     override val module = run {
         val file = File(main.path + UnixConfiguration.storage.module)
 
@@ -55,6 +63,7 @@ object CloudLocationSpace : LocationSpace {
 
         return@run file
     }
+
     override val service = run {
         val file = File(storage.path + UnixConfiguration.storage.service)
 
@@ -62,6 +71,7 @@ object CloudLocationSpace : LocationSpace {
 
         return@run file
     }
+
     override val template = run {
         val file = File(storage.path + UnixConfiguration.storage.template)
 

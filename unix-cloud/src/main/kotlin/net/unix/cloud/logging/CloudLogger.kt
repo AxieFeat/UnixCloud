@@ -4,6 +4,7 @@ package net.unix.cloud.logging
 
 import net.kyori.adventure.text.Component
 import net.unix.api.LocationSpace
+import net.unix.api.i18n.I18nService
 import net.unix.api.terminal.Terminal
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.format
@@ -76,23 +77,33 @@ object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
     }
 
     @Synchronized
-    fun service(msg: String) {
-        printMessage(msg, LogType.SERVICE)
+    fun service(msg: String, vararg replace: Any) {
+        printMessage(msg.format(replace), LogType.SERVICE)
     }
 
     @Synchronized
-    fun service(msg: Component) {
-        debug(msg.serialize())
+    fun service(msg: Component, vararg replace: Any) {
+        debug(msg.serialize().format(replace))
     }
 
     @Synchronized
-    fun debug(msg: String) {
-        if(debug) printMessage(msg, LogType.DEBUG)
+    fun debug(msg: String, vararg replace: Any) {
+        if(debug) printMessage(msg.format(replace), LogType.DEBUG)
     }
 
     @Synchronized
-    fun debug(msg: Component) {
-        if(debug) debug(msg.serialize())
+    fun debug(msg: Component, vararg replace: Any) {
+        if(debug) debug(msg.serialize().format(replace))
+    }
+
+    @Synchronized
+    fun info(msg: String, vararg replace: Any) {
+        printMessage(msg.format(replace), LogType.INFO)
+    }
+
+    @Synchronized
+    fun info(msg: Component, vararg replace: Any) {
+        info(msg.serialize().format(replace))
     }
 
     @Synchronized
@@ -101,8 +112,13 @@ object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
     }
 
     @Synchronized
-    fun info(msg: Component) {
-        info(msg.serialize())
+    fun warning(msg: String, vararg replace: Any) {
+        printMessage(msg.format(replace), LogType.WARN)
+    }
+
+    @Synchronized
+    fun warning(msg: Component, vararg replace: Any) {
+        warning(msg.serialize().format(replace))
     }
 
     @Synchronized
@@ -111,18 +127,18 @@ object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
     }
 
     @Synchronized
-    fun warning(msg: Component) {
-        warning(msg.serialize())
+    fun severe(msg: String, vararg replace: Any) {
+        printMessage(msg.format(replace), LogType.ERROR)
+    }
+
+    @Synchronized
+    fun severe(msg: Component, vararg replace: Any) {
+        severe(msg.serialize().format(replace))
     }
 
     @Synchronized
     override fun severe(msg: String) {
         printMessage(msg, LogType.ERROR)
-    }
-
-    @Synchronized
-    fun severe(msg: Component) {
-        severe(msg.serialize())
     }
 
     @Synchronized

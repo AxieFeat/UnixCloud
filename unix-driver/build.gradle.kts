@@ -13,6 +13,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":unix-network"))
     implementation(project(":unix-scheduler"))
+    implementation(project(":unix-api"))
 }
 
 tasks.test {

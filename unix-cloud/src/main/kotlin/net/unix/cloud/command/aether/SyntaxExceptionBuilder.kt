@@ -9,9 +9,10 @@ import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
 import net.kyori.adventure.text.Component
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.logging.CloudLogger
+import org.koin.core.component.KoinComponent
 import kotlin.math.max
 
-object SyntaxExceptionBuilder {
+object SyntaxExceptionBuilder : KoinComponent {
 
     private val hereMessage: Component = "<reset><red><i><--[HERE]</i></red>".deserializeComponent()
 

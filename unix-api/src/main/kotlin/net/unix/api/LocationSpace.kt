@@ -22,6 +22,11 @@ interface LocationSpace {
     val logs: File
 
     /**
+     * Directory for languages.
+     */
+    val language: File
+
+    /**
      * Directory for [Module]'s.
      */
     val module: File

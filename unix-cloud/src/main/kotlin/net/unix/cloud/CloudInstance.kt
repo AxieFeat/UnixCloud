@@ -7,6 +7,8 @@ import net.unix.api.LocationSpace
 import net.unix.api.bridge.CloudBridge
 import net.unix.api.group.*
 import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.i18n.I18nService
+import net.unix.api.i18n.SaveableLocaleManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
@@ -18,6 +20,7 @@ import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.api.terminal.Terminal
+import net.unix.cloud.CloudExtension.serialize
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.bridge.JVMBridge
 import net.unix.cloud.command.CloudCommandDispatcher
@@ -37,6 +40,9 @@ import net.unix.cloud.event.callEvent
 import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.cloud.event.koin.KoinStartEvent
 import net.unix.cloud.group.CloudJVMGroupManager
+import net.unix.cloud.i18n.CloudI18nService
+import net.unix.cloud.i18n.CloudI18nService.get
+import net.unix.cloud.i18n.CloudSaveableLocaleManager
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
@@ -64,6 +70,8 @@ fun main() {
         val module = module {
             single<LocationSpace> { CloudLocationSpace }
             single<Terminal> { CloudJLineTerminal() }
+            single<I18nService> { CloudI18nService }
+            single<SaveableLocaleManager> { CloudSaveableLocaleManager() }
             single<CommandDispatcher> { CloudCommandDispatcher }
             single<CloudServiceManager> { CloudJVMServiceManager }
             single<CloudTemplateManager> { BasicCloudTemplateManager }
@@ -659,6 +667,9 @@ object CloudInstance : KoinComponent, Startable {
     private val terminal: Terminal by inject()
     private val commandDispatcher: CommandDispatcher by inject()
 
+    private val i18nService: I18nService by inject()
+    private val saveableLocaleManager: SaveableLocaleManager by inject()
+
     private val cloudTemplateManager: CloudTemplateManager by inject()
     private val cloudGroupManager: CloudGroupManager by inject()
     private val cloudServiceManager: CloudServiceManager by inject()
@@ -676,6 +687,10 @@ object CloudInstance : KoinComponent, Startable {
         server.start(UnixConfiguration.bridge.port)
 
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler.run() })
+
+        saveableLocaleManager.loadlAll()
+        i18nService.locale = i18nService[UnixConfiguration.terminal.language] ?:
+                throw IllegalArgumentException("Language with name ${UnixConfiguration.terminal.language} not found!")
 
         CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
         CloudExtensionManager.extensions.forEach {

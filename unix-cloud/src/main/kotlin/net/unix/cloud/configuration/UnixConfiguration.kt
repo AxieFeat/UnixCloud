@@ -40,6 +40,7 @@ object UnixConfiguration : CloudConfiguration("/config.json") {
 data class TerminalSettings(
     val prompt: String = " <white>Unix<gray>@<aqua>cloud<gray>:~<dark_gray># ",
     val consoleName: String = "CONSOLE",
+    val language: String = "en",
     val serviceCommandPrefix: String = "/",
     val logger: LoggerSettings = LoggerSettings()
 ) : Serializable {
@@ -49,6 +50,7 @@ data class TerminalSettings(
 
         serialized["prompt"] = prompt
         serialized["console-name"] = consoleName
+        serialized["language"] = language
         serialized["service-command-prefix"] = serviceCommandPrefix
         serialized["logger"] = logger.serialize()
 
@@ -59,12 +61,14 @@ data class TerminalSettings(
         fun deserialize(serialized: Map<String, Any>): TerminalSettings {
             val prompt = serialized["prompt"].toString()
             val consoleName = serialized["console-name"].toString()
+            val language = serialized["language"].toString()
             val serviceCommandPrefix = serialized["service-command-prefix"].toString()
             val logger = LoggerSettings.deserialize(serialized["logger"])
 
             return TerminalSettings(
                 prompt,
                 consoleName,
+                language,
                 serviceCommandPrefix,
                 logger
             )
@@ -134,6 +138,7 @@ data class BridgeSettings(
 data class LocationSettings(
     val logs: String = "/logs",
     val extension: String = "/extensions",
+    val language: String = "/language",
     val module: String = "/modules",
     val storage: String = "/storage",
     val group: String = "/group",
@@ -146,6 +151,7 @@ data class LocationSettings(
 
         serialized["logs"] = logs
         serialized["extension"] = extension
+        serialized["language"] = language
         serialized["module"] = module
         serialized["storage"] = storage
         serialized["group"] = group
@@ -159,13 +165,14 @@ data class LocationSettings(
         fun deserialize(serialized: Map<String, Any>): LocationSettings {
             val logs = serialized["logs"].toString()
             val extensions = serialized["extension"].toString()
+            val language = serialized["language"].toString()
             val module = serialized["module"].toString()
             val storage = serialized["storage"].toString()
             val group = serialized["group"].toString()
             val service = serialized["service"].toString()
             val template = serialized["template"].toString()
 
-            return LocationSettings(logs, extensions, module, storage, group, service, template)
+            return LocationSettings(logs, extensions, language, module, storage, group, service, template)
         }
 
         fun deserialize(any: Any?) = deserialize(any as Map<String, Any>)
