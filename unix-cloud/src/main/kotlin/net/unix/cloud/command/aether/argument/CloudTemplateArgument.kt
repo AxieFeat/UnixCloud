@@ -16,13 +16,12 @@ import java.util.concurrent.CompletableFuture
  * Command argument for [CloudTemplate].
  */
 @Suppress("unused")
-class CloudTemplateArgument : CommandArgument<CloudTemplate>() {
+class CloudTemplateArgument : CommandArgument<CloudTemplate>(), KoinComponent {
 
+    private val cloudTemplateManager: CloudTemplateManager by inject()
     private var notFoundMessage = "CloudTemplate not found"
 
-    companion object : KoinComponent {
-
-        private val cloudTemplateManager: CloudTemplateManager by inject()
+    companion object {
 
         /**
          * Get [CloudTemplate] from command context by argument name.

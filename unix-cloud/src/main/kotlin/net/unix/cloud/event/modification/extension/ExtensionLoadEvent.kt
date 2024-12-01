@@ -2,7 +2,7 @@ package net.unix.cloud.event.modification.extension
 
 import net.unix.event.Cancellable
 import net.unix.api.modification.extension.Extension
-import net.unix.cloud.event.modification.ModificationEvent
+import net.unix.event.Event
 
 /**
  * Extension load event.
@@ -12,7 +12,7 @@ import net.unix.cloud.event.modification.ModificationEvent
 @Suppress("MemberVisibilityCanBePrivate")
 class ExtensionLoadEvent(
     val extension: Extension?
-) : ModificationEvent<ExtensionLoadEvent>(extension), Cancellable {
+) : Event<ExtensionLoadEvent>(), Cancellable {
 
     /**
      * If your cancel event - extension will not load.

@@ -17,13 +17,12 @@ import java.util.concurrent.CompletableFuture
  * Command argument for [CloudService].
  */
 @Suppress("unused")
-class CloudServiceArgument : CommandArgument<CloudService>() {
+class CloudServiceArgument : CommandArgument<CloudService>(), KoinComponent {
 
+    private val cloudServiceManager: CloudServiceManager by inject()
     private var notFoundMessage = "CloudService not found"
 
-    companion object : KoinComponent {
-
-        private val cloudServiceManager: CloudServiceManager by inject()
+    companion object {
 
         /**
          * Get [CloudService] from command context by argument name.

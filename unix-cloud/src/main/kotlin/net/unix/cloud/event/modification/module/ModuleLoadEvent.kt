@@ -2,7 +2,7 @@ package net.unix.cloud.event.modification.module
 
 import net.unix.event.Cancellable
 import net.unix.api.modification.module.Module
-import net.unix.cloud.event.modification.ModificationEvent
+import net.unix.event.Event
 
 /**
  * Module load event.
@@ -12,7 +12,7 @@ import net.unix.cloud.event.modification.ModificationEvent
 @Suppress("MemberVisibilityCanBePrivate")
 class ModuleLoadEvent(
     val module: Module?
-) : ModificationEvent<ModuleLoadEvent>(module), Cancellable {
+) : Event<ModuleLoadEvent>(), Cancellable {
 
     /**
      * If your cancel event - module will not load.

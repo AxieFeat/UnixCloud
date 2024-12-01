@@ -45,7 +45,7 @@ class GroupExecutableArgument : CommandArgument<GroupExecutable>() {
      *
      * @param message Message text.
      *
-     * @return Current instance of [CloudServiceArgument].
+     * @return Current instance of [GroupExecutableArgument].
      */
     fun notFound(message: String): GroupExecutableArgument {
         this.notFoundMessage = message

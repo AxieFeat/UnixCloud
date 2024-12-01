@@ -9,7 +9,9 @@ import net.unix.api.group.*
 import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.i18n.I18nService
 import net.unix.api.i18n.SaveableLocaleManager
+import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
+import net.unix.api.modification.module.Module
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
 import net.unix.api.pattern.Startable
@@ -21,13 +23,12 @@ import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.api.terminal.Terminal
+import net.unix.cloud.CloudExtension.or
+import net.unix.cloud.CloudExtension.rem
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.bridge.JVMBridge
 import net.unix.cloud.command.CloudCommandDispatcher
-import net.unix.cloud.command.aether.argument.CloudGroupArgument
-import net.unix.cloud.command.aether.argument.CloudServiceArgument
-import net.unix.cloud.command.aether.argument.CloudTemplateArgument
-import net.unix.cloud.command.aether.argument.GroupExecutableArgument
+import net.unix.cloud.command.aether.argument.*
 import net.unix.cloud.command.aether.command
 import net.unix.cloud.command.aether.get
 import net.unix.cloud.command.question.argument.QuestionGroupExecutableArgument
@@ -54,6 +55,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
+import java.io.File
 import java.rmi.Naming
 import java.rmi.registry.LocateRegistry
 import java.rmi.server.UnicastRemoteObject
@@ -93,6 +95,8 @@ fun main() {
 }
 
 fun registerCommands(
+    extensionsManager: ExtensionManager,
+    moduleManager: ModuleManager,
     commandDispatcher: CommandDispatcher,
     terminal: Terminal,
     cloudServiceManager: CloudServiceManager,
@@ -103,6 +107,154 @@ fun registerCommands(
     command("exit") {
         execute {
             CloudInstance.shutdown()
+        }
+    }.register()
+
+    /*
+
+    /module
+        list - Список всех модулей
+        info <module> - Информация о модуле
+        load <file> - Загрузить модуль
+        unload <module> - Выгрузить модуль
+        reload <module> - Перезагрузить модуль
+
+     */
+    command("module") {
+        execute {
+            CloudLogger.info("Usage:")
+            CloudLogger.info("  /module list - List of all modules")
+            CloudLogger.info("  /module info <module> - Information about module")
+            CloudLogger.info("  /module load <file> - Load module from file")
+            CloudLogger.info("  /module unload <module> - Unload module")
+            CloudLogger.info("  /module reload <module> - Reload module")
+        }
+
+        literal("list") {
+            execute {
+                CloudLogger.info("List of modules(${moduleManager.modules.size}):")
+
+                moduleManager.modules.forEach {
+                    CloudLogger.info("- ${it.info.name} v${it.info.version}")
+                }
+            }
+        }
+
+        literal("info") {
+            argument("module", CloudModuleArgument()) {
+                execute {
+                    val module: Module = it["module"]
+                    val info = module.info
+
+                    CloudLogger.info("Info about ${info.name}:")
+                    CloudLogger.info(" - File: ${module.executable.name}")
+                    CloudLogger.info(" - Loader: ${module.loader.javaClass.name}")
+                    CloudLogger.info(" - Main-class: ${info.main}")
+                    CloudLogger.info(" - Version: ${info.version}")
+                    CloudLogger.info(" - Authors: ${info.authors}")
+                    CloudLogger.info(" - Description: ${info.description}")
+                    CloudLogger.info(" - Website: ${info.website}")
+                    CloudLogger.info(" - Dependencies: ${info.depends}")
+                    CloudLogger.info(" - Soft dependencies: ${info.soft}")
+                }
+            }
+        }
+
+        literal("load") {
+            argument("file", CustomStringArgument.string(
+                error = "File not found"
+            ) {
+                moduleManager.folder.listFiles()
+                    ?.map { it.name }
+                    ?.filter { !moduleManager.modules.map { it.executable.name }.contains(it) }
+                    ?: listOf()
+            }) {
+                execute {
+                    val fileName: String = it["file"]
+
+                    val file = File(moduleManager.folder, fileName)
+
+                    val module = moduleManager.load(file)
+                    CloudLogger.info("Loaded module ${module.info.name} v${module.info.version}")
+                }
+            }
+        }
+
+        literal("unload") {
+            argument("module", CloudModuleArgument()) {
+                execute {
+                    val module: Module = it["module"]
+
+                    val result = moduleManager.unload(module)
+
+                    CloudLogger.info(
+                        result %
+                                "Unloaded module ${module.info.name} v${module.info.version}"
+                                or
+                                "Cant unload module ${module.info.name} v${module.info.version}"
+                    )
+                }
+            }
+        }
+
+        literal("reload") {
+            argument("module", CloudModuleArgument()) {
+                execute {
+                    val module: Module = it["module"]
+
+                    val result = moduleManager.reload(module)
+
+                    CloudLogger.info(
+                        result %
+                                "Reloaded module ${module.info.name} v${module.info.version}"
+                                or
+                                "Cant reload module ${module.info.name} v${module.info.version}"
+                    )
+                }
+            }
+        }
+    }.register()
+
+    /*
+
+    /extension
+        list - Список всех расширений
+        info <extension> - Информация о расширении
+
+     */
+    command("extension") {
+        execute {
+            CloudLogger.info("Usage:")
+            CloudLogger.info("  /extension list - List of all extensions")
+            CloudLogger.info("  /extension info <extension> - Information about extension")
+        }
+
+        literal("list") {
+            execute {
+                CloudLogger.info("List of extensions(${extensionsManager.extensions.size}):")
+
+                extensionsManager.extensions.forEach {
+                    CloudLogger.info("- ${it.info.name} v${it.info.version}")
+                }
+            }
+        }
+
+        literal("info") {
+            argument("extension", CloudExtensionArgument()) {
+                execute {
+                    val extension: Extension = it["extension"]
+                    val info = extension.info
+
+                    CloudLogger.info("Info about ${info.name}:")
+                    CloudLogger.info(" - File: ${extension.executable.name}")
+                    CloudLogger.info(" - Loader: ${extension.loader.javaClass.name}")
+                    CloudLogger.info(" - Main-class: ${info.main}")
+                    CloudLogger.info(" - Version: ${info.version}")
+                    CloudLogger.info(" - Authors: ${info.authors}")
+                    CloudLogger.info(" - Description: ${info.description}")
+                    CloudLogger.info(" - Website: ${info.website}")
+                }
+            }
         }
     }.register()
 
@@ -718,6 +870,8 @@ object CloudInstance : KoinComponent, Startable {
         remoteService.start()
 
         registerCommands(
+            extensionManager,
+            moduleManager,
             commandDispatcher,
             terminal,
             cloudServiceManager,

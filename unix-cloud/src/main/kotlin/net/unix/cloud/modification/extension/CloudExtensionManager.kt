@@ -50,7 +50,10 @@ object CloudExtensionManager : ExtensionManager {
 
         val event = ExtensionLoadEvent(result).callEvent()
 
-        if (!event.cancelled) result.onLoad()
+        if (!event.cancelled) {
+            cachedExtensions[result.info.name] = result
+            result.onLoad()
+        }
 
         return result
     }

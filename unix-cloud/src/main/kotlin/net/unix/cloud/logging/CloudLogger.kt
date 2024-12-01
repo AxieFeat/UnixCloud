@@ -28,7 +28,7 @@ object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
     private val locationSpace: LocationSpace by inject()
     private val terminal: Terminal by inject()
 
-    var debug = true
+    var debug = false
 
     private val format = UnixConfiguration.terminal.logger.format
     private val formatFile = UnixConfiguration.terminal.logger.formatFile

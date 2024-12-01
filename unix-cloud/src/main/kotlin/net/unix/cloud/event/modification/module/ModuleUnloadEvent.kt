@@ -2,7 +2,7 @@ package net.unix.cloud.event.modification.module
 
 import net.unix.event.Cancellable
 import net.unix.api.modification.module.Module
-import net.unix.cloud.event.modification.ModificationEvent
+import net.unix.event.Event
 
 /**
  * Module unload event.
@@ -12,7 +12,7 @@ import net.unix.cloud.event.modification.ModificationEvent
 @Suppress("MemberVisibilityCanBePrivate")
 class ModuleUnloadEvent(
     val module: Module
-) : ModificationEvent<ModuleUnloadEvent>(module), Cancellable {
+) : Event<ModuleUnloadEvent>(), Cancellable {
 
     /**
      * If your cancel event - module will not unload.

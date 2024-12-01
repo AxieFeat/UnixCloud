@@ -2,7 +2,7 @@ package net.unix.cloud.event.modification.module
 
 import net.unix.event.Cancellable
 import net.unix.api.modification.module.Module
-import net.unix.cloud.event.modification.ModificationEvent
+import net.unix.event.Event
 
 /**
  * Module reload event.
@@ -12,7 +12,7 @@ import net.unix.cloud.event.modification.ModificationEvent
 @Suppress("MemberVisibilityCanBePrivate")
 class ModuleReloadEvent(
     val module: Module
-) : ModificationEvent<ModuleReloadEvent>(module), Cancellable {
+) : Event<ModuleReloadEvent>(), Cancellable {
 
     /**
      * If your cancel event - module will not reload.

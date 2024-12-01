@@ -101,6 +101,8 @@ class CloudModuleLoader(
 
                 instance.init(info)
 
+                cachedLoad = true
+
                 return instance
             }
         }

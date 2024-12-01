@@ -17,13 +17,12 @@ import java.util.concurrent.CompletableFuture
  * Command argument for [CloudGroup].
  */
 @Suppress("unused")
-class CloudGroupArgument : CommandArgument<CloudGroup>() {
+class CloudGroupArgument : CommandArgument<CloudGroup>(), KoinComponent {
 
+    private val cloudGroupManager: CloudGroupManager by inject()
     private var notFoundMessage = "CloudGroup not found"
 
-    companion object : KoinComponent {
-
-        private val cloudGroupManager: CloudGroupManager by inject()
+    companion object {
 
         /**
          * Get [CloudGroup] from command context by argument name.

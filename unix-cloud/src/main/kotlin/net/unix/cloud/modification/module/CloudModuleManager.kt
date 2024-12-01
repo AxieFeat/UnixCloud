@@ -62,6 +62,8 @@ object CloudModuleManager : ModuleManager, KoinComponent {
 
         val event = ModuleLoadEvent(result).callEvent()
 
+        cachedModules[result.info.name] = result
+
         if (!event.cancelled) result.onLoad()
 
         return result
@@ -71,6 +73,8 @@ object CloudModuleManager : ModuleManager, KoinComponent {
         val event = ModuleUnloadEvent(module).callEvent()
 
         val unload = !event.cancelled % module.loader.unload() or false
+
+        if(unload) cachedModules.remove(module.info.name)
 
         return unload
     }
