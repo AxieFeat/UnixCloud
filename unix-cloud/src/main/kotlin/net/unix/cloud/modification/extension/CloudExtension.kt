@@ -19,6 +19,7 @@ abstract class CloudExtension : Extension {
 
     val listeners = mutableListOf<Any>()
 
+    @Transient
     override lateinit var loader: ExtensionClassLoader
 
     final override lateinit var folder: File

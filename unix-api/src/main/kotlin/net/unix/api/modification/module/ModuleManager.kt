@@ -4,6 +4,7 @@ import net.unix.api.modification.ModificationManager
 import net.unix.api.modification.exception.ModificationExistException
 import net.unix.api.modification.exception.ModificationLoadException
 import java.io.File
+import java.rmi.RemoteException
 
 /**
  * Manager for [Module]'s.
@@ -13,6 +14,7 @@ interface ModuleManager : ModificationManager {
     /**
      * List of all [Module]'s.
      */
+    @get:Throws(RemoteException::class)
     val modules: List<Module>
 
     /**
@@ -22,6 +24,7 @@ interface ModuleManager : ModificationManager {
      *
      * @return Instance of [Module] or null, if not founded.
      */
+    @Throws(RemoteException::class)
     override fun get(name: String): Module?
 
     /**
@@ -35,7 +38,7 @@ interface ModuleManager : ModificationManager {
      * @throws ModificationLoadException Generic exception, may be corrupted file?
      * @throws ModificationExistException If module with this name already loaded.
      */
-    @Throws(IllegalArgumentException::class, ModificationLoadException::class, ModificationExistException::class)
+    @Throws(IllegalArgumentException::class, ModificationLoadException::class, ModificationExistException::class, RemoteException::class)
     override fun loadAll(silent: Boolean): List<Module>
 
     /**
@@ -48,7 +51,7 @@ interface ModuleManager : ModificationManager {
      * @throws ModificationLoadException Generic exception, may be corrupted file?
      * @throws ModificationExistException If module with this name already loaded.
      */
-    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    @Throws(ModificationLoadException::class, ModificationExistException::class, RemoteException::class)
     override fun load(file: File): Module
 
     /**
@@ -58,6 +61,7 @@ interface ModuleManager : ModificationManager {
      *
      * @return True if success, else false.
      */
+    @Throws(RemoteException::class)
     fun unload(module: Module): Boolean
 
     /**
@@ -67,6 +71,7 @@ interface ModuleManager : ModificationManager {
      *
      * @return True if success, else false.
      */
+    @Throws(RemoteException::class)
     fun reload(module: Module): Boolean
 
     companion object

@@ -14,6 +14,8 @@ import java.io.File
 
 object BasicCloudTemplateManager : SaveableCloudTemplateManager, KoinComponent {
 
+    private fun readResolve(): Any = BasicCloudTemplateManager
+
     private val locationSpace: LocationSpace by inject()
 
     private val cachedTemplates = mutableMapOf<String, CloudTemplate>()

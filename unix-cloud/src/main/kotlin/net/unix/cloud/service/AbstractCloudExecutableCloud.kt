@@ -1,11 +1,14 @@
-package net.unix.api.service
+package net.unix.cloud.service
 
+import net.unix.api.service.CloudService
+import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.CloudServiceExecutable
 import java.io.File
 
-abstract class AbstractCloudExecutable(
+abstract class AbstractCloudExecutableCloud(
     override val service: CloudService,
     override val executableFile: File = File(service.dataFolder, service.group.executableFile)
-) : ServiceExecutable {
+) : CloudServiceExecutable {
 
     override var started: Boolean = false
         set(value) {

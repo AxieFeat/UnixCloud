@@ -1,6 +1,7 @@
 package net.unix.api.group
 
 import net.unix.api.group.exception.CloudGroupLimitException
+import java.rmi.RemoteException
 import kotlin.jvm.Throws
 
 /**
@@ -11,6 +12,7 @@ interface AutoCloudGroup : CloudGroup {
     /**
      * The behavior rules of group.
      */
+    @get:Throws(RemoteException::class)
     val rules: MutableSet<CloudGroupRule<Any>>
 
     /**
@@ -19,7 +21,8 @@ interface AutoCloudGroup : CloudGroup {
      * @throws CloudGroupLimitException If [startUpCount] more than [serviceLimit].
      * @throws IllegalArgumentException If [startUpCount] less 0.
      */
-    @set:Throws(CloudGroupLimitException::class, IllegalArgumentException::class)
+    @set:Throws(CloudGroupLimitException::class, IllegalArgumentException::class, RemoteException::class)
+    @get:Throws(RemoteException::class)
     var startUpCount: Int
 
 }

@@ -58,7 +58,8 @@ open class Client : com.esotericsoftware.kryonet.Client(), Network {
             Any::class.java,
             ArrayList::class.java,
             List::class.java,
-            LinkedHashMap::class.java
+            LinkedHashMap::class.java,
+            Set::class.java
         )
 
         connect(5000, host, port, port)

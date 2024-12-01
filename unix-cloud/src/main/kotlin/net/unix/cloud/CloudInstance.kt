@@ -14,13 +14,13 @@ import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
 import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataType
+import net.unix.api.remote.RemoteService
 import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.api.terminal.Terminal
-import net.unix.cloud.CloudExtension.serialize
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.bridge.JVMBridge
 import net.unix.cloud.command.CloudCommandDispatcher
@@ -31,9 +31,9 @@ import net.unix.cloud.command.aether.argument.GroupExecutableArgument
 import net.unix.cloud.command.aether.command
 import net.unix.cloud.command.aether.get
 import net.unix.cloud.command.question.argument.QuestionGroupExecutableArgument
-import net.unix.cloud.command.question.argument.primitive.QuestionStringArgument
-import net.unix.cloud.command.question.argument.primitive.QuestionNumberArgument
 import net.unix.cloud.command.question.argument.QuestionTemplateArgument
+import net.unix.cloud.command.question.argument.primitive.QuestionNumberArgument
+import net.unix.cloud.command.question.argument.primitive.QuestionStringArgument
 import net.unix.cloud.command.question.question
 import net.unix.cloud.configuration.UnixConfiguration
 import net.unix.cloud.event.callEvent
@@ -41,11 +41,11 @@ import net.unix.cloud.event.cloud.CloudStartEvent
 import net.unix.cloud.event.koin.KoinStartEvent
 import net.unix.cloud.group.CloudJVMGroupManager
 import net.unix.cloud.i18n.CloudI18nService
-import net.unix.cloud.i18n.CloudI18nService.get
 import net.unix.cloud.i18n.CloudSaveableLocaleManager
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.modification.extension.CloudExtensionManager
 import net.unix.cloud.modification.module.CloudModuleManager
+import net.unix.cloud.remote.CloudRemoteService
 import net.unix.cloud.service.CloudJVMServiceManager
 import net.unix.cloud.template.BasicCloudTemplateManager
 import net.unix.cloud.terminal.CloudJLineTerminal
@@ -54,6 +54,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
+import java.rmi.Naming
+import java.rmi.registry.LocateRegistry
+import java.rmi.server.UnicastRemoteObject
 import java.text.SimpleDateFormat
 import kotlin.math.floor
 import kotlin.system.exitProcess
@@ -80,6 +83,7 @@ fun main() {
             single<ExtensionManager> { CloudExtensionManager }
             single<Server> { Server() }
             single<CloudBridge> { JVMBridge }
+            single<RemoteService> { CloudRemoteService }
         }
 
         modules(module)
@@ -125,8 +129,8 @@ fun registerCommands(
         literal("list") {
             execute {
                 val services = cloudServiceManager.services
-                    .filter { it.executable is ConsoleServiceExecutable }
-                    .filter { (it.executable as ConsoleServiceExecutable).viewConsole }
+                    .filter { it.executable is ConsoleCloudServiceExecutable }
+                    .filter { (it.executable as ConsoleCloudServiceExecutable).viewConsole }
 
                 CloudLogger.info("Console view enabled for ${services.size} services")
                 services.forEach {
@@ -141,11 +145,11 @@ fun registerCommands(
                     val service: CloudService = it["service"]
                     val executable = service.executable
 
-                    if(executable !is ConsoleServiceExecutable) {
+                    if(executable !is ConsoleCloudServiceExecutable) {
                         CloudLogger.info("Service ${service.name} is not support command sending")
                         return@execute
                     }
-                    terminal.selectedExecutable = service.executable as ConsoleServiceExecutable
+                    terminal.selectedExecutable = service.executable as ConsoleCloudServiceExecutable
 
                     CloudLogger.info("You are selected ${service.name} for command sending")
                 }
@@ -158,7 +162,7 @@ fun registerCommands(
                     val service: CloudService = it["service"]
                     val executable = service.executable
 
-                    if(executable is ConsoleServiceExecutable) {
+                    if(executable is ConsoleCloudServiceExecutable) {
                         executable.viewConsole = !executable.viewConsole
                         CloudLogger.info("Toggled viewing of ${service.name} console")
                         return@execute
@@ -177,7 +181,7 @@ fun registerCommands(
                         val command: String = it["command"]
                         val executable = service.executable
 
-                        if (executable is ConsoleServiceExecutable) {
+                        if (executable is ConsoleCloudServiceExecutable) {
                             executable.command(command)
                             CloudLogger.info("Command successfully sent to ${service.name}")
                             return@execute
@@ -664,6 +668,8 @@ private fun createGroup(cloudGroupManager: CloudGroupManager) {
 
 object CloudInstance : KoinComponent, Startable {
 
+    private val locationSpace: LocationSpace by inject()
+
     private val terminal: Terminal by inject()
     private val commandDispatcher: CommandDispatcher by inject()
 
@@ -675,9 +681,11 @@ object CloudInstance : KoinComponent, Startable {
     private val cloudServiceManager: CloudServiceManager by inject()
 
     private val moduleManager: ModuleManager by inject()
+    private val extensionManager: ExtensionManager by inject()
 
     private val server: Server by inject()
     private val bridge: CloudBridge by inject()
+    private val remoteService: RemoteService by inject()
 
     override fun start() {
         CloudStartEvent().callEvent()
@@ -689,8 +697,13 @@ object CloudInstance : KoinComponent, Startable {
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler.run() })
 
         saveableLocaleManager.loadlAll()
-        i18nService.locale = i18nService[UnixConfiguration.terminal.language] ?:
-                throw IllegalArgumentException("Language with name ${UnixConfiguration.terminal.language} not found!")
+        val selectedLocale = i18nService[UnixConfiguration.terminal.language]
+
+        if(selectedLocale == null)  {
+            CloudLogger.warning("<yellow>Language with name \"${UnixConfiguration.terminal.language}\" not found!")
+        } else {
+            i18nService.locale = selectedLocale
+        }
 
         CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
         CloudExtensionManager.extensions.forEach {
@@ -700,6 +713,9 @@ object CloudInstance : KoinComponent, Startable {
         moduleManager.loadAll(false)
 
         bridge.configure(server)
+
+        configureRMI(remoteService)
+        remoteService.start()
 
         registerCommands(
             commandDispatcher,
@@ -716,5 +732,28 @@ object CloudInstance : KoinComponent, Startable {
 
     fun shutdown() {
         exitProcess(0)
+    }
+
+    private fun configureRMI(remoteService: RemoteService) {
+        remoteService.register(moduleManager)
+        remoteService.register(extensionManager)
+
+        remoteService.register(locationSpace)
+        remoteService.register(cloudTemplateManager)
+        remoteService.register(cloudGroupManager)
+        remoteService.register(cloudServiceManager)
+
+        remoteService.register(PersistentDataType.LONG, "LONG")
+        remoteService.register(PersistentDataType.BYTE_ARRAY, "BYTE_ARRAY")
+        remoteService.register(PersistentDataType.BYTE, "BYTE")
+        remoteService.register(PersistentDataType.DOUBLE, "DOUBLE")
+        remoteService.register(PersistentDataType.STRING, "STRING")
+        remoteService.register(PersistentDataType.FLOAT, "FLOAT")
+        remoteService.register(PersistentDataType.INTEGER, "INTEGER")
+        remoteService.register(PersistentDataType.INTEGER_ARRAY, "INTEGER_ARRAY")
+        remoteService.register(PersistentDataType.LONG_ARRAY, "LONG_ARRAY")
+        remoteService.register(PersistentDataType.SHORT, "SHORT")
+        remoteService.register(PersistentDataType.TAG_CONTAINER, "TAG_CONTAINER")
+        remoteService.register(PersistentDataType.TAG_CONTAINER_ARRAY, "TAG_CONTAINER_ARRAY")
     }
 }

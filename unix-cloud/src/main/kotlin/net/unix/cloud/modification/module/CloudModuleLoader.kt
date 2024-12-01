@@ -5,8 +5,8 @@ import net.unix.api.modification.exception.ModificationLoadException
 import net.unix.api.modification.module.Module
 import net.unix.api.modification.module.ModuleClassLoader
 import net.unix.api.modification.module.ModuleInfo
+import net.unix.api.modification.module.ModuleManager
 import net.unix.cloud.CloudExtension.deserializeJson
-import net.unix.cloud.CloudInstance
 import net.unix.cloud.event.CloudEventManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,7 +19,7 @@ class CloudModuleLoader(
     override val file: File
 ) : ModuleClassLoader, URLClassLoader(arrayOf(file.toURI().toURL())), KoinComponent {
 
-    private val cloudModuleManager: CloudModuleManager by inject()
+    private val cloudModuleManager: ModuleManager by inject()
 
     private val entries = mutableListOf<JarEntry>().also { list ->
         JarFile(file).also {

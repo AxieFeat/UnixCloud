@@ -4,7 +4,7 @@ import net.unix.api.LocationSpace
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.ServiceExecutable
+import net.unix.api.service.CloudServiceExecutable
 import net.unix.api.service.CloudServiceStatus
 import net.unix.api.service.StaticCloudService
 import net.unix.api.service.exception.CloudServiceModificationException
@@ -53,7 +53,7 @@ open class CloudJVMService(
     }
     override var status: CloudServiceStatus = CloudServiceStatus.PREPARED
 
-    override var executable: ServiceExecutable? = group.groupExecutable?.executableFor(this)
+    override var executable: CloudServiceExecutable? = group.groupExecutable?.executableFor(this)
 
     override var uptime: Long = 0
     override val created: Long = System.currentTimeMillis()
@@ -65,8 +65,8 @@ open class CloudJVMService(
             val files = template.files
 
             files.forEach {
-                val from = File(mainDirectory, it.from.toString())
-                val to = File(dataFolder, it.to.toString())
+                val from = File(mainDirectory, it.from)
+                val to = File(dataFolder, it.to)
 
                 from.copyRecursively(to, overwrite = true)
             }
@@ -74,7 +74,7 @@ open class CloudJVMService(
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    override fun start(executable: ServiceExecutable, overwrite: Boolean) {
+    override fun start(executable: CloudServiceExecutable, overwrite: Boolean) {
         if (status == CloudServiceStatus.DELETED) throw CloudServiceModificationException("You cannot run deleted CloudService!")
         if (status == CloudServiceStatus.STARTED) throw IllegalArgumentException("CloudService already started!")
 
@@ -110,8 +110,8 @@ open class CloudJVMService(
             val files = template.backFiles
 
             files.forEach {
-                val from = File(dataFolder, it.from.toString())
-                val to = File(mainDirectory, it.to.toString())
+                val from = File(dataFolder, it.from)
+                val to = File(mainDirectory, it.to)
 
                 from.copyRecursively(to, overwrite = true)
             }
@@ -120,5 +120,8 @@ open class CloudJVMService(
         dataFolder.deleteRecursively()
     }
 
-    companion object
+    companion object {
+        @JvmStatic
+        private val serialVersionUID = 8068719449091445131L
+    }
 }

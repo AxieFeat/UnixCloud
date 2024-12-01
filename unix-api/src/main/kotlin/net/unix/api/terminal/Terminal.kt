@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.unix.api.pattern.Closeable
 import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataHolder
-import net.unix.api.service.ConsoleServiceExecutable
+import net.unix.api.service.ConsoleCloudServiceExecutable
 import net.unix.command.sender.CommandSender
 
 /**
@@ -25,7 +25,7 @@ interface Terminal : PersistentDataHolder, Closeable, Startable {
     /**
      * Selected executable. It needs for command sending to services.
      */
-    var selectedExecutable: ConsoleServiceExecutable?
+    var selectedExecutable: ConsoleCloudServiceExecutable?
 
     /**
      * Set prompt for terminal.

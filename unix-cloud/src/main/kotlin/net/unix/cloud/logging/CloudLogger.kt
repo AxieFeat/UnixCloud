@@ -4,7 +4,6 @@ package net.unix.cloud.logging
 
 import net.kyori.adventure.text.Component
 import net.unix.api.LocationSpace
-import net.unix.api.i18n.I18nService
 import net.unix.api.terminal.Terminal
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.format
@@ -29,7 +28,7 @@ object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
     private val locationSpace: LocationSpace by inject()
     private val terminal: Terminal by inject()
 
-    var debug = false
+    var debug = true
 
     private val format = UnixConfiguration.terminal.logger.format
     private val formatFile = UnixConfiguration.terminal.logger.formatFile

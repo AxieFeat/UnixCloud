@@ -49,7 +49,8 @@ data class Packet(
     var namedInt: Map<String, Int>? = null,
     var namedLong: Map<String, Long>? = null,
     var namedDouble: Map<String, Double>? = null,
-    var namedFloat: Map<String, Float>? = null
+    var namedFloat: Map<String, Float>? = null,
+    var custom: Any? = null
 ) : Serializable {
 
     /**
@@ -137,6 +138,8 @@ data class Packet(
         private val namedLong: MutableMap<String, Long> = mutableMapOf()
         private val namedDouble: MutableMap<String, Double> = mutableMapOf()
         private val namedFloat: MutableMap<String, Float> = mutableMapOf()
+
+        private var custom: Any? = null
 
         private var responsePacket: ResponsePacket? = null
 
@@ -329,6 +332,12 @@ data class Packet(
             return this
         }
 
+        fun custom(any: Any?): PacketBuilder {
+            this.custom = any
+
+            return this
+        }
+
         /**
          * Mark packet as "response required"
          *
@@ -376,7 +385,8 @@ data class Packet(
                     System.currentTimeMillis(),
                     channel,
                     string, char, boolean, int, long, double, float,
-                    namedString, namedChar, namedBoolean, namedInt, namedLong, namedDouble, namedFloat
+                    namedString, namedChar, namedBoolean, namedInt, namedLong, namedDouble, namedFloat,
+                    custom
                 )
 
                 if (responsePacket != null) {
@@ -437,7 +447,8 @@ data class Packet(
                     System.currentTimeMillis(),
                     channel,
                     string, char, boolean, int, long, double, float,
-                    namedString, namedChar, namedBoolean, namedInt, namedLong, namedDouble, namedFloat
+                    namedString, namedChar, namedBoolean, namedInt, namedLong, namedDouble, namedFloat,
+                    custom
                 )
 
                 if (responsePacket != null) {

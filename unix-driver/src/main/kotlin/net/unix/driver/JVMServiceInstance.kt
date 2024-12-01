@@ -2,10 +2,23 @@ package net.unix.driver
 
 import net.unix.api.network.client.Client
 import net.unix.api.network.universe.Packet
+import net.unix.api.LocationSpace
+import net.unix.api.group.CloudGroupManager
+import net.unix.api.group.SaveableCloudGroupManager
+import net.unix.api.modification.extension.ExtensionManager
+import net.unix.api.modification.module.ModuleManager
+import net.unix.api.service.CloudServiceManager
+import net.unix.api.template.CloudTemplateManager
+import net.unix.driver.persistence.RemotePersistenceDataType
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 import java.io.File
+import java.rmi.registry.LocateRegistry
+import java.rmi.registry.Registry
 import java.util.*
+import kotlin.math.sin
 
 object JVMServiceInstance {
 
@@ -25,6 +38,29 @@ object JVMServiceInstance {
 
     fun install() {
         println("Service instance installing...")
+
+        val registry = LocateRegistry.getRegistry("localhost", 1099)
+        val locationSpace = registry.lookup("net.unix.cloud.CloudLocationSpace") as LocationSpace
+        val cloudTemplateManager = registry.lookup("net.unix.cloud.template.BasicCloudTemplateManager") as CloudTemplateManager
+        val cloudGroupManager = registry.lookup("net.unix.cloud.group.CloudJVMGroupManager") as SaveableCloudGroupManager
+        val cloudServiceManager = registry.lookup("net.unix.cloud.service.CloudJVMServiceManager") as CloudServiceManager
+        val moduleManager = registry.lookup("net.unix.cloud.modification.module.CloudModuleManager") as ModuleManager
+        val extensionManager = registry.lookup("net.unix.cloud.modification.extension.CloudExtensionManager") as ExtensionManager
+
+        startKoin {
+            val module = module {
+                single<Registry> { registry }
+                single<LocationSpace> { locationSpace }
+                single<CloudTemplateManager> { cloudTemplateManager }
+                single<CloudGroupManager> { cloudGroupManager }
+                single<CloudServiceManager> { cloudServiceManager }
+                single<RemotePersistenceDataType> { RemotePersistenceDataType }
+                single<ModuleManager> { moduleManager }
+                single<ExtensionManager> { extensionManager }
+            }
+
+            modules(module)
+        }
 
         val client = Client()
         client.connect("0.0.0.0", 9191)
@@ -66,6 +102,10 @@ object JVMServiceInstance {
                         .send(client)
                 }
             }
+        }
+
+        moduleManager.modules.forEach {
+            println(it.info.toString())
         }
     }
 

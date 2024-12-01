@@ -6,6 +6,7 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.group.GroupExecutable
 import net.unix.cloud.command.aether.SyntaxExceptionBuilder
+import net.unix.cloud.group.AbstractCloudGroupExecutable
 import net.unix.command.CommandArgument
 import java.util.concurrent.CompletableFuture
 
@@ -33,7 +34,7 @@ class GroupExecutableArgument : CommandArgument<GroupExecutable>() {
     }
 
     override fun parse(reader: StringReader): GroupExecutable {
-        val executable = GroupExecutable[reader.readString()] ?:
+        val executable = AbstractCloudGroupExecutable[reader.readString()] ?:
             throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return executable
@@ -56,7 +57,7 @@ class GroupExecutableArgument : CommandArgument<GroupExecutable>() {
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        GroupExecutable.executables.forEach {
+        AbstractCloudGroupExecutable.executables.forEach {
             if (it.key.contains(" ")) {
                 builder.suggest("\"${it.key}\"")
             } else

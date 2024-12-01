@@ -65,7 +65,8 @@ open class Server : com.esotericsoftware.kryonet.Server(), Network {
             Any::class.java,
             ArrayList::class.java,
             List::class.java,
-            LinkedHashMap::class.java
+            LinkedHashMap::class.java,
+            Set::class.java
         )
 
         bind(port, port)

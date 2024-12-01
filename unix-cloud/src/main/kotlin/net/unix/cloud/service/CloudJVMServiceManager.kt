@@ -10,6 +10,8 @@ import java.util.*
 @Suppress("MemberVisibilityCanBePrivate")
 object CloudJVMServiceManager : CloudServiceManager {
 
+    private fun readResolve(): Any = CloudJVMServiceManager
+
     val cachedServices = mutableMapOf<UUID, CloudService>()
 
     override val services: Set<CloudService>

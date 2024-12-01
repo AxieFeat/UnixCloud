@@ -4,6 +4,7 @@ import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.pattern.Deletable
 import net.unix.api.pattern.Saveable
 import java.io.File
+import java.rmi.RemoteException
 
 /**
  * Represent savable [CloudGroup].
@@ -17,6 +18,7 @@ interface SaveableCloudGroup : CloudGroup, Deletable, Saveable {
      *
      * @param file Where to keep the properties.
      */
+    @Throws(RemoteException::class)
     override fun save(file: File)
 
     /**
@@ -24,7 +26,7 @@ interface SaveableCloudGroup : CloudGroup, Deletable, Saveable {
      *
      * @throws CloudGroupLimitException If group has active services.
      */
-    @Throws(CloudGroupLimitException::class)
+    @Throws(CloudGroupLimitException::class, RemoteException::class)
     override fun delete()
 
 }

@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":unix-network"))
     implementation(project(":unix-scheduler"))
     implementation(project(":unix-api"))
+    implementation(project(":unix-cloud"))
 }
 
 tasks.test {

@@ -1,15 +1,19 @@
 package net.unix.api.group
 
+import net.unix.api.remote.RemoteAccessible
+import java.rmi.RemoteException
+
 /**
  * This interface represents some behavior rule of group.
  *
  * @param T Type of value.
  */
-interface CloudGroupRule<T> {
+interface CloudGroupRule<T> : RemoteAccessible {
 
     /**
      * Group, that's use this rule.
      */
+    @get:Throws(RemoteException::class)
     val group: CloudGroup
 
     /**
@@ -17,6 +21,7 @@ interface CloudGroupRule<T> {
      *
      * @return Instance of [T].
      */
+    @Throws(RemoteException::class)
     fun get(): T
 
     /**
@@ -24,6 +29,7 @@ interface CloudGroupRule<T> {
      *
      * @param input Updated value.
      */
+    @Throws(RemoteException::class)
     fun update(input: T)
 
 }

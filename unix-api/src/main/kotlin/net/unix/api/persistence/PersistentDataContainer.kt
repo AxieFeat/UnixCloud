@@ -2,12 +2,14 @@ package net.unix.api.persistence
 
 import net.kyori.adventure.key.Key
 import net.unix.api.pattern.Serializable
+import net.unix.api.remote.RemoteAccessible
+import java.rmi.RemoteException
 
 /**
  * This interface represents a map like object, capable of storing custom tags
  * in it.
  */
-interface PersistentDataContainer : Serializable {
+interface PersistentDataContainer : Serializable, RemoteAccessible {
 
     /**
      * Stores a metadata value on the [PersistentDataHolder] instance.
@@ -26,7 +28,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @throws IllegalArgumentException If no suitable adapter will be found for the [PersistentDataType.primitiveType].
      */
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, RemoteException::class)
     operator fun <T, Z> set(key: Key, type: PersistentDataType<T, Z>, value: Z)
 
     /**
@@ -57,6 +59,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @return If a value found.
      */
+    @Throws(RemoteException::class)
     fun <T, Z> has(key: Key, type: PersistentDataType<T, Z>): Boolean
 
     /**
@@ -75,7 +78,7 @@ interface PersistentDataContainer : Serializable {
      * @throws IllegalArgumentException If no suitable adapter will be found for
      * the [PersistentDataType.primitiveType].
      */
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, RemoteException::class)
     operator fun <T, Z> get(key: Key, type: PersistentDataType<T, Z>): Z?
 
     /**
@@ -98,7 +101,7 @@ interface PersistentDataContainer : Serializable {
      * @throws IllegalArgumentException If no suitable adapter will be found for
      * the [PersistentDataType.primitiveType].
      */
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, RemoteException::class)
     fun <T, Z> getOrDefault(key: Key, type: PersistentDataType<T, Z>, defaultValue: Z): Z
 
     /**
@@ -110,6 +113,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @return The key set.
      */
+    @get:Throws(RemoteException::class)
     val keys: Set<Key?>
 
     /**
@@ -117,6 +121,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @param key The key.
      */
+    @Throws(RemoteException::class)
     fun remove(key: Key)
 
     /**
@@ -125,6 +130,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @return The boolean.
      */
+    @get:Throws(RemoteException::class)
     val isEmpty: Boolean
 
     /**
@@ -132,6 +138,7 @@ interface PersistentDataContainer : Serializable {
      *
      * @return The tag context.
      */
+    @get:Throws(RemoteException::class)
     val adapterContext: PersistentDataAdapterContext
 
     companion object

@@ -15,6 +15,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":unix-driver"))
+    implementation(project(":unix-modifications:unix-modules:unix-module-test"))
 }
 
 tasks.test {

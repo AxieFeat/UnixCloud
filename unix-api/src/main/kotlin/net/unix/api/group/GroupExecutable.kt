@@ -2,8 +2,10 @@ package net.unix.api.group
 
 import net.unix.api.pattern.Serializable
 import net.unix.api.pattern.Nameable
+import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.CloudService
-import net.unix.api.service.ServiceExecutable
+import net.unix.api.service.CloudServiceExecutable
+import java.rmi.RemoteException
 
 /**
  * Allows to create CloudGroup type.
@@ -13,47 +15,22 @@ import net.unix.api.service.ServiceExecutable
  *
  * @throws IllegalArgumentException If type with this name already exist.
  */
-abstract class GroupExecutable : Serializable, Nameable {
+interface GroupExecutable : Serializable, Nameable, RemoteAccessible {
 
     /**
      * The name of executable.
      */
-    abstract override val name: String
+    @get:Throws(RemoteException::class)
+    override val name: String
 
     /**
      * Create executable for service.
      *
      * @param service Service.
      *
-     * @return Instance of [ServiceExecutable].
+     * @return Instance of [CloudServiceExecutable].
      */
-    abstract fun executableFor(service: CloudService): ServiceExecutable
+    @Throws(RemoteException::class)
+    fun executableFor(service: CloudService): CloudServiceExecutable
 
-    override fun serialize(): Map<String, Any> = mapOf("name" to name)
-
-    fun register() {
-        if (name == "NONE") throw IllegalArgumentException("You cant use \"NONE\" as name for GroupExecutable!")
-
-        if (executables[name] != null) throw IllegalArgumentException("GroupExecutable with this name already exist!")
-
-        executables[name] = this
-    }
-
-    companion object {
-
-        /**
-         * All registered instances of [GroupExecutable]
-         */
-        val executables = mutableMapOf<String, GroupExecutable>()
-
-        /**
-         * Get [GroupExecutable] by it [name].
-         *
-         * @param name Name of type.
-         *
-         * @return Instance of [GroupExecutable] or null, if not founded.
-         */
-        operator fun get(name: String): GroupExecutable? = executables[name]
-
-    }
 }

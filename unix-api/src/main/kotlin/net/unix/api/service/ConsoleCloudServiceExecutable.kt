@@ -1,15 +1,19 @@
 package net.unix.api.service
 
-interface ConsoleServiceExecutable : ServiceExecutable {
+import java.rmi.RemoteException
+
+interface ConsoleCloudServiceExecutable : CloudServiceExecutable {
 
     /**
      * All service terminal logs.
      */
+    @get:Throws(RemoteException::class)
     val logs: MutableList<String>
 
     /**
      * Is console view of service enabled?
      */
+    @get:Throws(RemoteException::class)
     var viewConsole: Boolean
 
     /**
@@ -17,6 +21,7 @@ interface ConsoleServiceExecutable : ServiceExecutable {
      *
      * @param command Command to send.
      */
+    @Throws(RemoteException::class)
     fun command(command: String)
 
 }

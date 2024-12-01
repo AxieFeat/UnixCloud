@@ -8,15 +8,19 @@ import net.unix.cloud.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
+import java.rmi.RemoteException
 import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
 object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
 
+    private fun readResolve(): Any = CloudJVMGroupManager
+
     private val locationSpace: LocationSpace by inject()
 
     val cachedGroups = mutableMapOf<UUID, CloudGroup>()
 
+    @get:Throws(RemoteException::class)
     override val groups: Set<CloudGroup>
         get() = cachedGroups.values.toSet()
 
@@ -25,6 +29,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         CloudRuleHandler.start()
     }
 
+    @Throws(RemoteException::class)
     override fun register(group: CloudGroup) {
         cachedGroups[group.uuid] = group
 
@@ -37,6 +42,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         }
     }
 
+    @Throws(RemoteException::class)
     override fun unregister(group: CloudGroup) {
         cachedGroups.remove(group.uuid)
 
@@ -47,6 +53,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         }
     }
 
+    @Throws(RemoteException::class)
     override fun newInstance(
         uuid: UUID,
         name: String,
@@ -58,6 +65,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         uuid, name, serviceLimit, executableFile, templates, executable, mutableSetOf()
     )
 
+    @Throws(RemoteException::class)
     override fun newInstance(
         uuid: UUID,
         name: String,
@@ -82,6 +90,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         return group
     }
 
+    @Throws(RemoteException::class)
     override fun loadAllGroups() {
         locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
             loadGroup(it)
@@ -93,10 +102,13 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         }
     }
 
+    @Throws(RemoteException::class)
     override fun get(name: String): List<CloudGroup> = groups.filter { it.clearName == name }
 
+    @Throws(RemoteException::class)
     override fun get(uuid: UUID): CloudGroup? = cachedGroups[uuid]
 
+    @Throws(RemoteException::class)
     override fun loadGroup(file: File): SaveableCloudGroup {
         val group = CloudJVMGroup.deserialize(file.readJson<Map<String, Any>>())
 
@@ -107,6 +119,6 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         return group
     }
 
+    @Throws(RemoteException::class)
     override fun delete(group: SaveableCloudGroup) = group.delete()
-
 }

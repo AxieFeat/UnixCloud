@@ -2,13 +2,17 @@ package net.unix.api.modification
 
 import net.unix.api.modification.exception.ModificationExistException
 import net.unix.api.modification.exception.ModificationLoadException
+import net.unix.api.remote.RemoteAccessible
 import java.io.File
+import java.rmi.RemoteException
 
-interface ModificationManager {
+interface ModificationManager : RemoteAccessible {
 
     /**
      * Folder from which modifications will be loaded.
      */
+    @get:Throws(RemoteException::class)
+    @set:Throws(RemoteException::class)
     var folder: File
 
     /**
@@ -18,6 +22,7 @@ interface ModificationManager {
      *
      * @return Instance of [Modification] or null, if not founded.
      */
+    @Throws(RemoteException::class)
     operator fun get(name: String): Modification?
 
     /**
@@ -30,7 +35,7 @@ interface ModificationManager {
      * @throws ModificationLoadException Generic exception, may be corrupted file?
      * @throws ModificationExistException If modification with this name already loaded.
      */
-    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    @Throws(ModificationLoadException::class, ModificationExistException::class, RemoteException::class)
     fun loadAll(silent: Boolean = true): List<Modification>
 
     /**
@@ -43,7 +48,7 @@ interface ModificationManager {
      * @throws ModificationLoadException Generic exception, may be corrupted file?
      * @throws ModificationExistException If modification with this name already loaded.
      */
-    @Throws(ModificationLoadException::class, ModificationExistException::class)
+    @Throws(ModificationLoadException::class, ModificationExistException::class, RemoteException::class)
     fun load(file: File): Modification?
 
     companion object

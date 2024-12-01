@@ -17,6 +17,8 @@ import java.io.File
 
 object CloudModuleManager : ModuleManager, KoinComponent {
 
+    private fun readResolve(): Any = CloudModuleManager
+
     private val locationSpace: LocationSpace by inject()
 
     private val cachedModules = mutableMapOf<String, Module>()

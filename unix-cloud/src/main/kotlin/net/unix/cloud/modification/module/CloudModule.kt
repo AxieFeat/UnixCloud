@@ -16,6 +16,7 @@ abstract class CloudModule : Module {
 
     val listeners = mutableListOf<Any>()
 
+    @Transient
     final override lateinit var loader: ModuleClassLoader
     final override lateinit var folder: File
     final override lateinit var executable: File

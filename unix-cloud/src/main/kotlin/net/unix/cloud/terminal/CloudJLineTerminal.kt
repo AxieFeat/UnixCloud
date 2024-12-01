@@ -1,7 +1,7 @@
 package net.unix.cloud.terminal
 
 import net.kyori.adventure.text.Component
-import net.unix.api.service.ConsoleServiceExecutable
+import net.unix.api.service.ConsoleCloudServiceExecutable
 import net.unix.cloud.CloudExtension.deserializeComponent
 import net.unix.cloud.CloudExtension.serializeAnsi
 import net.unix.cloud.command.format.CloudCommandCompleter
@@ -12,7 +12,6 @@ import net.unix.cloud.persistence.CloudPersistentDataContainer
 import net.unix.command.sender.CommandSender
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
-import org.jline.reader.impl.LineReaderImpl
 import org.jline.terminal.TerminalBuilder
 import org.jline.utils.InfoCmp
 import java.nio.charset.StandardCharsets
@@ -28,7 +27,7 @@ open class CloudJLineTerminal : net.unix.api.terminal.Terminal {
 
     override val sender: CommandSender = CloudConsoleCommandSender()
 
-    override var selectedExecutable: ConsoleServiceExecutable? = null
+    override var selectedExecutable: ConsoleCloudServiceExecutable? = null
 
     private lateinit var runner: JLineTerminalRunner
 

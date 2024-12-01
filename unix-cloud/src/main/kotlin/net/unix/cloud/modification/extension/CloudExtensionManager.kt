@@ -10,6 +10,8 @@ import java.io.File
 
 object CloudExtensionManager : ExtensionManager {
 
+    private fun readResolve(): Any = CloudExtensionManager
+
     override var folder: File = CloudLocationSpace.extension
     private val cachedExtensions = mutableMapOf<String, Extension>()
 

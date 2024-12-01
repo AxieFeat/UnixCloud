@@ -100,7 +100,7 @@ open class CloudJVMGroup(
 
         val service = CloudJVMService(
             this,
-            name = "$clearName-$servicesCount"
+            name = "$clearName-${servicesCount + 1}"
         )
 
         cloudServiceManager.register(service)
@@ -154,6 +154,9 @@ open class CloudJVMGroup(
 
         private val cloudTemplateManager: CloudTemplateManager by inject()
 
+        @JvmStatic
+        private val serialVersionUID = 9068729559091433172L
+
         /**
          * Deserialize [CloudJVMGroup] from [CloudJVMGroup.serialize].
          *
@@ -179,7 +182,7 @@ open class CloudJVMGroup(
                 cloudTemplateManager[it]
             }.toMutableList()
 
-            val groupExecutable = GroupExecutable[serialized["group-executable"].toString()]
+            val groupExecutable = AbstractCloudGroupExecutable[serialized["group-executable"].toString()]
 
             return CloudJVMGroup(
                 uuid,

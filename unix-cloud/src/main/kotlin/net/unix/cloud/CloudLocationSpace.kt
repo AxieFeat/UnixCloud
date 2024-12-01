@@ -3,6 +3,7 @@ package net.unix.cloud
 import net.unix.api.LocationSpace
 import net.unix.cloud.configuration.UnixConfiguration
 import java.io.File
+import java.io.Serializable
 
 val mainDirectory: File = run {
     val file = File(
@@ -17,7 +18,9 @@ val mainDirectory: File = run {
 }
 
 @Suppress("MemberVisibilityCanBePrivate")
-object CloudLocationSpace : LocationSpace {
+object CloudLocationSpace : LocationSpace, Serializable {
+
+    private fun readResolve(): Any = CloudLocationSpace
 
     override val main: File
         get() = mainDirectory

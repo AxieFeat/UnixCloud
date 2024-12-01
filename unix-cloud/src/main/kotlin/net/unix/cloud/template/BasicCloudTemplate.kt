@@ -57,6 +57,9 @@ open class BasicCloudTemplate(
 
     companion object {
 
+        @JvmStatic
+        private val serialVersionUID = 178729509111313172L
+
         /**
          * Deserialize [BasicCloudTemplate] from [BasicCloudTemplate.serialize].
          *

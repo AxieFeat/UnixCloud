@@ -1,16 +1,17 @@
 package net.unix.cloud.group
 
-import net.unix.api.group.GroupExecutable
 import net.unix.api.service.CloudService
-import net.unix.api.service.ServiceExecutable
-import net.unix.cloud.service.ServiceJVMExecutable
+import net.unix.api.service.CloudServiceExecutable
+import net.unix.cloud.service.CloudServiceJVMExecutable
 
-object GroupJVMExecutable : GroupExecutable() {
+object GroupJVMExecutable : AbstractCloudGroupExecutable() {
+
+    private fun readResolve(): Any = GroupJVMExecutable
 
     override val name: String = "JVM"
 
-    override fun executableFor(service: CloudService): ServiceExecutable {
-        return ServiceJVMExecutable(service)
+    override fun executableFor(service: CloudService): CloudServiceExecutable {
+        return CloudServiceJVMExecutable(service)
     }
 
 }

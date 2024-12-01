@@ -4,10 +4,12 @@ import net.unix.api.pattern.Serializable
 import net.unix.api.group.exception.CloudGroupLimitException
 import net.unix.api.pattern.Nameable
 import net.unix.api.persistence.PersistentDataHolder
+import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
-import net.unix.api.service.ServiceExecutable
+import net.unix.api.service.CloudServiceExecutable
 import org.jetbrains.annotations.Range
+import java.rmi.RemoteException
 import java.util.UUID
 
 /**
@@ -15,21 +17,24 @@ import java.util.UUID
  *
  * The group defines the general behavior for [CloudService]'s, their settings, files, and so on.
  */
-interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
+interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAccessible {
 
     /**
      * The unique id of [CloudGroup].
      */
+    @get:Throws(RemoteException::class)
     val uuid: UUID
 
     /**
      * Cloud group name. Can be repeated by other groups.
      */
+    @get:Throws(RemoteException::class)
     override val name: String
 
     /**
      * Name of group without any formatting. Can not contain spaces.
      */
+    @get:Throws(RemoteException::class)
     val clearName: String
 
     /**
@@ -40,6 +45,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
      *
      * If null - type is not set.
      */
+    @get:Throws(RemoteException::class)
     val groupExecutable: GroupExecutable?
 
     /**
@@ -47,21 +53,25 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
      *
      * If you change list elements, that will be applied only for new [CloudService]'s.
      */
+    @get:Throws(RemoteException::class)
     val templates: MutableList<CloudTemplate>
 
     /**
      * Set of services of this group.
      */
+    @get:Throws(RemoteException::class)
     val services: Set<CloudService>
 
     /**
      * Count of all [CloudService]'s of this group.
      */
+    @get:Throws(RemoteException::class)
     val servicesCount: Int
 
     /**
-     * Path to executable file in prepared service. It will be started via [ServiceExecutable].
+     * Path to executable file in prepared service. It will be started via [CloudServiceExecutable].
      */
+    @get:Throws(RemoteException::class)
     val executableFile: String
 
     /**
@@ -69,7 +79,8 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
      *
      * @throws CloudGroupLimitException If value less than [servicesCount].
      */
-    @set:Throws(CloudGroupLimitException::class)
+    @set:Throws(CloudGroupLimitException::class, RemoteException::class)
+    @get:Throws(RemoteException::class)
     var serviceLimit: Int
 
     /**
@@ -82,7 +93,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
      * @throws IllegalArgumentException If [count] < 1.
      * @throws CloudGroupLimitException If [CloudService]'s count more, then [serviceLimit].
      */
-    @Throws(IllegalArgumentException::class, CloudGroupLimitException::class)
+    @Throws(IllegalArgumentException::class, CloudGroupLimitException::class, RemoteException::class)
     fun create(count: @Range(from = 1L, to = Int.MAX_VALUE.toLong()) Int): List<CloudService>
 
     /**
@@ -92,7 +103,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable {
      *
      * @throws CloudGroupLimitException If [CloudService]'s count more, then [serviceLimit].
      */
-    @Throws(CloudGroupLimitException::class)
+    @Throws(CloudGroupLimitException::class, RemoteException::class)
     fun create(): CloudService
 
     companion object

@@ -82,6 +82,10 @@ open class CloudPersistentDataContainer : PersistentDataContainer {
     }
 
     companion object {
+
+        @JvmStatic
+        private val serialVersionUID = 4068221551011413172L
+
         /**
          * Deserialize [CloudPersistentDataContainer] from [CloudPersistentDataContainer.serialize].
          *

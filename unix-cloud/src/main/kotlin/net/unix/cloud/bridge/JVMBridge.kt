@@ -14,6 +14,8 @@ import java.util.UUID
 
 object JVMBridge : CloudBridge, KoinComponent {
 
+    private fun readResolve(): Any = JVMBridge
+
     private val serviceManager: CloudServiceManager by inject()
 
     private val cachedClients = mutableMapOf<Int, UUID>()

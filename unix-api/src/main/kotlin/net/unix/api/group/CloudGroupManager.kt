@@ -1,6 +1,8 @@
 package net.unix.api.group
 
+import net.unix.api.remote.RemoteAccessible
 import net.unix.api.template.CloudTemplate
+import java.rmi.RemoteException
 import java.util.UUID
 
 /**
@@ -8,11 +10,12 @@ import java.util.UUID
  *
  * With this you can manage [CloudGroup]'s.
  */
-interface CloudGroupManager {
+interface CloudGroupManager : RemoteAccessible {
 
     /**
      * All [CloudGroup]'s.
      */
+    @get:Throws(RemoteException::class)
     val groups: Set<CloudGroup>
 
     /**
@@ -20,6 +23,7 @@ interface CloudGroupManager {
      *
      * @param group Group to register.
      */
+    @Throws(RemoteException::class)
     fun register(group: CloudGroup)
 
     /**
@@ -27,6 +31,7 @@ interface CloudGroupManager {
      *
      * @param group Group to unregister.
      */
+    @Throws(RemoteException::class)
     fun unregister(group: CloudGroup)
 
     /**
@@ -43,7 +48,7 @@ interface CloudGroupManager {
      *
      * @throws IllegalArgumentException If [name] contain spaces.
      */
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, RemoteException::class)
     fun newInstance(uuid: UUID,
                     name: String,
                     serviceLimit: Int,
@@ -67,7 +72,7 @@ interface CloudGroupManager {
      *
      * @throws IllegalArgumentException If [name] contain spaces.
      */
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, RemoteException::class)
     fun newInstance(uuid: UUID,
                     name: String,
                     serviceLimit: Int,
@@ -84,6 +89,7 @@ interface CloudGroupManager {
      *
      * @return True, if count of [CloudGroup]'s with this name > 1, else false
      */
+    @Throws(RemoteException::class)
     fun duplicates(name: String): Boolean = get(name).count() > 1
 
     /**
@@ -93,6 +99,7 @@ interface CloudGroupManager {
      *
      * @return List of [CloudGroup]'s with this name, can be empty.
      */
+    @Throws(RemoteException::class)
     operator fun get(name: String): List<CloudGroup>
 
     /**
@@ -102,6 +109,7 @@ interface CloudGroupManager {
      *
      * @return Instance of [CloudGroup] or null, if not founded.
      */
+    @Throws(RemoteException::class)
     operator fun get(uuid: UUID): CloudGroup?
 
 }

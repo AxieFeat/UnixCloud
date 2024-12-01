@@ -10,6 +10,7 @@ import org.koin.core.component.inject
 
 object CloudRuleHandler : Startable, KoinComponent {
 
+    @delegate:Transient
     private val cloudGroupManager: CloudGroupManager by inject()
 
     override fun start() {

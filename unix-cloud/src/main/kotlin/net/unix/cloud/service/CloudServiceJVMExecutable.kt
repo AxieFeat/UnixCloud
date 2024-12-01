@@ -1,8 +1,7 @@
 package net.unix.cloud.service
 
-import net.unix.api.service.AbstractCloudExecutable
 import net.unix.api.service.CloudService
-import net.unix.api.service.ConsoleServiceExecutable
+import net.unix.api.service.ConsoleCloudServiceExecutable
 import net.unix.cloud.group.CloudJVMGroup
 import net.unix.cloud.logging.CloudLogger
 import net.unix.scheduler.SchedulerType
@@ -13,7 +12,7 @@ import java.io.*
  * Executor for JVM executable files.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class ServiceJVMExecutable(
+open class CloudServiceJVMExecutable(
     override val service: CloudService,
     override val executableFile: File = File(service.dataFolder, service.group.executableFile),
     val properties: List<String> =
@@ -21,11 +20,12 @@ open class ServiceJVMExecutable(
             (service.group as CloudJVMGroup).properties.plus(executableFile.path)
         else
             listOf("java", "-Xms100M", "-Xmx1G", "-jar", executableFile.path)
-) : AbstractCloudExecutable(service, executableFile), ConsoleServiceExecutable {
+) : AbstractCloudExecutableCloud(service, executableFile), ConsoleCloudServiceExecutable {
 
     /**
      * Builder for service process.
      */
+    @Transient
     val processBuilder = run {
         val process = ProcessBuilder(properties)
 
@@ -48,6 +48,7 @@ open class ServiceJVMExecutable(
     /**
      * Service process.
      */
+    @Transient
     lateinit var process: Process
 
     override fun start() {
