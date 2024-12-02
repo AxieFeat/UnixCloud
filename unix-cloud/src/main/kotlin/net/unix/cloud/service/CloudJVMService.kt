@@ -3,11 +3,9 @@ package net.unix.cloud.service
 import net.unix.api.LocationSpace
 import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
-import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.CloudServiceExecutable
-import net.unix.api.service.CloudServiceStatus
-import net.unix.api.service.StaticCloudService
+import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
+import net.unix.cloud.CloudExtension.toJson
 import net.unix.cloud.CloudExtension.uniqueUUID
 import net.unix.cloud.logging.CloudLogger
 import net.unix.cloud.mainDirectory
@@ -71,6 +69,16 @@ open class CloudJVMService(
                 from.copyRecursively(to, overwrite = true)
             }
         }
+
+        val infoFile = File(dataFolder, "service.info")
+
+        if (!infoFile.exists()) infoFile.createNewFile()
+
+        CloudServiceInfo(
+            this.name,
+            this.uuid
+        ).serialize().toJson(infoFile)
+
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)

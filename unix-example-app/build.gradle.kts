@@ -15,6 +15,10 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":unix-driver"))
+    implementation(project(":unix-network"))
+    implementation(project(":unix-scheduler"))
+    implementation(project(":unix-api"))
+    implementation(project(":unix-cloud"))
     implementation(project(":unix-modifications:unix-modules:unix-module-test"))
 }
 

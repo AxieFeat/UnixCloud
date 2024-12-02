@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package net.unix.driver
 
 import net.unix.api.network.client.Client
@@ -7,8 +9,11 @@ import net.unix.api.group.CloudGroupManager
 import net.unix.api.group.SaveableCloudGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
+import net.unix.api.service.CloudService
+import net.unix.api.service.CloudServiceInfo
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
+import net.unix.cloud.CloudExtension.readJson
 import net.unix.driver.persistence.RemotePersistenceDataType
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
@@ -17,7 +22,6 @@ import org.koin.dsl.module
 import java.io.File
 import java.rmi.registry.LocateRegistry
 import java.rmi.registry.Registry
-import java.util.*
 
 object JVMServiceInstance {
 
@@ -33,7 +37,15 @@ object JVMServiceInstance {
         return@run file
     }
 
-    val uuid: UUID = UUID.fromString(dataFolder.name)
+    val info: CloudServiceInfo = run {
+        val file = File(dataFolder, "service.info")
+
+        if(!file.exists()) throw IllegalArgumentException("Can not find info file in service!")
+
+        return@run CloudServiceInfo.deserialize(file.readJson())
+    }
+
+    lateinit var service: CloudService
 
     fun install() {
         println("Service instance installing...")
@@ -61,6 +73,8 @@ object JVMServiceInstance {
             modules(module)
         }
 
+        this.service = cloudServiceManager[info.uuid] ?: throw IllegalArgumentException("Cant find current CloudService instance!")
+
         val client = Client()
         client.connect("0.0.0.0", 9191)
 
@@ -68,7 +82,7 @@ object JVMServiceInstance {
 
         Packet.builder()
             .setChannel("fun:service:auth")
-            .addNamedString("uuid" to uuid.toString())
+            .addNamedString("uuid" to service.uuid.toString())
             .send(client)
 
         println("Service started.")
@@ -101,10 +115,6 @@ object JVMServiceInstance {
                         .send(client)
                 }
             }
-        }
-
-        moduleManager.modules.forEach {
-            println(it.info.toString())
         }
     }
 
