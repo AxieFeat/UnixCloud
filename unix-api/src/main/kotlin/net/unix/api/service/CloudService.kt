@@ -68,11 +68,10 @@ interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccess
     var status: CloudServiceStatus
 
     /**
-     * Uptime of service in seconds.
+     * Uptime of service in milliseconds.
      */
     @get:Throws(RemoteException::class)
-    @set:Throws(RemoteException::class)
-    var uptime: Long
+    val uptime: Long
 
     /**
      * The service executable.

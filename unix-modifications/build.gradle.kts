@@ -12,7 +12,7 @@ repositories {
 subprojects {
 
     dependencies {
-        compileOnly(project(":unix-cloud"))
+        compileOnly(project(":unix-node"))
         compileOnly(project(":unix-api"))
         compileOnly(project(":unix-network"))
         compileOnly(project(":unix-scheduler"))

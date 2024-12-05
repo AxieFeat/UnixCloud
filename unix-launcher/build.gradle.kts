@@ -5,22 +5,18 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-group = "net.unix.cloud"
-version = "1.0"
-
-repositories {
-    mavenCentral()
-}
+group = rootProject.group
+version = rootProject.version
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation(project(":unix-driver"))
+    implementation(project(":unix-api"))
     implementation(project(":unix-network"))
     implementation(project(":unix-scheduler"))
-    implementation(project(":unix-api"))
-    implementation(project(":unix-node"))
+    implementation(project(":unix-event-system"))
     implementation(project(":unix-command-api"))
-    implementation(project(":unix-modifications:unix-modules:unix-module-test"))
+    implementation(project(":unix-node"))
+    implementation(project(":unix-center"))
 }
 
 tasks.test {
@@ -28,10 +24,10 @@ tasks.test {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("example-app.jar")
+    archiveFileName.set("unixcloud.jar")
 
     manifest {
-        attributes["Main-Class"] = "net.unix.example.app.ExampleKt"
+        attributes["Main-Class"] = "net.unix.launcher.CloudInstallerKt"
     }
 }
 
