@@ -18,6 +18,7 @@ class RestModule : CloudModule() {
         instance = this
 
         CloudLogger.info("Initializing REST module...")
+        
         val config = loadConfig()
         val moduleClassLoader = this::class.java.classLoader
         executeWithDifferentContextClassLoader(moduleClassLoader) {
