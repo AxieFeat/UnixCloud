@@ -15,6 +15,11 @@ import net.unix.module.rest.controller.ControllerHandler
 import net.unix.module.rest.controller.RequestMethodData
 import net.unix.module.rest.defaultcontroller.UserController
 import net.unix.module.rest.defaultcontroller.filemanager.FileManagerController
+import net.unix.module.rest.defaultcontroller.group.GroupActionController
+import net.unix.module.rest.defaultcontroller.group.GroupController
+import net.unix.module.rest.defaultcontroller.service.ServiceActionController
+import net.unix.module.rest.defaultcontroller.service.ServiceController
+import net.unix.module.rest.defaultcontroller.template.TemplateController
 import net.unix.module.rest.jsonlib.GsonCreator
 
 object RestServer {
@@ -46,6 +51,11 @@ object RestServer {
 
         controllerHandler.registerController(AuthController(this.authService))
         controllerHandler.registerController(UserController(this.authService))
+        controllerHandler.registerController(TemplateController())
+        controllerHandler.registerController(GroupController())
+        controllerHandler.registerController(GroupActionController())
+        controllerHandler.registerController(ServiceController())
+        controllerHandler.registerController(ServiceActionController())
         controllerHandler.registerController(FileManagerController())
     }
 
