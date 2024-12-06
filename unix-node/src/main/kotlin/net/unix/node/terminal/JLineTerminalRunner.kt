@@ -16,6 +16,11 @@ import org.jline.reader.UserInterruptException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+val unixStartTime = System.currentTimeMillis()
+
+val unixUptime: Long
+    get() = System.currentTimeMillis() - unixStartTime
+
 class JLineTerminalRunner(
     val terminal: CloudJLineTerminal
 ) : Thread(), KoinComponent {

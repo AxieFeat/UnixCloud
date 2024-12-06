@@ -15,7 +15,7 @@ object UnixConfiguration : CloudConfiguration("/config.json") {
             save()
         }
 
-    val bridge = BridgeSettings.deserialize(values["terminal"])
+    val bridge = BridgeSettings.deserialize(values["bridge"])
     val terminal = TerminalSettings.deserialize(values["terminal"])
     val storage = LocationSettings.deserialize(values["storage"])
     val allowedEvents = EventSettings.deserialize(values["allowed-events"])
@@ -153,22 +153,25 @@ data class LoggerSettings(
 }
 
 data class BridgeSettings(
-    val port: Int = 9191
+    val port: Int = 9191,
+    val rmiPort: Int = 1099
 ) : Serializable {
 
     override fun serialize(): Map<String, Any> {
         val serialized = mutableMapOf<String, Any>()
 
         serialized["port"] = port
+        serialized["rmi-port"] = rmiPort
 
         return serialized
     }
 
     companion object {
         fun deserialize(serialized: Map<String, Any>): BridgeSettings {
-            val port = serialized["port"].toString().toIntOrNull() ?: 9191
+            val port = serialized["port"].toString().toDoubleOrNull()?.toInt() ?: 9191
+            val rmiPort = serialized["rmi-port"].toString().toDoubleOrNull()?.toInt() ?: 1099
 
-            return BridgeSettings(port)
+            return BridgeSettings(port, rmiPort)
         }
 
         fun deserialize(any: Any?) = deserialize(any as Map<String, Any>)

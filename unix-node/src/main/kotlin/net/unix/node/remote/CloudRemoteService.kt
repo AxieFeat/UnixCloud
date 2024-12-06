@@ -2,6 +2,8 @@ package net.unix.node.remote
 
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.remote.RemoteService
+import net.unix.node.CloudExtension.print
+import net.unix.node.configuration.UnixConfiguration
 import net.unix.node.logging.CloudLogger
 import java.rmi.Naming
 import java.rmi.registry.LocateRegistry
@@ -16,11 +18,15 @@ object CloudRemoteService : RemoteService {
     }
 
     override fun start() {
-        LocateRegistry.createRegistry(1099)
+        val port = UnixConfiguration.bridge.rmiPort
+
+        LocateRegistry.createRegistry(port)
+
         toRegister.forEach { remoteAccessible ->
             Naming.rebind("//localhost/${remoteAccessible.key}", UnicastRemoteObject.exportObject(remoteAccessible.value, 0))
         }
-        CloudLogger.info("RMI server started with ${toRegister.size} objects")
+
+        CloudLogger.info("RMI server started with ${toRegister.size} objects in $port")
         toRegister.forEach {
             CloudLogger.debug(" - ${it.key}")
         }

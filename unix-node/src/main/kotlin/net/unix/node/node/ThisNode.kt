@@ -2,8 +2,8 @@ package net.unix.node.node
 
 import net.unix.api.node.Node
 import net.unix.node.configuration.UnixConfiguration
-import unixStartTime
-import unixUptime
+import net.unix.node.terminal.unixStartTime
+import net.unix.node.terminal.unixUptime
 
 /**
  * This object represents "this" node.

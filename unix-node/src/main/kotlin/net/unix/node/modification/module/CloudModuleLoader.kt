@@ -89,22 +89,26 @@ class CloudModuleLoader(
             it.name.substring(0, it.name.length - 6).replace('/', '.')
         }.also {
             if(!it.contains(info.main)) throw ModificationLoadException("Main class \"${info.main}\" in module \"${info.name}\" not found!")
-        }.map {
-            loadClass(it)
-        }.forEach { clazz ->
-            if (clazz.name == info.main) {
-                val instance = try {
-                    clazz.newInstance() as CloudModule
-                } catch (ex: ClassCastException) {
-                    throw ModificationLoadException("Main class in module \"${info.name}\" is not extends CloudModule!")
+        }.forEach {
+
+            try {
+                val clazz = loadClass(it)
+
+                if (clazz.name == info.main) {
+                    val instance = try {
+                        clazz.newInstance() as CloudModule
+                    } catch (ex: ClassCastException) {
+                        throw ModificationLoadException("Main class in module \"${info.name}\" is not extends CloudModule!")
+                    }
+
+                    instance.init(info)
+
+                    cachedLoad = true
+
+                    return instance
                 }
+            } catch(ignore: Exception) {}
 
-                instance.init(info)
-
-                cachedLoad = true
-
-                return instance
-            }
         }
 
         return null

@@ -1,0 +1,7 @@
+{
+  "name": "unix-rest",
+  "version": "1.0",
+  "main": "net.unix.module.rest.RestModule",
+  "authors": ["AxieFeat"],
+  "description": "REST module for UnixCloud."
+}

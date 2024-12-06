@@ -49,7 +49,11 @@ object CloudModuleManager : ModuleManager, KoinComponent {
 
             CloudLogger.info("Loaded module ${module.info.name} v${module.info.version}")
 
+            val event = ModuleLoadEvent(module).callEvent()
+
             cachedModules[loader.info!!.name] = module
+
+            if (!event.cancelled) module.onLoad()
 
             module
         }

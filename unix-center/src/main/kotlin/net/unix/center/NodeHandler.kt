@@ -16,6 +16,10 @@ object NodeHandler {
         println("Starting node handler...")
         server.start(port)
 
+        server.createListener("empty", Listener.ListenerType.CONNECTED) { conn, packet ->
+            println("Connected client with id ${conn.id}")
+        }
+
         server.createListener("fun:node:list") { conn, packet ->
             if(packet == null) return@createListener
 
@@ -37,6 +41,7 @@ object NodeHandler {
                     .asResponseFor(packet)
                     .addNamedString("fail" to "Node with name $name already registered!")
                     .send(conn.id, server)
+
                 return@createListener
             }
 
@@ -54,10 +59,10 @@ object NodeHandler {
             }
         }
 
-        server.createListener("fun:node:startTime") { conn, packet ->
-            if(packet == null) return@createListener
+        server.createListener("fun:node:startTime") { requestConn, requestPacket ->
+            if(requestPacket == null) return@createListener
 
-            val target = packet.get<String>("name") ?: return@createListener
+            val target = requestPacket.get<String>("name") ?: return@createListener
 
             Packet.builder()
                 .setChannel("fun:node:startTime")
@@ -67,17 +72,17 @@ object NodeHandler {
 
                     Packet.builder()
                         .setChannel("fun:node:startTime")
-                        .asResponseFor(packet)
+                        .asResponseFor(requestPacket)
                         .addNamedLong("time" to time)
-                        .send(conn.id, server)
+                        .send(requestConn.id, server)
                 }
                 .send(nodes[target] ?: return@createListener, server)
         }
 
-        server.createListener("fun:node:uptime") { conn, packet ->
-            if(packet == null) return@createListener
+        server.createListener("fun:node:uptime") { requestConn, requestPacket ->
+            if(requestPacket == null) return@createListener
 
-            val target = packet.get<String>("name") ?: return@createListener
+            val target = requestPacket.get<String>("name") ?: return@createListener
 
             Packet.builder()
                 .setChannel("fun:node:uptime")
@@ -87,17 +92,17 @@ object NodeHandler {
 
                     Packet.builder()
                         .setChannel("fun:node:uptime")
-                        .asResponseFor(packet)
+                        .asResponseFor(requestPacket)
                         .addNamedLong("time" to time)
-                        .send(conn.id, server)
+                        .send(requestConn.id, server)
                 }
                 .send(nodes[target] ?: return@createListener, server)
         }
 
-        server.createListener("fun:node:usageMemory") { conn, packet ->
-            if(packet == null) return@createListener
+        server.createListener("fun:node:usageMemory") { requestConn, requestPacket ->
+            if(requestPacket == null) return@createListener
 
-            val target = packet.get<String>("name") ?: return@createListener
+            val target = requestPacket.get<String>("name") ?: return@createListener
 
             Packet.builder()
                 .setChannel("fun:node:usageMemory")
@@ -107,17 +112,17 @@ object NodeHandler {
 
                     Packet.builder()
                         .setChannel("fun:node:usageMemory")
-                        .asResponseFor(packet)
+                        .asResponseFor(requestPacket)
                         .addNamedLong("memory" to memory)
-                        .send(conn.id, server)
+                        .send(requestConn.id, server)
                 }
                 .send(nodes[target] ?: return@createListener, server)
         }
 
-        server.createListener("fun:node:freeMemory") { conn, packet ->
-            if(packet == null) return@createListener
+        server.createListener("fun:node:freeMemory") { requestConn, requestPacket ->
+            if(requestPacket == null) return@createListener
 
-            val target = packet.get<String>("name") ?: return@createListener
+            val target = requestPacket.get<String>("name") ?: return@createListener
 
             Packet.builder()
                 .setChannel("fun:node:freeMemory")
@@ -127,17 +132,17 @@ object NodeHandler {
 
                     Packet.builder()
                         .setChannel("fun:node:freeMemory")
-                        .asResponseFor(packet)
+                        .asResponseFor(requestPacket)
                         .addNamedLong("memory" to memory)
-                        .send(conn.id, server)
+                        .send(requestConn.id, server)
                 }
                 .send(nodes[target] ?: return@createListener, server)
         }
 
-        server.createListener("fun:node:maxMemory") { conn, packet ->
-            if(packet == null) return@createListener
+        server.createListener("fun:node:maxMemory") { requestConn, requestPacket ->
+            if(requestPacket == null) return@createListener
 
-            val target = packet.get<String>("name") ?: return@createListener
+            val target = requestPacket.get<String>("name") ?: return@createListener
 
             Packet.builder()
                 .setChannel("fun:node:maxMemory")
@@ -147,9 +152,9 @@ object NodeHandler {
 
                     Packet.builder()
                         .setChannel("fun:node:maxMemory")
-                        .asResponseFor(packet)
+                        .asResponseFor(requestPacket)
                         .addNamedLong("memory" to memory)
-                        .send(conn.id, server)
+                        .send(requestConn.id, server)
                 }
                 .send(nodes[target] ?: return@createListener, server)
         }

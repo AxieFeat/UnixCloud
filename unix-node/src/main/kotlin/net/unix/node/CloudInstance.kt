@@ -62,10 +62,6 @@
 //import kotlin.math.floor
 //import kotlin.system.exitProcess
 //
-val unixStartTime = System.currentTimeMillis()
-
-val unixUptime: Long
-       get() = System.currentTimeMillis() - unixStartTime
 //
 //fun launch() {
 //    System.setProperty("file.encoding", UnixConfiguration.fileEncoding)

@@ -26,6 +26,10 @@ allprojects {
         maven {
             url = URI("https://clojars.org/repo/")
         }
+
+        maven {
+            url = URI("https://jitpack.io")
+        }
     }
 
     dependencies {
@@ -58,6 +62,13 @@ allprojects {
 
         implementation("com.github.docker-java:docker-java:3.4.0")
         implementation("com.github.docker-java:docker-java-transport-httpclient5:3.4.0")
+
+        implementation("org.slf4j:slf4j-api:1.8.0-beta4")
+        implementation("org.slf4j:slf4j-simple:1.8.0-beta4")
+
+        implementation("io.javalin:javalin:3.13.7")
+        implementation("com.auth0:java-jwt:3.16.0")
+        implementation("com.github.kmehrunes:javalin-jwt:v0.2")
     }
 }
 

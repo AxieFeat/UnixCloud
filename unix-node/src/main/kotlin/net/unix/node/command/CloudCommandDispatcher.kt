@@ -16,6 +16,7 @@ import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.Module
 import net.unix.api.modification.module.ModuleManager
+import net.unix.api.node.Node
 import net.unix.api.node.NodeManager
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.*
@@ -38,6 +39,7 @@ import net.unix.node.command.question.argument.primitive.QuestionNumberArgument
 import net.unix.node.command.question.argument.primitive.QuestionStringArgument
 import net.unix.node.command.question.question
 import net.unix.node.logging.CloudLogger
+import net.unix.scheduler.impl.scheduler
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
@@ -83,11 +85,42 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             literal("list") {
 
-                val nodes = nodeManager.nodes
+                execute {
+                    val nodes = nodeManager.nodes
 
-                CloudLogger.info("List of all nodes(${nodes.size}):")
-                nodes.forEach {
-                    CloudLogger.info(" - ${it.name}")
+                    CloudLogger.info("List of all nodes(${nodes.size}):")
+                    nodes.forEach {
+                        CloudLogger.info(" - ${it.name}")
+                    }
+                }
+
+            }
+
+            literal("info") {
+
+                argument("node", CloudNodeArgument()) {
+
+                    val format = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
+
+                    execute {
+                        CloudLogger.info("Loading info about node...")
+
+                        scheduler {
+                            execute {
+                                val node: Node = it["node"]
+
+                                val uptime = node.uptime / 1000
+                                val startDate = node.startTime
+                                val memoryUsage = node.usageMemory / 1000000
+                                val maxMemory = node.maxMemory / 1000000
+
+                                CloudLogger.info("Info about ${node.name}:")
+                                CloudLogger.info(" - Uptime: ${formatSeconds(uptime)}")
+                                CloudLogger.info(" - Start date: ${format.format(startDate)}")
+                                CloudLogger.info(" - Memory: $memoryUsage/$maxMemory MB")
+                            }
+                        }
+                    }
                 }
 
             }
@@ -443,18 +476,6 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                         val service: CloudService = it["service"]
 
                         val format = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
-
-                        fun formatSeconds(time: Long): String {
-                            val secondsLeft = time % 3600 % 60
-                            val minutes = floor(time.toDouble() % 3600 / 60).toLong()
-                            val hours = floor(time.toDouble() / 3600).toLong()
-
-                            val hh = (if ((hours < 10)) "0" else "") + hours
-                            val mm = (if ((minutes < 10)) "0" else "") + minutes
-                            val ss = (if ((secondsLeft < 10)) "0" else "") + secondsLeft
-
-                            return "$hh:$mm:$ss"
-                        }
 
                         CloudLogger.info("Info about ${service.name}:")
                         CloudLogger.info(" - UUID: ${service.uuid}")
@@ -823,6 +844,18 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                 }
             }
         }.start()
+    }
+
+    private fun formatSeconds(time: Long): String {
+        val secondsLeft = time % 3600 % 60
+        val minutes = floor(time.toDouble() % 3600 / 60).toLong()
+        val hours = floor(time.toDouble() / 3600).toLong()
+
+        val hh = (if ((hours < 10)) "0" else "") + hours
+        val mm = (if ((minutes < 10)) "0" else "") + minutes
+        val ss = (if ((secondsLeft < 10)) "0" else "") + secondsLeft
+
+        return "$hh:$mm:$ss"
     }
 
 }
