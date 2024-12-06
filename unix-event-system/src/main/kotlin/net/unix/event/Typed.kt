@@ -6,7 +6,7 @@ package net.unix.event
 interface Typed {
 
     /**
-     * The event type is provided as a integer value. A listener method can specify which type of event it want to
+     * The event type is provided as an integer value. A listener method can specify which type of event it wants to
      * listen to.
      *
      * @return The event type identifier.

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
+@Suppress("unused")
 class GsonCreator {
 
     private val builder = GsonBuilder()

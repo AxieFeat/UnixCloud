@@ -1,14 +1,14 @@
 package net.unix.api.network.universe
 
 /**
- * Action for packet timeout
+ * Action for packet timeout.
  *
- * @see [Packet.PacketBuilder.onResponseTimeout]
+ * @see [Packet.PacketBuilder.onResponseTimeout].
  */
 fun interface TimeoutAction {
 
     /**
-     * Run code
+     * Run code.
      */
     fun run()
 

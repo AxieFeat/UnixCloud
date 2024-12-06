@@ -9,6 +9,7 @@ import net.unix.module.rest.jsonlib.JsonLib
 import org.apache.commons.lang3.RandomStringUtils
 import java.io.File
 
+@Suppress("NAME_SHADOWING", "MemberVisibilityCanBePrivate", "unused")
 class AuthService : ExceptionHelper {
 
     private val usersFile = File(RestModule.instance.folder,"rest/users.json")
@@ -86,8 +87,8 @@ class AuthService : ExceptionHelper {
         JsonLib.fromObject(users).saveAsFile(usersFile)
     }
 
-    class UserAlreadyExistException() : Exception("The user does already exist")
+    class UserAlreadyExistException : Exception("The user does already exist")
 
-    class UserNotExistException() : Exception("The user does not exist")
+    class UserNotExistException : Exception("The user does not exist")
 
 }

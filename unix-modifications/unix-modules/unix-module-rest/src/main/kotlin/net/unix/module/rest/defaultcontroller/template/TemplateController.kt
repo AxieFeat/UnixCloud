@@ -8,6 +8,7 @@ import net.unix.node.template.BasicCloudTemplate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@Suppress("unused")
 @RestController("cloud/template/")
 class TemplateController : Controller, KoinComponent {
 

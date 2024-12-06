@@ -13,8 +13,8 @@ import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceInfo
 import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
-import net.unix.cloud.CloudExtension.readJson
 import net.unix.driver.persistence.RemotePersistenceDataType
+import net.unix.node.CloudExtension.readJson
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
 import org.koin.core.context.startKoin

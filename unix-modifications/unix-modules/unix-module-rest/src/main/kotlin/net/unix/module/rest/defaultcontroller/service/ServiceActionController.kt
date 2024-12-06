@@ -10,6 +10,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
 
+@Suppress("unused")
 @RestController("cloud/action/service/")
 class ServiceActionController : Controller, KoinComponent {
 

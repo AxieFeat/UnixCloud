@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * Command argument for [Node]'s
  */
+@Suppress("unused")
 class CloudNodeArgument : CommandArgument<Node>(), KoinComponent {
 
     private val nodeManager: NodeManager by inject()

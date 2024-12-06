@@ -25,11 +25,11 @@ open class Client : com.esotericsoftware.kryonet.Client(), Network {
     companion object
 
     /**
-     * Register class for Kryo serializer
+     * Register class for Kryo serializer.
      *
-     * @param clazz Class to register
+     * @param clazz Class to register.
      *
-     * @return Current instance of [Client]
+     * @return Current instance of [Client].
      */
     fun registerClass(vararg clazz: Class<*>): Client {
         val kryo = super.getKryo()
@@ -42,12 +42,12 @@ open class Client : com.esotericsoftware.kryonet.Client(), Network {
     }
 
     /**
-     * Connect to some server
+     * Connect to some server.
      *
-     * @param host Host to connect
-     * @param port Port to connect
+     * @param host Host to connect.
+     * @param port Port to connect.
      *
-     * @return Current instance of [Client]
+     * @return Current instance of [Client].
      */
     fun connect(host: String, port: Int): Client {
         start()

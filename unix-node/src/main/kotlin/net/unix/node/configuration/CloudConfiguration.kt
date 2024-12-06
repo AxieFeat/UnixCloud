@@ -6,7 +6,7 @@ import net.unix.node.CloudExtension.toJson
 import net.unix.node.mainDirectory
 import java.io.File
 
-@Suppress("LeakingThis")
+@Suppress("LeakingThis", "unused")
 abstract class CloudConfiguration(
     override val location: String
 ) : Configuration {

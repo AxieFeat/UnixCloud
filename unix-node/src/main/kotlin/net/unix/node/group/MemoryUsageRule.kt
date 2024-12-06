@@ -7,6 +7,7 @@ import net.unix.api.service.CloudService
 import net.unix.node.bridge.JVMBridge
 import java.util.UUID
 
+@Suppress("unused")
 class MemoryUsageRule(
     override val group: CloudGroup
 ) : CloudGroupRule<Map<UUID, Pair<Long?, Long?>>> {
@@ -22,10 +23,10 @@ class MemoryUsageRule(
     }
 
     private fun CloudService.getMemoryUsage(): Long? {
-        return this.persistentDataContainer[net.unix.node.bridge.JVMBridge.serviceUsedMemory, PersistentDataType.LONG]?.div(1000000)
+        return this.persistentDataContainer[JVMBridge.serviceUsedMemory, PersistentDataType.LONG]?.div(1000000)
     }
 
     private fun CloudService.getMaxMemory(): Long? {
-        return this.persistentDataContainer[net.unix.node.bridge.JVMBridge.serviceMaxMemory, PersistentDataType.LONG]?.div(1000000)
+        return this.persistentDataContainer[JVMBridge.serviceMaxMemory, PersistentDataType.LONG]?.div(1000000)
     }
 }

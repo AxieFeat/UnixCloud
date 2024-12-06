@@ -6,7 +6,6 @@ import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
 import net.unix.api.modification.module.Module
 import net.unix.api.remote.RemoteAccessible
-import java.rmi.Remote
 import java.rmi.RemoteException
 import kotlin.jvm.Throws
 

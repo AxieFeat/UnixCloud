@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * Command argument for [Module].
  */
+@Suppress("unused")
 class CloudModuleArgument : CommandArgument<Module>(), KoinComponent {
 
     private val moduleManager: ModuleManager by inject()

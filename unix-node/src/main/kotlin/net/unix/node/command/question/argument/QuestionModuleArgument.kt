@@ -12,6 +12,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.CompletableFuture
 
+@Suppress("unused")
 class QuestionModuleArgument : QuestionArgument<Module>, KoinComponent {
 
     private val moduleManager: ModuleManager by inject()

@@ -22,7 +22,7 @@ interface CommandSender {
     /**
      * Send message to command sender.
      *
-     * @param message Component to sent.
+     * @param message Component to send.
      */
     fun sendMessage(message: Component)
 

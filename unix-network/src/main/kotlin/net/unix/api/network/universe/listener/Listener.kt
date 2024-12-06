@@ -6,7 +6,7 @@ import net.unix.api.network.client.Client
 import net.unix.api.network.server.Server
 
 /**
- * Simple packet listener
+ * Simple packet listener.
  *
  * @see [Server]
  * @see [Client]
@@ -16,10 +16,10 @@ fun interface Listener {
     companion object
 
     /**
-     * Run code
+     * Run code.
      *
-     * @param connection Instance of [Connection]
-     * @param packet Received [Packet]
+     * @param connection Instance of [Connection].
+     * @param packet Received [Packet].
      *
      * @see [Server]
      * @see [Client]

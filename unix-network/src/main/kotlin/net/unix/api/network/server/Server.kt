@@ -11,7 +11,7 @@ import net.unix.api.network.universe.listener.PacketListener
 import kotlin.properties.Delegates
 
 /**
- * Network server
+ * Network server.
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class Server : com.esotericsoftware.kryonet.Server(), Network {
@@ -30,11 +30,11 @@ open class Server : com.esotericsoftware.kryonet.Server(), Network {
     companion object
 
     /**
-     * Register class for Kryo serializer
+     * Register class for Kryo serializer.
      *
-     * @param clazz Class to register
+     * @param clazz Class to register.
      *
-     * @return Current instance of [Client]
+     * @return Current instance of [Client].
      */
     fun registerClass(vararg clazz: Class<*>): Server {
 

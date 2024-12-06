@@ -49,7 +49,7 @@ interface PersistentDataContainer : Serializable, RemoteAccessible {
      *
      *
      * This method is only usable for custom object keys. Overwriting existing
-     * tags, like the the display name, will not work as the values are stored
+     * tags, like the display name, will not work as the values are stored
      * using your namespace.
      *
      * @param key The key the value is stored under.

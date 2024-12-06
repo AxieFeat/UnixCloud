@@ -2,7 +2,6 @@ package net.unix.node.remote
 
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.remote.RemoteService
-import net.unix.node.CloudExtension.print
 import net.unix.node.configuration.UnixConfiguration
 import net.unix.node.logging.CloudLogger
 import java.rmi.Naming

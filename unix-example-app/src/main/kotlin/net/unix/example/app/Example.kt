@@ -9,7 +9,6 @@ import net.unix.api.template.CloudTemplateManager
 import net.unix.driver.JVMServiceInstance
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.Scanner
 
 fun main() {
     JVMServiceInstance.install()
@@ -17,6 +16,7 @@ fun main() {
     ExampleService().start()
 }
 
+@Suppress("unused")
 class ExampleService : KoinComponent {
 
     private val locationSpace: LocationSpace by inject()

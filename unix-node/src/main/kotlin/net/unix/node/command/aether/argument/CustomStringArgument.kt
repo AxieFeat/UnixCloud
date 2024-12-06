@@ -10,7 +10,7 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.CompletableFuture
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class CustomStringArgument private constructor(
     val type: StringType,
     val error: String,
@@ -63,7 +63,7 @@ class CustomStringArgument private constructor(
         QUOTABLE_PHRASE(*arrayOf("\"quoted phrase\"", "word", "\"\"")),
         GREEDY_PHRASE(*arrayOf("word", "words with spaces", "\"and symbols\""));
 
-        val examples: Collection<String> = Arrays.asList(*examples)
+        val examples: Collection<String> = listOf(*examples)
     }
 
     companion object {

@@ -9,6 +9,7 @@ import net.unix.module.rest.annotation.RestController
 import net.unix.module.rest.auth.AuthService
 import net.unix.module.rest.controller.Controller
 
+@Suppress("unused")
 @RestController("auth/")
 class AuthController(
     private val authService: AuthService

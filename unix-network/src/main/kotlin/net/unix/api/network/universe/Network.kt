@@ -6,19 +6,19 @@ import net.unix.api.network.universe.listener.Listener
 import net.unix.api.network.universe.listener.PacketListener
 
 /**
- * Network packet sender
+ * Network packet sender.
  *
- * @see [Server]
- * @see [Client]
+ * @see [Server].
+ * @see [Client].
  */
 interface Network {
 
     /**
-     * Send packet to server
+     * Send packet to server.
      *
-     * @param packet Instance of [Packet]
+     * @param packet Instance of [Packet].
      *
-     * @return Current instance of [Network]
+     * @return Current instance of [Network].
      *
      * @see [Server]
      * @see [Client]
@@ -26,12 +26,12 @@ interface Network {
     fun sendPacket(packet: Packet): Network
 
     /**
-     * Send packet to client
+     * Send packet to client.
      *
-     * @param id Client id
-     * @param packet Instance of [Packet]
+     * @param id Client id.
+     * @param packet Instance of [Packet].
      *
-     * @return Current instance of [Network]
+     * @return Current instance of [Network].
      *
      * @see [Server]
      * @see [Client]
@@ -39,13 +39,13 @@ interface Network {
     fun sendPacket(id: Int, packet: Packet): Network
 
     /**
-     * Create listener
+     * Create listener.
      *
-     * @param channel Channel to listen
-     * @param type Type of listener
-     * @param listener Listener
+     * @param channel Channel to listen.
+     * @param type Type of listener.
+     * @param listener Listener.
      *
-     * @return Current instance of [Network]
+     * @return Current instance of [Network].
      *
      * @see [Server]
      * @see [Client]
@@ -53,12 +53,12 @@ interface Network {
     fun createListener(channel: String, type: Listener.ListenerType = Listener.ListenerType.RECEIVED, listener: Listener): Network
 
     /**
-     * Create listener
+     * Create listener.
      *
-     * @param channel Channel to listen
-     * @param listener Listener
+     * @param channel Channel to listen.
+     * @param listener Listener.
      *
-     * @return Current instance of [Network]
+     * @return Current instance of [Network].
      *
      * @see [Server]
      * @see [Client]

@@ -8,7 +8,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode
  *
  * @param name Command name.
  */
-@Suppress("LeakingThis")
+@Suppress("LeakingThis", "unused")
 abstract class CommandBuilder<T>(
     val name: String
 ) : LiteralArgumentBuilder<T>(name) {

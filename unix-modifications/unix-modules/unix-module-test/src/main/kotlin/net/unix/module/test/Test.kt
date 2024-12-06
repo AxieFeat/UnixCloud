@@ -13,7 +13,7 @@ class Test : CloudModule() {
 
     override fun onLoad() {
         registerListener(
-            listener<CloudTerminalCompleteEvent> { event ->
+            listener<CloudTerminalCompleteEvent> { _ ->
                 println("Terminal compete event!")
             }
         )

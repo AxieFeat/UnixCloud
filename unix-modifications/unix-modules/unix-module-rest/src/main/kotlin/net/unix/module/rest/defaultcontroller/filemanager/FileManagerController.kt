@@ -9,6 +9,7 @@ import net.unix.module.rest.controller.Controller
 import net.unix.node.logging.CloudLogger
 import java.io.File
 
+@Suppress("unused")
 @RestController("filemanager/")
 class FileManagerController : Controller {
 

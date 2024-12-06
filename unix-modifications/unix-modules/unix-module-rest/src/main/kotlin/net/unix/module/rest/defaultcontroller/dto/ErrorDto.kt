@@ -1,5 +1,6 @@
 package net.unix.module.rest.defaultcontroller.dto
 
+@Suppress("unused")
 class ErrorDto(
     val errorClass: String,
     error: String?

@@ -31,7 +31,7 @@ object CloudNodeManager : NodeManager {
         Packet.builder()
             .setChannel("fun:node:auth")
             .addNamedString("name" to ThisNode.name)
-            .onResponse { conn, packet ->
+            .onResponse { _, packet ->
                 val fail = packet.get<String>("fail") ?: return@onResponse
 
                 CloudLogger.severe("Can not connect to Center of nodes.")
@@ -39,7 +39,7 @@ object CloudNodeManager : NodeManager {
             }
             .send(client)
 
-        client.createListener("fun:node:startTime") { conn, packet ->
+        client.createListener("fun:node:startTime") { _, packet ->
             if(packet == null) return@createListener
 
             Packet.builder()
@@ -49,7 +49,7 @@ object CloudNodeManager : NodeManager {
                 .send(client)
         }
 
-        client.createListener("fun:node:uptime") { conn, packet ->
+        client.createListener("fun:node:uptime") { _, packet ->
             if(packet == null) return@createListener
 
             Packet.builder()
@@ -59,7 +59,7 @@ object CloudNodeManager : NodeManager {
                 .send(client)
         }
 
-        client.createListener("fun:node:usageMemory") { conn, packet ->
+        client.createListener("fun:node:usageMemory") { _, packet ->
             if(packet == null) return@createListener
 
             Packet.builder()
@@ -69,7 +69,7 @@ object CloudNodeManager : NodeManager {
                 .send(client)
         }
 
-        client.createListener("fun:node:freeMemory") { conn, packet ->
+        client.createListener("fun:node:freeMemory") { _, packet ->
             if(packet == null) return@createListener
 
             Packet.builder()
@@ -79,7 +79,7 @@ object CloudNodeManager : NodeManager {
                 .send(client)
         }
 
-        client.createListener("fun:node:maxMemory") { conn, packet ->
+        client.createListener("fun:node:maxMemory") { _, packet ->
             if(packet == null) return@createListener
 
             Packet.builder()
@@ -93,7 +93,7 @@ object CloudNodeManager : NodeManager {
             execute(0, 5000) {
                 Packet.builder()
                     .setChannel("fun:node:list")
-                    .onResponse { conn, packet ->
+                    .onResponse { _, packet ->
                         val nodes = packet.string ?: listOf()
 
                         val result = mutableSetOf<Node>()

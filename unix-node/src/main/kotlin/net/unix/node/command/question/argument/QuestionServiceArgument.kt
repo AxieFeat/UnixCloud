@@ -13,6 +13,7 @@ import org.koin.core.component.inject
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+@Suppress("unused")
 class QuestionServiceArgument : QuestionArgument<CloudService>, KoinComponent {
 
     private val cloudServiceManager: CloudServiceManager by inject()

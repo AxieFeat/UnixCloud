@@ -13,6 +13,7 @@ import org.koin.core.component.inject
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+@Suppress("unused")
 class QuestionGroupArgument : QuestionArgument<CloudGroup>, KoinComponent {
 
     private val cloudGroupManager: CloudGroupManager by inject()

@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * Command argument for [GroupExecutable].
  */
+@Suppress("unused")
 class GroupExecutableArgument : CommandArgument<GroupExecutable>() {
 
     private var notFoundMessage = "GroupExecutable not found"

@@ -6,7 +6,7 @@ import net.unix.api.network.server.Server
 import net.unix.api.network.universe.Packet
 
 /**
- * Simple packet listener
+ * Simple packet listener.
  *
  * @see [Server]
  * @see [Client]
@@ -16,9 +16,9 @@ interface PacketListener {
     companion object
 
     /**
-     * On connection
+     * On connection.
      *
-     * @param connection Instance of [Connection]
+     * @param connection Instance of [Connection].
      *
      * @see [Server]
      * @see [Client]
@@ -26,9 +26,9 @@ interface PacketListener {
     fun connected(connection: Connection)
 
     /**
-     * On disconnection
+     * On disconnection.
      *
-     * @param connection Instance of [Connection]
+     * @param connection Instance of [Connection].
      *
      * @see [Server]
      * @see [Client]
@@ -36,9 +36,9 @@ interface PacketListener {
     fun disconnected(connection: Connection)
 
     /**
-     * On idle
+     * On idle.
      *
-     * @param connection Instance of [Connection]
+     * @param connection Instance of [Connection].
      *
      * @see [Server]
      * @see [Client]
@@ -46,10 +46,10 @@ interface PacketListener {
     fun idle(connection: Connection)
 
     /**
-     * On packet receive
+     * On packet receive.
      *
-     * @param connection Instance of [Connection]
-     * @param packet Received [Packet]
+     * @param connection Instance of [Connection].
+     * @param packet Received [Packet].
      *
      * @see [Server]
      * @see [Client]

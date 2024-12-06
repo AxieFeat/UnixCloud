@@ -8,6 +8,7 @@ import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
 import java.util.concurrent.CompletableFuture
 
+@Suppress("unused")
 class QuestionBoolArgument : QuestionArgument<Boolean> {
     override fun parse(reader: StringReader): Boolean {
         val result = reader.readString().toBooleanStrictOrNull()

@@ -183,7 +183,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                 ) {
                     moduleManager.folder.listFiles()
                         ?.map { it.name }
-                        ?.filter { !moduleManager.modules.map { it.executable.name }.contains(it) }
+                        ?.filter { file -> !moduleManager.modules.map { it.executable.name }.contains(file) }
                         ?: listOf()
                 }) {
                     execute {
@@ -659,8 +659,8 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             literal("info") {
                 argument("group", CloudGroupArgument()) {
-                    execute {
-                        val group: CloudGroup = it["group"]
+                    execute { context ->
+                        val group: CloudGroup = context["group"]
 
                         CloudLogger.info("Info about ${group.name}:")
                         CloudLogger.info(" - UUID: ${group.uuid}")

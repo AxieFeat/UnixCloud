@@ -12,6 +12,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.CompletableFuture
 
+@Suppress("unused")
 class QuestionNodeArgument : QuestionArgument<Node>, KoinComponent {
 
     private val nodeManager: NodeManager by inject()

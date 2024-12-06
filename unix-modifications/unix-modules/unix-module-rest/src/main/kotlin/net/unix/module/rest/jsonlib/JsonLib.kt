@@ -12,6 +12,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
+@Suppress("unused", "UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "SameReturnValue")
 class JsonLib private constructor(val jsonElement: JsonElement, private val currentGson: Gson) {
 
     fun append(property: String, value: String?): JsonLib {

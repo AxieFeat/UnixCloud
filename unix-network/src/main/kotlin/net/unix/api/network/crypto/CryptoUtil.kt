@@ -4,6 +4,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.*
 import javax.crypto.Cipher
 
+@Suppress("unused")
 object CryptoUtil {
 
     init {

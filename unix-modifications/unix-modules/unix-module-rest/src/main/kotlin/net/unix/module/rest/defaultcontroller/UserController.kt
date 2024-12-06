@@ -5,6 +5,7 @@ import net.unix.module.rest.auth.AuthService
 import net.unix.module.rest.auth.user.User
 import net.unix.module.rest.controller.Controller
 
+@Suppress("unused")
 @RestController("user/")
 class UserController(
     private val authService: AuthService

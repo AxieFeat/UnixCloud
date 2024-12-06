@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package net.unix.module.rest.javalin
 
 import io.javalin.Javalin

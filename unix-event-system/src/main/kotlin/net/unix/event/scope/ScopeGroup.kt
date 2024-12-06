@@ -64,7 +64,7 @@ class ScopeGroup(scope: String) {
             }
 
 
-            // if sub group for the matcher group was provided and this isn't the wilcard end of a group def
+            // if subgroup for the matcher group was provided and this isn't the wilcard end of a group def
             if (group == null) return false
 
 

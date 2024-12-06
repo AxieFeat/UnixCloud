@@ -61,8 +61,7 @@ class SingleRequestProcessor(
     }
 
     private fun handleParameters(): Map<RequestMethodData.RequestParameterData, Any?> {
-        val parameterDataToInvokeValue = requestMethodData.parameters
-            .map { it to handleValueForParameter(it) }.toMap()
+        val parameterDataToInvokeValue = requestMethodData.parameters.associateWith { handleValueForParameter(it) }
 
         if (parameterDataToInvokeValue.any { isValueIncorrect(it.key, it.value) }) {
             throw IncorrectValueException("A value is incorrect")
@@ -90,8 +89,7 @@ class SingleRequestProcessor(
             return this.requestingUser
         }
 
-        val annotation = parameterData.annotation!!
-        when (annotation) {
+        when (val annotation = parameterData.annotation!!) {
             is RequestBody -> {
                 return JsonLib.fromJsonString(this.ctx.body(), RestServer.webGson)
                     .getObject(parameterData.parameterType)

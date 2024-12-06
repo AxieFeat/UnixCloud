@@ -66,20 +66,23 @@ class CloudExtensionLoader(
             it.name.substring(0, it.name.length - 6).replace('/', '.')
         }.also {
             if(!it.contains(info.main)) throw ModificationLoadException("Main class \"${info.main}\" in extension \"${info.name}\" not found!")
-        }.map {
-            loadClass(it)
-        }.forEach { clazz ->
-            if (clazz.name == info.main) {
-                val instance = try {
-                    clazz.newInstance() as CloudExtension
-                } catch (ex: ClassCastException) {
-                    throw ModificationLoadException("Main class in extension \"${info.name}\" is not extends CloudExtension!")
+        }.forEach {
+
+            try {
+                val clazz = loadClass( it)
+
+                if (clazz.name == info.main) {
+                    val instance = try {
+                        clazz.newInstance() as CloudExtension
+                    } catch (ex: ClassCastException) {
+                        throw ModificationLoadException("Main class in extension \"${info.name}\" is not extends CloudExtension!")
+                    }
+
+                    instance.init(info)
+
+                    return instance
                 }
-
-                instance.init(info)
-
-                return instance
-            }
+            } catch (ignore: Exception) {}
         }
 
         return null

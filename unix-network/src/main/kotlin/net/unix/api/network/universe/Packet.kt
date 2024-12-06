@@ -9,27 +9,29 @@ import java.io.Serializable
 import java.util.*
 
 /**
- * Packet class
+ * Packet class.
  *
- * @param uuid Packet UUID
- * @param date Time of send in millis
- * @param channel Channel name
+ * @param uuid Packet UUID.
+ * @param date Time of send in millis.
+ * @param channel Channel name.
  *
- * @param string String in packet
- * @param char Char in packet
- * @param boolean Boolean in packet
- * @param int Int in packet
- * @param long Long in packet
- * @param double Double in packet
- * @param float Float in packet
+ * @param string String in packet.
+ * @param char Char in packet.
+ * @param boolean Boolean in packet.
+ * @param int Int in packet.
+ * @param long Long in packet.
+ * @param double Double in packet.
+ * @param float Float in packet.
  *
- * @param namedString Named string in packet
- * @param namedChar Named char in packet
- * @param namedBoolean Named boolean in packet
- * @param namedInt Named int in packet
- * @param namedLong Named long in packet
- * @param namedDouble Named double in packet
- * @param namedFloat Named float in packet
+ * @param namedString Named string in packet.
+ * @param namedChar Named char in packet.
+ * @param namedBoolean Named boolean in packet.
+ * @param namedInt Named int in packet.
+ * @param namedLong Named long in packet.
+ * @param namedDouble Named double in packet.
+ * @param namedFloat Named float in packet.
+ *
+ * @param custom Some custom value.
  */
 @Suppress("unused")
 data class Packet(
@@ -54,12 +56,12 @@ data class Packet(
 ) : Serializable {
 
     /**
-     * Get named argument by name
+     * Get named argument by name.
      *
-     * @param T Type of argument (Only primitives)
-     * @param name Argument name
+     * @param T Type of argument (Only primitives).
+     * @param name Argument name.
      *
-     * @return Argument by name or null, if not founded
+     * @return Argument by name or null, if not founded.
      */
     inline operator fun <reified T> get(name: String): T? {
         return when(T::class) {
@@ -111,13 +113,13 @@ data class Packet(
 
     companion object {
         /**
-         * Builder for packets
+         * Builder for packets.
          */
         fun builder(): PacketBuilder = PacketBuilder()
     }
 
     /**
-     * Simple builder for packets
+     * Simple builder for packets.
      */
     class PacketBuilder {
 
@@ -147,11 +149,11 @@ data class Packet(
         private var responseTimeout: TimeoutAction? = null
 
         /**
-         * Mark packet as response for other packet
+         * Mark packet as response for other packet.
          *
-         * @param packet On what packet response
+         * @param packet On what packet response.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun asResponseFor(packet: Packet): PacketBuilder {
             this.uuid = packet.uuid
@@ -160,11 +162,11 @@ data class Packet(
         }
 
         /**
-         * Set channel for packet
+         * Set channel for packet.
          *
-         * @param channel Channel name
+         * @param channel Channel name.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun setChannel(channel: String): PacketBuilder {
             this.channel = channel
@@ -172,11 +174,11 @@ data class Packet(
         }
 
         /**
-         * Add string to packet
+         * Add string to packet.
          *
-         * @param string String to add
+         * @param string String to add.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addString(vararg string: String): PacketBuilder {
             this.string.addAll(string)
@@ -184,11 +186,11 @@ data class Packet(
         }
 
         /**
-         * Add named string to packet
+         * Add named string to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedString(vararg pair: Pair<String, String>): PacketBuilder {
             this.namedString.putAll(pair)
@@ -196,11 +198,11 @@ data class Packet(
         }
 
         /**
-         * Add char to packet
+         * Add char to packet.
          *
-         * @param char Char to add
+         * @param char Char to add.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addChar(vararg char: Char): PacketBuilder {
             this.char.addAll(char.asList())
@@ -208,11 +210,11 @@ data class Packet(
         }
 
         /**
-         * Add named char to packet
+         * Add named char to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedChar(vararg pair: Pair<String, Char>): PacketBuilder {
             this.namedChar.putAll(pair)
@@ -220,11 +222,11 @@ data class Packet(
         }
 
         /**
-         * Add boolean to packet
+         * Add boolean to packet.
          *
-         * @param boolean Boolean to add
+         * @param boolean Boolean to add.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addBoolean(vararg boolean: Boolean): PacketBuilder {
             this.boolean.addAll(boolean.asList())
@@ -232,11 +234,11 @@ data class Packet(
         }
 
         /**
-         * Add named boolean to packet
+         * Add named boolean to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedBoolean(vararg pair: Pair<String, Boolean>): PacketBuilder {
             this.namedBoolean.putAll(pair)
@@ -244,11 +246,11 @@ data class Packet(
         }
 
         /**
-         * Add int to packet
+         * Add int to packet.
          *
-         * @param int Int to add
+         * @param int Int to add.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addInt(vararg int: Int): PacketBuilder {
             this.int.addAll(int.asList())
@@ -256,11 +258,11 @@ data class Packet(
         }
 
         /**
-         * Add named int to packet
+         * Add named int to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedInt(vararg pair: Pair<String, Int>): PacketBuilder {
             this.namedInt.putAll(pair)
@@ -268,11 +270,11 @@ data class Packet(
         }
 
         /**
-         * Add long to packet
+         * Add long to packet.
          *
-         * @param long Long to add
+         * @param long Long to add.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addLong(vararg long: Long): PacketBuilder {
             this.long.addAll(long.asList())
@@ -280,11 +282,11 @@ data class Packet(
         }
 
         /**
-         * Add named long to packet
+         * Add named long to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedLong(vararg pair: Pair<String, Long>): PacketBuilder {
             this.namedLong.putAll(pair)
@@ -292,11 +294,11 @@ data class Packet(
         }
 
         /**
-         * Add double to packet
+         * Add double to packet.
          *
-         * @param double Double to add
+         * @param double Double to add.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addDouble(vararg double: Double): PacketBuilder {
             this.double.addAll(double.asList())
@@ -304,11 +306,11 @@ data class Packet(
         }
 
         /**
-         * Add named double to packet
+         * Add named double to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedDouble(vararg pair: Pair<String, Double>): PacketBuilder {
             this.namedDouble.putAll(pair)
@@ -321,11 +323,11 @@ data class Packet(
         }
 
         /**
-         * Add named float to packet
+         * Add named float to packet.
          *
-         * @param pair Pair of named argument. Key - argument name, Value - some argument value
+         * @param pair Pair of named argument. Key - argument name, Value - some argument value.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun addNamedFloat(vararg pair: Pair<String, Float>): PacketBuilder {
             this.namedFloat.putAll(pair)
@@ -339,11 +341,11 @@ data class Packet(
         }
 
         /**
-         * Mark packet as "response required"
+         * Mark packet as "response required".
          *
-         * @param response Response action
+         * @param response Response action.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun onResponse(response: ResponsePacket): PacketBuilder {
             this.responsePacket = response
@@ -351,12 +353,12 @@ data class Packet(
         }
 
         /**
-         * Execute action, if packet not receive response. Works only if [onResponse] is set
+         * Execute action, if packet not receive response. Works only if [onResponse] is set.
          *
-         * @param timeout Timeout in millis
-         * @param action Timeout action
+         * @param timeout Timeout in millis.
+         * @param action Timeout action.
          *
-         * @return Current instance of [PacketBuilder]
+         * @return Current instance of [PacketBuilder].
          */
         fun onResponseTimeout(timeout: Long, action: TimeoutAction): PacketBuilder {
             this.responseTimeoutDelay = timeout
@@ -365,11 +367,11 @@ data class Packet(
         }
 
         /**
-         * Send packet by any instance of [Network]
+         * Send packet by any instance of [Network].
          *
-         * @param network Sender of packet
+         * @param network Sender of packet.
          *
-         * @return Instance of sent [Packet]
+         * @return Instance of sent [Packet].
          *
          * @see [Server]
          * @see [Client]
@@ -426,12 +428,12 @@ data class Packet(
         }
 
         /**
-         * Send packet by any instance of [Network]
+         * Send packet by any instance of [Network].
          *
-         * @param id Client id (For sending from [Server])
-         * @param network Sender of packet
+         * @param id Client id (For sending from [Server]).
+         * @param network Sender of packet.
          *
-         * @return Instance of sent [Packet]
+         * @return Instance of sent [Packet].
          *
          * @see [Server]
          * @see [Client]

@@ -20,7 +20,7 @@ data class CloudNode(
                     Packet.builder()
                         .setChannel("fun:node:startTime")
                         .addNamedString("name" to name)
-                        .onResponse { conn, packet ->
+                        .onResponse { _, packet ->
                             val time = packet.get<Long>("time")
 
                             completable.complete(time)
@@ -44,7 +44,7 @@ data class CloudNode(
                     Packet.builder()
                         .setChannel("fun:node:uptime")
                         .addNamedString("name" to name)
-                        .onResponse { conn, packet ->
+                        .onResponse { _, packet ->
                             val time = packet.get<Long>("time")
 
                             completable.complete(time)
@@ -68,7 +68,7 @@ data class CloudNode(
                     Packet.builder()
                         .setChannel("fun:node:usageMemory")
                         .addNamedString("name" to name)
-                        .onResponse { conn, packet ->
+                        .onResponse { _, packet ->
                             val memory = packet.get<Long>("memory")
 
                             completable.complete(memory)
@@ -92,7 +92,7 @@ data class CloudNode(
                     Packet.builder()
                         .setChannel("fun:node:freeMemory")
                         .addNamedString("name" to name)
-                        .onResponse { conn, packet ->
+                        .onResponse { _, packet ->
                             val memory = packet.get<Long>("memory")
 
                             completable.complete(memory)
@@ -116,7 +116,7 @@ data class CloudNode(
                     Packet.builder()
                         .setChannel("fun:node:maxMemory")
                         .addNamedString("name" to name)
-                        .onResponse { conn, packet ->
+                        .onResponse { _, packet ->
                             val memory = packet.get<Long>("memory")
 
                             completable.complete(memory)

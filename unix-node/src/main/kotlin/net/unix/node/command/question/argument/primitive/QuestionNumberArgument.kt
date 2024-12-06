@@ -8,7 +8,7 @@ import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
 import java.util.concurrent.CompletableFuture
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class QuestionNumberArgument(
     val type: Type,
     val min: Number,

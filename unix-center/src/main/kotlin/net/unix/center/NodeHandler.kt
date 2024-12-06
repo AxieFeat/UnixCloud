@@ -1,5 +1,3 @@
-@file:Suppress("NAME_SHADOWING")
-
 package net.unix.center
 
 import net.unix.api.network.server.Server
@@ -16,7 +14,7 @@ object NodeHandler {
         println("Starting node handler...")
         server.start(port)
 
-        server.createListener("empty", Listener.ListenerType.CONNECTED) { conn, packet ->
+        server.createListener("empty", Listener.ListenerType.CONNECTED) { conn, _ ->
             println("Connected client with id ${conn.id}")
         }
 
@@ -50,7 +48,7 @@ object NodeHandler {
             println("Registered node $name")
         }
 
-        server.createListener("empty", Listener.ListenerType.DISCONNECTED) { conn, packet ->
+        server.createListener("empty", Listener.ListenerType.DISCONNECTED) { conn, _ ->
             nodes.toMap().forEach {
                 if(it.value == conn.id) {
                     nodes.remove(it.key)
@@ -66,7 +64,7 @@ object NodeHandler {
 
             Packet.builder()
                 .setChannel("fun:node:startTime")
-                .onResponse { conn, packet ->
+                .onResponse { _, packet ->
 
                     val time = packet.get<Long>("time") ?: return@onResponse
 
@@ -86,7 +84,7 @@ object NodeHandler {
 
             Packet.builder()
                 .setChannel("fun:node:uptime")
-                .onResponse { conn, packet ->
+                .onResponse { _, packet ->
 
                     val time = packet.get<Long>("time") ?: return@onResponse
 
@@ -106,7 +104,7 @@ object NodeHandler {
 
             Packet.builder()
                 .setChannel("fun:node:usageMemory")
-                .onResponse { conn, packet ->
+                .onResponse { _, packet ->
 
                     val memory = packet.get<Long>("memory") ?: return@onResponse
 
@@ -126,7 +124,7 @@ object NodeHandler {
 
             Packet.builder()
                 .setChannel("fun:node:freeMemory")
-                .onResponse { conn, packet ->
+                .onResponse { _, packet ->
 
                     val memory = packet.get<Long>("memory") ?: return@onResponse
 
@@ -146,7 +144,7 @@ object NodeHandler {
 
             Packet.builder()
                 .setChannel("fun:node:maxMemory")
-                .onResponse { conn, packet ->
+                .onResponse { _, packet ->
 
                     val memory = packet.get<Long>("memory") ?: return@onResponse
 

@@ -3,17 +3,17 @@ package net.unix.api.network.universe
 import com.esotericsoftware.kryonet.Connection
 
 /**
- * Action on receiving response for packet
+ * Action on receiving response for packet.
  *
- * @see [Packet.PacketBuilder.onResponse]
+ * @see [Packet.PacketBuilder.onResponse].
  */
 fun interface ResponsePacket {
 
     /**
-     * Run code
+     * Run code.
      *
-     * @param connection Instance of [Connection]
-     * @param packet Received [Packet]
+     * @param connection Instance of [Connection].
+     * @param packet Received [Packet].
      */
     fun run(connection: Connection, packet: Packet)
 
