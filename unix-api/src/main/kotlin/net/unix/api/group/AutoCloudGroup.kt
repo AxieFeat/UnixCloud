@@ -1,6 +1,7 @@
 package net.unix.api.group
 
 import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.group.rule.CloudGroupRule
 import java.rmi.RemoteException
 import kotlin.jvm.Throws
 

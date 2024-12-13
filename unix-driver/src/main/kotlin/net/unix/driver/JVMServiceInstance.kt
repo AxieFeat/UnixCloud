@@ -47,16 +47,16 @@ object JVMServiceInstance {
 
     lateinit var service: CloudService
 
-    fun install() {
+    fun install(port: Int = 9191, rmiPort: Int = 1099) {
         println("Service instance installing...")
 
-        val registry = LocateRegistry.getRegistry("localhost", 1099)
-        val locationSpace = registry.lookup("net.unix.cloud.CloudLocationSpace") as LocationSpace
-        val cloudTemplateManager = registry.lookup("net.unix.cloud.template.BasicCloudTemplateManager") as CloudTemplateManager
-        val cloudGroupManager = registry.lookup("net.unix.cloud.group.CloudJVMGroupManager") as SaveableCloudGroupManager
-        val cloudServiceManager = registry.lookup("net.unix.cloud.service.CloudJVMServiceManager") as CloudServiceManager
-        val moduleManager = registry.lookup("net.unix.cloud.modification.module.CloudModuleManager") as ModuleManager
-        val extensionManager = registry.lookup("net.unix.cloud.modification.extension.CloudExtensionManager") as ExtensionManager
+        val registry = LocateRegistry.getRegistry("localhost", rmiPort)
+        val locationSpace = registry.lookup("net.unix.node.CloudLocationSpace") as LocationSpace
+        val cloudTemplateManager = registry.lookup("net.unix.node.template.BasicCloudTemplateManager") as CloudTemplateManager
+        val cloudGroupManager = registry.lookup("net.unix.node.group.CloudJVMGroupManager") as SaveableCloudGroupManager
+        val cloudServiceManager = registry.lookup("net.unix.node.service.CloudJVMServiceManager") as CloudServiceManager
+        val moduleManager = registry.lookup("net.unix.node.modification.module.CloudModuleManager") as ModuleManager
+        val extensionManager = registry.lookup("net.unix.node.modification.extension.CloudExtensionManager") as ExtensionManager
 
         startKoin {
             val module = module {
@@ -76,14 +76,14 @@ object JVMServiceInstance {
         this.service = cloudServiceManager[info.uuid] ?: throw IllegalArgumentException("Cant find current CloudService instance!")
 
         val client = Client()
-        client.connect("0.0.0.0", 9191)
+        client.connect("0.0.0.0", port)
 
         println("Service connected to node!")
 
         Packet.builder()
             .setChannel("fun:service:auth")
             .addNamedString("uuid" to service.uuid.toString())
-            .send(client)
+            .sendBy(client)
 
         println("Service started.")
 
@@ -98,21 +98,21 @@ object JVMServiceInstance {
                     Packet.builder()
                         .setChannel("fun:service:memory:max")
                         .addNamedLong("memory" to max)
-                        .send(client)
+                        .sendBy(client)
                 }
 
                 execute {
                     Packet.builder()
                         .setChannel("fun:service:memory:used")
                         .addNamedLong("memory" to used)
-                        .send(client)
+                        .sendBy(client)
                 }
 
                 execute {
                     Packet.builder()
                         .setChannel("fun:service:memory:free")
                         .addNamedLong("memory" to free)
-                        .send(client)
+                        .sendBy(client)
                 }
             }
         }

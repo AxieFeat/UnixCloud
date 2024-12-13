@@ -2,7 +2,7 @@ package net.unix.module.rest.defaultcontroller.service
 
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.ConsoleCloudServiceExecutable
+import net.unix.api.service.ConsoleCloudServiceWrapper
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
 import net.unix.module.rest.defaultcontroller.dto.CommandDto
@@ -27,7 +27,7 @@ class ServiceActionController : Controller, KoinComponent {
     fun handleCommandExecute(@RequestPathParam("uuid") uuid: String, @RequestBody command: CommandDto): CloudService {
         val service = cloudServiceManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
 
-        (service.executable as? ConsoleCloudServiceExecutable)?.command(command.command)
+        (service.wrapper as? ConsoleCloudServiceWrapper)?.command(command.command)
 
         return service
     }
@@ -36,7 +36,7 @@ class ServiceActionController : Controller, KoinComponent {
     fun handleScreenToggle(@RequestPathParam("uuid") uuid: String): CloudService {
         val service = cloudServiceManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
 
-        val executable = (service.executable as? ConsoleCloudServiceExecutable)
+        val executable = (service.wrapper as? ConsoleCloudServiceWrapper)
 
         executable?.viewConsole = !(executable?.viewConsole ?: false)
 

@@ -21,22 +21,19 @@ interface CloudTemplate : PersistentDataHolder, Serializable, Nameable, Deletabl
      * Template name.
      */
     @get:Throws(RemoteException::class)
-    @set:Throws(RemoteException::class)
-    override var name: String
+    override val name: String
 
     /**
      * Files, that will be copied on creation [CloudService].
      */
     @get:Throws(RemoteException::class)
-    @set:Throws(RemoteException::class)
-    var files: MutableList<CloudFile>
+    val files: MutableList<CloudFile>
 
     /**
      * Files, that will be copied back, after [CloudService] delete.
      */
     @get:Throws(RemoteException::class)
-    @set:Throws(RemoteException::class)
-    var backFiles: MutableList<CloudFile>
+    val backFiles: MutableList<CloudFile>
 
     /**
      * Delete template.

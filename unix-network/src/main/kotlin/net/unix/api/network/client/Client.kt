@@ -2,11 +2,16 @@ package net.unix.api.network.client
 
 import com.esotericsoftware.kryonet.Connection
 import com.esotericsoftware.minlog.Log
+import net.unix.api.network.server.Server
 import net.unix.api.network.universe.Network
 import net.unix.api.network.universe.Packet
 import net.unix.api.network.universe.ResponsePacket
+import net.unix.api.network.universe.file.*
 import net.unix.api.network.universe.listener.Listener
 import net.unix.api.network.universe.listener.PacketListener
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 /**
  * Network client
@@ -17,6 +22,7 @@ open class Client : com.esotericsoftware.kryonet.Client(), Network {
     // TODO crypto
     //val keyPair = CryptoUtil.generateKeyPair()
     val waitingPacketListener = WaitingPacketListener()
+    val fileListener = FileListener(this)
 
     init {
         Log.set(6)
@@ -59,12 +65,17 @@ open class Client : com.esotericsoftware.kryonet.Client(), Network {
             ArrayList::class.java,
             List::class.java,
             LinkedHashMap::class.java,
-            Set::class.java
+            Set::class.java,
+            FileRequest::class.java,
+            FileTransferChunk::class.java,
+            ProgressUpdate::class.java,
+            ByteArray::class.java
         )
 
         connect(5000, host, port, port)
 
         super.addListener(waitingPacketListener)
+        super.addListener(fileListener)
 
         return this
     }
@@ -125,13 +136,69 @@ open class Client : com.esotericsoftware.kryonet.Client(), Network {
     }
 
     override fun sendPacket(packet: Packet): Client {
-        sendTCP(packet)
-
-        return this
+        return sendObject(packet)
     }
 
     override fun sendPacket(id: Int, packet: Packet): Network {
         throw RuntimeException("Don't use Client#sendPacket() with this params, server only!")
+    }
+
+    override fun sendObject(any: Any): Client {
+        super.sendTCP(any)
+
+        return this
+    }
+
+    override fun sendObject(id: Int, any: Any): Client {
+        throw RuntimeException("Don't use Client#sendObject() with this params, server only!")
+    }
+
+    class FileListener(val client: Client) : com.esotericsoftware.kryonet.Listener() {
+
+        val requestedFiles = mutableMapOf<String, RequestFile>()
+        val aliveFiles = mutableMapOf<String, ProgressUpdate>()
+
+        override fun received(conn: Connection, content: Any?) {
+
+            if(content is ProgressUpdate) {
+                if(aliveFiles[content.uuid] != null) {
+                    aliveFiles[content.uuid!!] = content
+                    requestedFiles[content.uuid]?.progressTask?.run(content)
+                }
+            }
+
+            if(content is FileTransferChunk) {
+                writeToFile(content.saveOn!!, content.bytes)
+
+                if(content.last) {
+                    requestedFiles[content.uuid]?.onSuccess?.call()
+
+                    aliveFiles.remove(content.uuid)
+                    requestedFiles.remove(content.uuid)
+                    return
+                }
+
+                if(!aliveFiles.contains(content.uuid))
+                    aliveFiles[content.uuid!!] = ProgressUpdate(content.uuid, 0, 0)
+            }
+
+            if(content is FileRequest) {
+                FileTransfer.send()
+                    .fromRequest(content)
+                    .sendBy(client)
+            }
+        }
+
+        private fun writeToFile(path: String, bytes: ByteArray) {
+            try {
+                FileOutputStream(path, true).use { fos ->
+                    fos.write(bytes)
+                }
+            } catch (e: IOException) {
+                println("Error writing to file")
+                throw e
+            }
+        }
     }
 
     class WaitingPacketListener : com.esotericsoftware.kryonet.Listener() {

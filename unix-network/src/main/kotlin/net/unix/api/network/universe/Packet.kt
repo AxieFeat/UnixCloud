@@ -376,7 +376,7 @@ data class Packet(
          * @see [Server]
          * @see [Client]
          */
-        fun send(network: Network): Packet {
+        fun sendBy(network: Network): Packet {
 
             val uuid = if (this.uuid == null) generateUUID(network) else this.uuid
 
@@ -430,15 +430,17 @@ data class Packet(
         /**
          * Send packet by any instance of [Network].
          *
-         * @param id Client id (For sending from [Server]).
-         * @param network Sender of packet.
+         * @param send Pair of [Network] instance and client ID
          *
          * @return Instance of sent [Packet].
          *
          * @see [Server]
          * @see [Client]
          */
-        fun send(id: Int, network: Network): Packet {
+        fun sendBy(send: Pair<Network, Int>): Packet {
+
+            val network = send.first
+            val id = send.second
 
             val uuid = if (this.uuid == null) generateUUID(network) else this.uuid
 

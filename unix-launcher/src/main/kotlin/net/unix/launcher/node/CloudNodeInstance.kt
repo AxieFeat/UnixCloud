@@ -18,12 +18,16 @@ import net.unix.api.template.CloudTemplateManager
 import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.api.terminal.Terminal
 import net.unix.command.CommandDispatcher
-import net.unix.launcher.CloudInstanceShutdownHandler
 import net.unix.node.CloudLocationSpace
 import net.unix.node.bridge.JVMBridge
 import net.unix.node.command.CloudCommandDispatcher
+import net.unix.node.command.question.argument.primitive.QuestionStringArgument
+import net.unix.node.command.question.question
 import net.unix.node.configuration.UnixConfiguration
+import net.unix.node.database.Database
+import net.unix.node.database.DatabaseConfiguration
 import net.unix.node.event.callEvent
+import net.unix.node.event.cloud.CloudStartEvent
 import net.unix.node.event.koin.KoinStartEvent
 import net.unix.node.group.CloudJVMGroupManager
 import net.unix.node.i18n.CloudI18nService
@@ -100,11 +104,15 @@ object CloudNodeInstance : KoinComponent, Startable {
     override fun start() {
         terminal.start()
 
+        Database.install(DatabaseConfiguration.connectionInfo)
+
+        CloudStartEvent().callEvent()
+
         server.start(UnixConfiguration.bridge.port)
 
         Runtime.getRuntime().addShutdownHook(Thread { CloudInstanceShutdownHandler.run() })
 
-        saveableLocaleManager.loadlAll()
+        saveableLocaleManager.loadAll()
         val selectedLocale = i18nService[UnixConfiguration.terminal.language]
 
         if (selectedLocale == null) {

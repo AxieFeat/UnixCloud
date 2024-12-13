@@ -2,8 +2,13 @@ package net.unix.node.group
 
 import net.unix.api.LocationSpace
 import net.unix.api.group.*
+import net.unix.api.group.rule.CloudGroupRule
 import net.unix.api.template.CloudTemplate
 import net.unix.node.CloudExtension.readJson
+import net.unix.node.database.DatabaseConfiguration
+import net.unix.node.event.callEvent
+import net.unix.node.event.cloud.group.GroupCreateEvent
+import net.unix.node.group.rule.CloudRuleHandler
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,7 +30,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         get() = cachedGroups.values.toSet()
 
     init {
-        GroupJVMExecutable.register()
+        GroupJVMWrapper.register()
         CloudRuleHandler.start()
     }
 
@@ -60,7 +65,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         serviceLimit: Int,
         executableFile: String,
         templates: MutableList<CloudTemplate>,
-        executable: GroupExecutable?
+        executable: GroupWrapper?
     ): CloudGroup = newInstance(
         uuid, name, serviceLimit, executableFile, templates, executable, mutableSetOf()
     )
@@ -72,7 +77,7 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
         serviceLimit: Int,
         executableFile: String,
         templates: MutableList<CloudTemplate>,
-        executable: GroupExecutable?,
+        executable: GroupWrapper?,
         rules: MutableSet<CloudGroupRule<Any>>
     ): AutoCloudGroup {
         val group = CloudJVMGroup(
@@ -81,9 +86,11 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
             serviceLimit,
             executableFile,
             templates = templates,
-            groupExecutable = executable,
+            groupWrapper = executable,
             rules = rules
         )
+
+        GroupCreateEvent(group).callEvent()
 
         register(group)
 
@@ -92,13 +99,15 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
 
     @Throws(RemoteException::class)
     override fun loadAllGroups() {
-        locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
-            loadGroup(it)
+        if(!DatabaseConfiguration.useDatabase) {
+            locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
+                loadGroup(it)
+            }
         }
 
-        CloudLogger.info("Loaded ${cachedGroups.size} groups:")
-        cachedGroups.forEach {
-            CloudLogger.info(" - ${it.value.name}")
+        CloudLogger.info("Loaded ${groups.size} groups:")
+        groups.forEach {
+            CloudLogger.info(" - ${it.name}")
         }
     }
 

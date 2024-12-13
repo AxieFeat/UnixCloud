@@ -1,24 +1,28 @@
 package net.unix.launcher
 
-import net.unix.center.NodeHandler
+import net.unix.manager.NodeHandler
 import net.unix.launcher.node.launchCloudInstance
 import java.util.Scanner
 
 fun main(args: Array<String>) {
 
     if(args.isNotEmpty()) {
-        if (args[0] == "node") {
+
+        var started = false
+
+        if(args.contains("manager")) {
+            NodeHandler.start(8181)
+            started = true
+        }
+        if(args.contains("node")) {
             launchCloudInstance()
-            return
+            started = true
         }
 
-        if (args[0] == "center") {
-            NodeHandler.start(8181)
-            return
-        }
+        if(started) return
     }
 
-    println("Select start mode: NODE, CENTER")
+    println("Select start mode: NODE, MANAGER")
 
     val scanner = Scanner(System.`in`)
 
@@ -30,11 +34,11 @@ fun main(args: Array<String>) {
             return
         }
 
-        if(line == "CENTER") {
+        if(line == "MANAGER") {
             NodeHandler.start(8181)
             return
         }
 
-        println("Select start mode: NODE, CENTER")
+        println("Select start mode: NODE, MANAGER")
     }
 }

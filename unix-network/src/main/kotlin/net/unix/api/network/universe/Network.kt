@@ -39,6 +39,31 @@ interface Network {
     fun sendPacket(id: Int, packet: Packet): Network
 
     /**
+     * Send object to server.
+     *
+     * @param any Any value.
+     *
+     * @return Current instance of [Network].
+     *
+     * @see [Server]
+     * @see [Client]
+     */
+    fun sendObject(any: Any): Network
+
+    /**
+     * Send object to client.
+     *
+     * @param id Client id.
+     * @param any Any value.
+     *
+     * @return Current instance of [Network].
+     *
+     * @see [Server]
+     * @see [Client]
+     */
+    fun sendObject(id: Int, any: Any): Network
+
+    /**
      * Create listener.
      *
      * @param channel Channel to listen.

@@ -1,5 +1,6 @@
 package net.unix.api.group
 
+import net.unix.api.group.rule.CloudGroupRule
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.template.CloudTemplate
 import java.rmi.RemoteException
@@ -54,7 +55,7 @@ interface CloudGroupManager : RemoteAccessible {
                     serviceLimit: Int,
                     executableFile: String,
                     templates: MutableList<CloudTemplate> = mutableListOf(),
-                    executable: GroupExecutable? = null
+                    executable: GroupWrapper? = null
     ): CloudGroup
 
     /**
@@ -78,7 +79,7 @@ interface CloudGroupManager : RemoteAccessible {
                     serviceLimit: Int,
                     executableFile: String,
                     templates: MutableList<CloudTemplate> = mutableListOf(),
-                    executable: GroupExecutable? = null,
+                    executable: GroupWrapper? = null,
                     rules: MutableSet<CloudGroupRule<Any>>
     ): AutoCloudGroup
 

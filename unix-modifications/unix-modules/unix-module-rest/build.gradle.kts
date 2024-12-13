@@ -31,5 +31,5 @@ tasks.withType<ShadowJar> {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }

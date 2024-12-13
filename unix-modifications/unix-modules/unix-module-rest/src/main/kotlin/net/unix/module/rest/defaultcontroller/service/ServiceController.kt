@@ -2,7 +2,7 @@ package net.unix.module.rest.defaultcontroller.service
 
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.ConsoleCloudServiceExecutable
+import net.unix.api.service.ConsoleCloudServiceWrapper
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
 import org.koin.core.component.KoinComponent
@@ -38,7 +38,7 @@ class ServiceController : Controller, KoinComponent {
 
         val service = cloudServiceManager[serviceUuid]!!
 
-        return (service.executable as? ConsoleCloudServiceExecutable)?.logs ?: throwNoSuchElement()
+        return (service.wrapper as? ConsoleCloudServiceWrapper)?.logs ?: throwNoSuchElement()
     }
 
     private fun doesServiceExist(uuid: UUID): Boolean {

@@ -17,6 +17,6 @@ include("unix-command-api")
 include("unix-driver")
 include("unix-node")
 include("unix-launcher")
-include("unix-center")
+include("unix-manager")
 include("unix-modifications:unix-modules:unix-module-rest")
 findProject(":unix-modifications:unix-modules:unix-module-rest")?.name = "unix-module-rest"

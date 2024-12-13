@@ -11,7 +11,7 @@ interface SaveableLocaleManager {
     /**
      * Load all locales from [LocationSpace.language] directory.
      */
-    fun loadlAll()
+    fun loadAll()
 
     /**
      * Load [SaveableLocale] from file.

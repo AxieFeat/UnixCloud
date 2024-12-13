@@ -156,22 +156,6 @@ object CloudExtension {
     }
 
     /**
-     * Hash of string.
-     *
-     * SHA-256 -> MD5 -> Base64 -> SHA-256
-     *
-     * @return Hash result.
-     */
-    fun String.hash(): String {
-        val bytes = this.toByteArray()
-
-        val first = sha256.digest(bytes).fold("") { str, it -> str + "%02x".format(it) }.toByteArray()
-        val second = md5.digest(first).fold("") { str, it -> str + "%02x".format(it) }.toByteArray()
-        
-        return Base64.getEncoder().encode(second).fold("") { str, it -> str + "%02x".format(it) }
-    }
-
-    /**
      * Deserialize json from [JarEntry].
      *
      * @param T Type for deserializing.
@@ -200,15 +184,30 @@ object CloudExtension {
     inline fun <reified T> File.readJson(): T {
         val text = this.readText()
 
-        val result = gson.fromJson(text, T::class.java)
+        return text.readJson()
+    }
+
+    /**
+     * Read JSON from string.
+     *
+     * @param T Type of object.
+     *
+     * @return Deserialize result.
+     */
+    inline fun <reified T> String.readJson(): T {
+        val result = gson.fromJson(this, T::class.java)
 
         return result
     }
 
     fun Any.toJson(file: File) {
-        val text = gson.toJson(this)
+        val text = this.toJson()
 
         file.writeText(text)
+    }
+
+    fun Any.toJson(): String {
+        return gson.toJson(this)
     }
 
     /**
@@ -242,7 +241,6 @@ object CloudExtension {
         val boolFunction = object : BoolInterface<T> {
             override val from: Boolean = this@rem
             override val result: T = any
-
         }
 
         return boolFunction

@@ -37,7 +37,7 @@ object CloudNodeManager : NodeManager {
                 CloudLogger.severe("Can not connect to Center of nodes.")
                 CloudLogger.severe(fail)
             }
-            .send(client)
+            .sendBy(client)
 
         client.createListener("fun:node:startTime") { _, packet ->
             if(packet == null) return@createListener
@@ -46,7 +46,7 @@ object CloudNodeManager : NodeManager {
                 .setChannel("fun:node:startTime")
                 .asResponseFor(packet)
                 .addNamedLong("time" to ThisNode.startTime)
-                .send(client)
+                .sendBy(client)
         }
 
         client.createListener("fun:node:uptime") { _, packet ->
@@ -56,7 +56,7 @@ object CloudNodeManager : NodeManager {
                 .setChannel("fun:node:uptime")
                 .asResponseFor(packet)
                 .addNamedLong("time" to ThisNode.uptime)
-                .send(client)
+                .sendBy(client)
         }
 
         client.createListener("fun:node:usageMemory") { _, packet ->
@@ -66,7 +66,7 @@ object CloudNodeManager : NodeManager {
                 .setChannel("fun:node:usageMemory")
                 .asResponseFor(packet)
                 .addNamedLong("memory" to ThisNode.usageMemory)
-                .send(client)
+                .sendBy(client)
         }
 
         client.createListener("fun:node:freeMemory") { _, packet ->
@@ -76,7 +76,7 @@ object CloudNodeManager : NodeManager {
                 .setChannel("fun:node:freeMemory")
                 .asResponseFor(packet)
                 .addNamedLong("memory" to ThisNode.freeMemory)
-                .send(client)
+                .sendBy(client)
         }
 
         client.createListener("fun:node:maxMemory") { _, packet ->
@@ -86,7 +86,7 @@ object CloudNodeManager : NodeManager {
                 .setChannel("fun:node:maxMemory")
                 .asResponseFor(packet)
                 .addNamedLong("memory" to ThisNode.maxMemory)
-                .send(client)
+                .sendBy(client)
         }
 
         scheduler {
@@ -111,7 +111,7 @@ object CloudNodeManager : NodeManager {
                     .onResponseTimeout(5000) {
                         cachedNodes = mutableSetOf(ThisNode)
                     }
-                    .send(CloudNodeManager.client)
+                    .sendBy(CloudNodeManager.client)
             }
         }
     }

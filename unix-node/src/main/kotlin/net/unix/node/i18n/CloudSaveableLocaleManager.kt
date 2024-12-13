@@ -16,7 +16,7 @@ class CloudSaveableLocaleManager : SaveableLocaleManager, KoinComponent {
     private val locationSpace: LocationSpace by inject()
     private val i18nService: I18nService by inject()
 
-    override fun loadlAll() {
+    override fun loadAll() {
         locationSpace.language.listFiles()?.filter {
             it.name.endsWith(".yml") ||
                     it.name.endsWith(".yaml") }?.forEach {

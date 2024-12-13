@@ -11,11 +11,12 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(project(":unix-scheduler"))
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }

@@ -1,7 +1,7 @@
 package net.unix.node.terminal
 
 import net.kyori.adventure.text.Component
-import net.unix.api.service.ConsoleCloudServiceExecutable
+import net.unix.api.service.ConsoleCloudServiceWrapper
 import net.unix.node.command.format.CloudCommandCompleter
 import net.unix.node.command.format.CloudCommandHighlighter
 import net.unix.node.command.sender.CloudConsoleCommandSender
@@ -27,7 +27,7 @@ open class CloudJLineTerminal(
 
     override val sender: CommandSender = CloudConsoleCommandSender()
 
-    override var selectedExecutable: ConsoleCloudServiceExecutable? = null
+    override var selectedExecutable: ConsoleCloudServiceWrapper? = null
 
     private lateinit var runner: JLineTerminalRunner
 

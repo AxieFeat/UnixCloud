@@ -7,6 +7,8 @@ import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
 import net.unix.node.CloudExtension.toJson
 import net.unix.node.CloudExtension.uniqueUUID
+import net.unix.node.event.callEvent
+import net.unix.node.event.cloud.service.ServiceDeleteEvent
 import net.unix.node.logging.CloudLogger
 import net.unix.node.mainDirectory
 import net.unix.node.persistence.CloudPersistentDataContainer
@@ -51,7 +53,7 @@ open class CloudJVMService(
     }
     override var status: CloudServiceStatus = CloudServiceStatus.PREPARED
 
-    override var executable: CloudServiceExecutable? = group.groupExecutable?.executableFor(this)
+    override var wrapper: CloudServiceWrapper? = group.groupWrapper?.executableFor(this)
 
     override val uptime: Long
         get() {
@@ -88,24 +90,24 @@ open class CloudJVMService(
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
-    override fun start(executable: CloudServiceExecutable, overwrite: Boolean) {
+    override fun start(executable: CloudServiceWrapper, overwrite: Boolean) {
         if (status == CloudServiceStatus.DELETED) throw CloudServiceModificationException("You cannot run deleted CloudService!")
         if (status == CloudServiceStatus.STARTED) throw IllegalArgumentException("CloudService already started!")
 
-        val groupExecutable = group.groupExecutable
+        val groupExecutable = group.groupWrapper
 
         if (groupExecutable == null || overwrite) {
-            this.executable = executable
+            this.wrapper = executable
         }
 
-        this.executable?.start()
+        this.wrapper?.start()
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
     override fun kill(delete: Boolean) {
         if (status == CloudServiceStatus.DELETED) throw CloudServiceModificationException("You cannot stop deleted CloudService!")
 
-        executable?.kill()
+        wrapper?.kill()
         if(delete) delete()
     }
 
@@ -115,6 +117,8 @@ open class CloudJVMService(
         if (status == CloudServiceStatus.STARTED) throw IllegalArgumentException("Could not delete CloudService, at first stop it!")
 
         CloudLogger.info("Trying to delete $name...")
+
+        ServiceDeleteEvent(this).callEvent()
 
         cloudServiceManager.unregister(this)
 

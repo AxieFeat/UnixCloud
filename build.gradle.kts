@@ -69,6 +69,15 @@ allprojects {
         implementation("io.javalin:javalin:3.13.7")
         implementation("com.auth0:java-jwt:3.16.0")
         implementation("com.github.kmehrunes:javalin-jwt:v0.2")
+
+        implementation("com.zaxxer:HikariCP:5.1.0")
+        implementation("org.jdbi:jdbi3-core:3.38.0-rc3")
+        implementation("org.jdbi:jdbi3-caffeine-cache:3.38.0")
+        implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
+        implementation("org.jdbi:jdbi3-kotlin-sqlobject:3.38.0-rc3")
+
+        implementation("org.xerial:sqlite-jdbc:3.47.1.0")
+        implementation("com.mysql:mysql-connector-j:9.1.0")
     }
 }
 
@@ -85,5 +94,5 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }

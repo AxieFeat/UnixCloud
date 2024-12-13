@@ -6,9 +6,14 @@ import net.unix.api.network.client.Client
 import net.unix.api.network.universe.Network
 import net.unix.api.network.universe.Packet
 import net.unix.api.network.universe.ResponsePacket
+import net.unix.api.network.universe.file.*
 import net.unix.api.network.universe.listener.Listener
 import net.unix.api.network.universe.listener.PacketListener
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import kotlin.properties.Delegates
+
 
 /**
  * Network server.
@@ -22,6 +27,7 @@ open class Server : com.esotericsoftware.kryonet.Server(), Network {
     // TODO crypto
     //val keyPair = CryptoUtil.generateKeyPair()
     val waitingPacketListener = WaitingPacketListener()
+    val fileListener = FileListener(this)
 
     init {
         Log.set(6)
@@ -66,12 +72,17 @@ open class Server : com.esotericsoftware.kryonet.Server(), Network {
             ArrayList::class.java,
             List::class.java,
             LinkedHashMap::class.java,
-            Set::class.java
+            Set::class.java,
+            FileRequest::class.java,
+            FileTransferChunk::class.java,
+            ProgressUpdate::class.java,
+            ByteArray::class.java
         )
 
         bind(port, port)
 
         super.addListener(waitingPacketListener)
+        super.addListener(fileListener)
 
         return this
     }
@@ -133,15 +144,71 @@ open class Server : com.esotericsoftware.kryonet.Server(), Network {
     }
 
     override fun sendPacket(packet: Packet): Server {
-        super.sendToAllTCP(packet)
+        return sendObject(packet)
+    }
+
+    override fun sendPacket(id: Int, packet: Packet): Server {
+        return sendObject(id, packet)
+    }
+
+    override fun sendObject(any: Any): Server {
+        super.sendToAllTCP(any)
 
         return this
     }
 
-    override fun sendPacket(id: Int, packet: Packet): Network {
-        super.sendToTCP(id, packet)
+    override fun sendObject(id: Int, any: Any): Server {
+        super.sendToTCP(id, any)
 
         return this
+    }
+
+    class FileListener(val server: Server) : com.esotericsoftware.kryonet.Listener() {
+
+        val requestedFiles = mutableMapOf<String, RequestFile>()
+        val aliveFiles = mutableMapOf<String, ProgressUpdate>()
+
+        override fun received(conn: Connection, content: Any?) {
+
+            if(content is ProgressUpdate) {
+                if(aliveFiles[content.uuid] != null) {
+                    aliveFiles[content.uuid!!] = content
+                    requestedFiles[content.uuid]?.progressTask?.run(content)
+                }
+            }
+
+            if(content is FileTransferChunk) {
+                writeToFile(content.saveOn!!, content.bytes)
+
+                if(content.last) {
+                    requestedFiles[content.uuid]?.onSuccess?.call()
+
+                    aliveFiles.remove(content.uuid)
+                    requestedFiles.remove(content.uuid)
+                    return
+                }
+
+                if(!aliveFiles.contains(content.uuid))
+                    aliveFiles[content.uuid!!] = ProgressUpdate(content.uuid, 0, 0)
+            }
+
+            if(content is FileRequest) {
+                FileTransfer.send()
+                    .fromRequest(content)
+                    .sendBy(server to conn.id)
+            }
+        }
+
+        private fun writeToFile(path: String, bytes: ByteArray) {
+            try {
+                FileOutputStream(path, true).use { fos ->
+                    fos.write(bytes)
+                }
+            } catch (e: IOException) {
+                println("Error writing to file")
+                throw e
+            }
+        }
     }
 
     class WaitingPacketListener : com.esotericsoftware.kryonet.Listener() {

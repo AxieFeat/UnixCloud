@@ -6,6 +6,8 @@ import net.unix.api.template.CloudTemplate
 import net.unix.api.template.SaveableCloudTemplate
 import net.unix.api.template.SaveableCloudTemplateManager
 import net.unix.node.CloudExtension.readJson
+import net.unix.node.event.callEvent
+import net.unix.node.event.cloud.template.TemplateCreateEvent
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -27,6 +29,8 @@ object BasicCloudTemplateManager : SaveableCloudTemplateManager, KoinComponent {
             name,
             files
         )
+
+        TemplateCreateEvent(template).callEvent()
 
         register(template)
 

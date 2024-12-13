@@ -15,6 +15,7 @@ import net.unix.event.listener.EventType
 import net.unix.event.listener.ListenerPriority
 import net.unix.event.listener.ListenerScope
 import net.unix.event.scope.ScopeGroup
+import net.unix.scheduler.impl.scheduler
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
@@ -51,9 +52,16 @@ fun interface InlineListener<T> {
  * @return Instance of [T].
  */
 fun <T> Event<T>.callEvent(): T {
-    CloudEventManager.callEvent(this)
 
-    return this as T
+    val event = this
+
+    scheduler {
+        execute {
+            CloudEventManager.callEvent(event)
+        }
+    }
+
+    return event as T
 }
 
 /**

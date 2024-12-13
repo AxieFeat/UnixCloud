@@ -4,6 +4,7 @@ import net.unix.api.LocationSpace
 import net.unix.api.group.*
 import net.unix.api.group.exception.CloudGroupDeleteException
 import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.group.rule.CloudGroupRule
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
@@ -14,6 +15,9 @@ import net.unix.api.template.CloudTemplateManager
 import net.unix.node.CloudExtension.inUse
 import net.unix.node.CloudExtension.toJson
 import net.unix.node.CloudExtension.uniqueUUID
+import net.unix.node.event.callEvent
+import net.unix.node.event.cloud.group.GroupDeleteEvent
+import net.unix.node.event.cloud.service.ServiceCreateEvent
 import net.unix.node.persistence.CloudPersistentDataContainer
 import net.unix.node.service.CloudJVMService
 import org.koin.core.component.KoinComponent
@@ -30,7 +34,7 @@ open class CloudJVMGroup(
     val properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar"),
     override val templates: MutableList<CloudTemplate> = mutableListOf(),
     override val rules: MutableSet<CloudGroupRule<Any>> = mutableSetOf(),
-    override val groupExecutable: GroupExecutable? = GroupJVMExecutable,
+    override val groupWrapper: GroupWrapper? = GroupJVMWrapper,
 ) : SaveableCloudGroup, AutoCloudGroup {
 
     init {
@@ -103,6 +107,8 @@ open class CloudJVMGroup(
             name = "$clearName-${servicesCount + 1}"
         )
 
+        ServiceCreateEvent(service).callEvent()
+
         cloudServiceManager.register(service)
 
         return service
@@ -116,7 +122,7 @@ open class CloudJVMGroup(
         serialized["service-limit"] = serviceLimit
         serialized["executable-file"] = executableFile
         serialized["properties"] = properties
-        if(groupExecutable?.name != null) serialized["group-executable"] = groupExecutable!!.name
+        if(groupWrapper?.name != null) serialized["group-executable"] = groupWrapper!!.name
         serialized["templates"] = templates.map { it.name }
 
         return serialized
@@ -136,6 +142,8 @@ open class CloudJVMGroup(
     override fun delete() {
         if (services.any { it.status == CloudServiceStatus.STARTED })
             throw CloudGroupDeleteException("Stop all services before deleting group!")
+
+        GroupDeleteEvent(this).callEvent()
 
         services.forEach {
             try {
@@ -173,7 +181,7 @@ open class CloudJVMGroup(
             }
 
             val name = serialized["name"].toString()
-            val serviceLimit = serialized["service-limit"].toString().toIntOrNull() ?: 1
+            val serviceLimit = serialized["service-limit"].toString().toDoubleOrNull()?.toInt() ?: 1
             val executableFile = serialized["executable-file"].toString()
             val properties = serialized["properties"] as List<String>
 
@@ -182,7 +190,7 @@ open class CloudJVMGroup(
                 cloudTemplateManager[it]
             }.toMutableList()
 
-            val groupExecutable = AbstractCloudGroupExecutable[serialized["group-executable"].toString()]
+            val groupExecutable = AbstractCloudGroupWrapper[serialized["group-executable"].toString()]
 
             return CloudJVMGroup(
                 uuid,
@@ -191,7 +199,7 @@ open class CloudJVMGroup(
                 executableFile,
                 properties,
                 templates,
-                groupExecutable = groupExecutable
+                groupWrapper = groupExecutable
             )
         }
     }

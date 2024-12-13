@@ -28,7 +28,7 @@ data class CloudNode(
                         .onResponseTimeout(1000) {
                             completable.complete(0)
                         }
-                        .send(client)
+                        .sendBy(client)
                 }
             }
 
@@ -52,7 +52,7 @@ data class CloudNode(
                         .onResponseTimeout(1000) {
                             completable.complete(0)
                         }
-                        .send(client)
+                        .sendBy(client)
                 }
             }
 
@@ -76,7 +76,7 @@ data class CloudNode(
                         .onResponseTimeout(1000) {
                             completable.complete(0)
                         }
-                        .send(client)
+                        .sendBy(client)
                 }
             }
 
@@ -100,7 +100,7 @@ data class CloudNode(
                         .onResponseTimeout(1000) {
                             completable.complete(0)
                         }
-                        .send(client)
+                        .sendBy(client)
                 }
             }
 
@@ -124,7 +124,7 @@ data class CloudNode(
                         .onResponseTimeout(1000) {
                             completable.complete(0)
                         }
-                        .send(client)
+                        .sendBy(client)
                 }
             }
 

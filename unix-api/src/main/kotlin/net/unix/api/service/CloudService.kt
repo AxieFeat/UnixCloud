@@ -14,7 +14,7 @@ import java.util.*
  * [CloudService]'s allow to start instances of [CloudGroup].
  *
  * The service is some kind of executable program that is controlled by UnixCloud.
- * You can run almost anything using [CloudServiceExecutable].
+ * You can run almost anything using [CloudServiceWrapper].
  */
 interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccessible {
 
@@ -74,24 +74,24 @@ interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccess
     val uptime: Long
 
     /**
-     * The service executable.
+     * The service wrapper.
      */
     @get:Throws(RemoteException::class)
     @set:Throws(RemoteException::class)
-    var executable: CloudServiceExecutable?
+    var wrapper: CloudServiceWrapper?
 
     /**
      * Start [CloudService] with some executable properties.
      *
      * @param executable Executable properties.
      * @param overwrite If true - [executable] will be used in any case, else [executable] may
-     * be not used (If [CloudGroup] has some [CloudGroup.groupExecutable])
+     * be not used (If [CloudGroup] has some [CloudGroup.groupWrapper])
      *
      * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
      * @throws IllegalArgumentException If [status] is not [CloudServiceStatus.PREPARED].
      */
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class, RemoteException::class)
-    fun start(executable: CloudServiceExecutable, overwrite: Boolean = false)
+    fun start(executable: CloudServiceWrapper, overwrite: Boolean = false)
 
     /**
      * Kill [CloudService].

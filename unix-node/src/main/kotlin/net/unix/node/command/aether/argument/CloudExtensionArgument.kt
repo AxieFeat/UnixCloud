@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture
  * Command argument for [Extension].
  */
 @Suppress("unused")
-class CloudExtensionArgument  : CommandArgument<Extension>(), KoinComponent {
+class CloudExtensionArgument : CommandArgument<Extension>(), KoinComponent {
 
     private val extensionsManager: ExtensionManager by inject()
     private var notFoundMessage = "Extensions not found"

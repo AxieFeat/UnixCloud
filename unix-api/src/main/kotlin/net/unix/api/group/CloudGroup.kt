@@ -7,7 +7,7 @@ import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
-import net.unix.api.service.CloudServiceExecutable
+import net.unix.api.service.CloudServiceWrapper
 import org.jetbrains.annotations.Range
 import java.rmi.RemoteException
 import java.util.UUID
@@ -38,15 +38,15 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
     val clearName: String
 
     /**
-     * The executable of group.
+     * The wrapper of group.
      *
-     * If you set executable of group - all services will be
-     * started with this executable properties.
+     * If you set wrapper of group - all services will be
+     * started with this wrapper properties.
      *
      * If null - type is not set.
      */
     @get:Throws(RemoteException::class)
-    val groupExecutable: GroupExecutable?
+    val groupWrapper: GroupWrapper?
 
     /**
      * [CloudTemplate]'s of group.
@@ -69,7 +69,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
     val servicesCount: Int
 
     /**
-     * Path to executable file in prepared service. It will be started via [CloudServiceExecutable].
+     * Path to executable file in prepared service. It will be started via [CloudServiceWrapper].
      */
     @get:Throws(RemoteException::class)
     val executableFile: String

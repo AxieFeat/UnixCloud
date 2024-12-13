@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":unix-event-system"))
     implementation(project(":unix-command-api"))
     implementation(project(":unix-node"))
-    implementation(project(":unix-center"))
+    implementation(project(":unix-manager"))
 }
 
 tasks.test {
@@ -32,5 +32,5 @@ tasks.withType<ShadowJar> {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }
