@@ -5,7 +5,7 @@ package net.unix.node.bridge
 import net.unix.api.bridge.CloudBridge
 import net.unix.api.network.server.Server
 import net.unix.api.persistence.PersistentDataType
-import net.unix.api.service.CloudServiceManager
+import net.unix.api.service.ServiceManager
 import net.unix.node.NamespacedKey
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
@@ -17,7 +17,7 @@ object JVMBridge : CloudBridge, KoinComponent {
 
     private fun readResolve(): Any = JVMBridge
 
-    private val serviceManager: CloudServiceManager by inject(named("default"))
+    private val serviceManager: ServiceManager by inject(named("default"))
 
     private val cachedClients = mutableMapOf<Int, UUID>()
     override val clients: Map<Int, UUID>

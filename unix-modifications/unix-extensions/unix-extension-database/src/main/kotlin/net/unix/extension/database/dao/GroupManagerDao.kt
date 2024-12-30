@@ -1,6 +1,6 @@
 package net.unix.extension.database.dao
 
-import net.unix.api.group.GroupWrapper
+import net.unix.api.group.wrapper.GroupWrapper
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.extension.database.dao.entity.JVMGroupEntry
 import net.unix.node.persistence.CloudPersistentDataContainer
@@ -33,7 +33,6 @@ interface GroupManagerDao {
      * @param uuid UUID of group.
      * @param name Name of group.
      * @param serviceLimit Limit for services.
-     * @param executableFile Executable file of group.
      * @param persistent Persistent data container of group.
      * @param properties Properties of group.
      * @param wrapper Wrapper of group.
@@ -44,7 +43,6 @@ interface GroupManagerDao {
         uuid: UUID,
         name: String,
         serviceLimit: Int = 1,
-        executableFile: String,
         persistent: PersistentDataContainer = CloudPersistentDataContainer(),
         properties: List<String> = listOf("java", "-Xms100M", "-Xmx1G", "-jar"),
         wrapper: GroupWrapper? = null,

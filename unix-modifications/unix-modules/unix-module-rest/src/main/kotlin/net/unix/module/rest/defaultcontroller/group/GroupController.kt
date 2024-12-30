@@ -1,8 +1,8 @@
 package net.unix.module.rest.defaultcontroller.group
 
-import net.unix.api.group.CloudGroup
-import net.unix.api.group.CloudGroupManager
-import net.unix.api.service.CloudService
+import net.unix.api.group.Group
+import net.unix.api.group.GroupManager
+import net.unix.api.service.Service
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
 import net.unix.node.CloudExtension.uniqueUUID
@@ -15,30 +15,29 @@ import java.util.*
 @RestController("cloud/group/")
 class GroupController : Controller, KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
+    private val groupManager: GroupManager by inject(named("default"))
 
     @RequestMapping(RequestType.GET, "", "web.cloud.group.get.all")
-    fun handleGetAllGroups(): Set<CloudGroup> {
-        return cloudGroupManager.groups
+    fun handleGetAllGroups(): Set<Group> {
+        return groupManager.groups
     }
 
     @RequestMapping(RequestType.GET, "uuid/:uuid", "web.cloud.group.get.one")
-    fun handleGetOneGroup(@RequestPathParam("uuid") uuid: String): CloudGroup {
-        return cloudGroupManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
+    fun handleGetOneGroup(@RequestPathParam("uuid") uuid: String): Group {
+        return groupManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
     }
 
     @RequestMapping(RequestType.GET, "uuid/:uuid/services", "web.cloud.group.get.services")
-    fun handleGetServicesOfGroup(@RequestPathParam("uuid") uuid: String): Set<CloudService> {
-        return cloudGroupManager[UUID.fromString(uuid)]?.services ?: throwNoSuchElement()
+    fun handleGetServicesOfGroup(@RequestPathParam("uuid") uuid: String): Set<Service> {
+        return groupManager[UUID.fromString(uuid)]?.services ?: throwNoSuchElement()
     }
 
     @RequestMapping(RequestType.POST, "create/:name", "web.cloud.group.create")
-    fun handleCreateGroup(@RequestPathParam("name") name: String): CloudGroup {
-        return cloudGroupManager.newInstance(
+    fun handleCreateGroup(@RequestPathParam("name") name: String): Group {
+        return groupManager.factory.create(
             uniqueUUID(),
             name,
-            1,
-            "main.jar"
+            1
         )
     }
 
@@ -49,13 +48,13 @@ class GroupController : Controller, KoinComponent {
 
         if (!doesGroupExist(groupUUID)) throwNoSuchElement()
 
-        val group = cloudGroupManager[groupUUID]!!
-        cloudGroupManager.unregister(group)
+        val group = groupManager[groupUUID]!!
+        groupManager.unregister(group)
         return true
     }
 
     private fun doesGroupExist(uuid: UUID): Boolean {
-        return cloudGroupManager[uuid] != null
+        return groupManager[uuid] != null
     }
 
 }

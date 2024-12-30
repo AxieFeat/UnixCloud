@@ -3,8 +3,8 @@ package net.unix.node.command.question.argument
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceManager
+import net.unix.api.service.Service
+import net.unix.api.service.ServiceManager
 import net.unix.command.question.QuestionArgument
 import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
@@ -15,11 +15,11 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Suppress("unused")
-class QuestionServiceArgument : QuestionArgument<CloudService>, KoinComponent {
+class QuestionServiceArgument : QuestionArgument<Service>, KoinComponent {
 
-    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
+    private val serviceManager: ServiceManager by inject(named("default"))
 
-    override fun parse(reader: StringReader): CloudService {
+    override fun parse(reader: StringReader): Service {
         val rawName = reader.readString()
 
         val uuid = if(rawName.contains(" ")) {
@@ -29,17 +29,17 @@ class QuestionServiceArgument : QuestionArgument<CloudService>, KoinComponent {
                     .replace(")", "")
             )
         } else {
-            cloudServiceManager[rawName].first().uuid
+            serviceManager[rawName].first().uuid
         }
 
-        val service = cloudServiceManager[uuid]
+        val service = serviceManager[uuid]
             ?: throw QuestionParseException("<red>CloudService not found")
 
         return service
     }
 
     override fun suggestion(sender: CommandSender, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
-        cloudServiceManager.services.forEach {
+        serviceManager.services.forEach {
             builder.suggest(it.name)
         }
 

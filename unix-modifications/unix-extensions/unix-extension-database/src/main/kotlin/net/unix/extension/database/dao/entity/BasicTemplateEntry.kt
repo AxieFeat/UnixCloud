@@ -1,13 +1,13 @@
 package net.unix.extension.database.dao.entity
 
 import net.unix.api.template.CloudFile
-import net.unix.api.template.CloudTemplate
+import net.unix.api.template.Template
 import net.unix.node.CloudExtension.readJson
 import net.unix.extension.database.dao.Database
 import net.unix.extension.database.dao.TemplateManagerDao
 import net.unix.node.node.ThisNode
 import net.unix.node.persistence.CloudPersistentDataContainer
-import net.unix.node.template.BasicCloudTemplate
+import net.unix.node.template.BasicTemplate
 import java.beans.ConstructorProperties
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -68,10 +68,10 @@ class BasicTemplateEntry @ConstructorProperties(
             }
         }
 
-    fun toCloudTemplate(): CloudTemplate? {
+    fun toCloudTemplate(): Template? {
         if(ThisNode.name != node) return null
 
-        return BasicCloudTemplate(
+        return BasicTemplate(
             name,
             persistentDataContainer,
             files.toMutableList(),

@@ -9,6 +9,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.util.concurrent.Callable
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @Suppress("UNCHECKED_CAST")
 class NextQuestionBuilder<T>(
@@ -52,6 +55,15 @@ class NextQuestionBuilder<T>(
     override fun restart() {
         answer = null
         start()
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    inline fun <T> next(argument: QuestionArgument<T>, setup: NextQuestionBuilder<T>.() -> Unit): NextQuestionBuilder<T> {
+        contract {
+            callsInPlace(setup, InvocationKind.EXACTLY_ONCE)
+        }
+
+        return NextQuestionBuilder(this, argument).also(setup)
     }
 
 }

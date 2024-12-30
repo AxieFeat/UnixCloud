@@ -1,6 +1,6 @@
 package net.unix.extension.database.dao.argument
 
-import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.ServiceStatus
 import org.jdbi.v3.core.argument.AbstractArgumentFactory
 import org.jdbi.v3.core.argument.Argument
 import org.jdbi.v3.core.config.ConfigRegistry
@@ -11,7 +11,7 @@ import java.sql.Types
 import java.util.*
 
 class ServiceStatusArgument(
-    private var status: CloudServiceStatus?
+    private var status: ServiceStatus?
 ) : Argument {
 
     @Throws(SQLException::class)
@@ -21,8 +21,8 @@ class ServiceStatusArgument(
 
 }
 
-class ServiceStatusArgumentFactory : AbstractArgumentFactory<CloudServiceStatus>(Types.VARCHAR) {
+class ServiceStatusArgumentFactory : AbstractArgumentFactory<ServiceStatus>(Types.VARCHAR) {
 
-    override fun build(value: CloudServiceStatus?, config: ConfigRegistry?): Argument = ServiceStatusArgument(value)
+    override fun build(value: ServiceStatus?, config: ConfigRegistry?): Argument = ServiceStatusArgument(value)
 
 }

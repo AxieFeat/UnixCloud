@@ -5,8 +5,8 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.node.command.aether.SyntaxExceptionBuilder
-import net.unix.api.template.CloudTemplate
-import net.unix.api.template.CloudTemplateManager
+import net.unix.api.template.Template
+import net.unix.api.template.TemplateManager
 import net.unix.command.CommandArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -14,33 +14,33 @@ import org.koin.core.qualifier.named
 import java.util.concurrent.CompletableFuture
 
 /**
- * Command argument for [CloudTemplate].
+ * Command argument for [Template].
  */
 @Suppress("unused")
-class CloudTemplateArgument : CommandArgument<CloudTemplate>(), KoinComponent {
+class CloudTemplateArgument : CommandArgument<Template>(), KoinComponent {
 
-    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
+    private val templateManager: TemplateManager by inject(named("default"))
     private var notFoundMessage = "CloudTemplate not found"
 
     companion object {
 
         /**
-         * Get [CloudTemplate] from command context by argument name.
+         * Get [Template] from command context by argument name.
          *
          * @param name Argument name.
          *
-         * @return Instance of [CloudTemplate].
+         * @return Instance of [Template].
          *
-         * @throws IllegalArgumentException If argument not found or is not [CloudTemplate].
+         * @throws IllegalArgumentException If argument not found or is not [Template].
          */
         @Throws(IllegalArgumentException::class)
-        fun CommandContext<*>.getCloudTemplate(name: String): CloudTemplate {
-            return this.getArgument(name, CloudTemplate::class.java)
+        fun CommandContext<*>.getCloudTemplate(name: String): Template {
+            return this.getArgument(name, Template::class.java)
         }
     }
 
-    override fun parse(reader: StringReader): CloudTemplate {
-        val template = cloudTemplateManager[reader.readString()]
+    override fun parse(reader: StringReader): Template {
+        val template = templateManager[reader.readString()]
             ?: throw SyntaxExceptionBuilder.exception(notFoundMessage, reader)
 
         return template
@@ -60,14 +60,14 @@ class CloudTemplateArgument : CommandArgument<CloudTemplate>(), KoinComponent {
     }
 
     override fun getExamples(): List<String> {
-        return cloudTemplateManager.templates.map { it.name }
+        return templateManager.templates.map { it.name }
     }
 
     override fun <S> listSuggestions(
         context: CommandContext<S>,
         builder: SuggestionsBuilder
     ): CompletableFuture<Suggestions> {
-        cloudTemplateManager.templates.forEach {
+        templateManager.templates.forEach {
             if (it.name.contains(" ")) {
                 builder.suggest("\"${it.name}\"")
             } else

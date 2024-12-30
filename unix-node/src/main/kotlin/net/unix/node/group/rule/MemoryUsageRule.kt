@@ -1,10 +1,10 @@
 package net.unix.node.group.rule
 
-import net.unix.api.group.CloudGroup
-import net.unix.api.group.rule.CloudGroupRule
+import net.unix.api.group.Group
+import net.unix.api.group.rule.GroupRule
 import net.unix.api.persistence.PersistentDataType
-import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceManager
+import net.unix.api.service.Service
+import net.unix.api.service.ServiceManager
 import net.unix.node.bridge.JVMBridge
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
@@ -14,12 +14,12 @@ import java.util.UUID
 
 @Suppress("unused")
 class MemoryUsageRule(
-    override val group: CloudGroup
-) : CloudGroupRule<Map<UUID, Pair<Long?, Long?>>>, KoinComponent {
+    override val group: Group
+) : GroupRule<Map<UUID, Pair<Long?, Long?>>>, KoinComponent {
 
 
     private var lastUsage: Long = 0
-    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
+    private val serviceManager: ServiceManager by inject(named("default"))
 
     override fun get(): Map<UUID, Pair<Long?, Long?>> {
         return group.services.associateBy { it.uuid }.mapValues {
@@ -29,7 +29,7 @@ class MemoryUsageRule(
 
     override fun update(input: Map<UUID, Pair<Long?, Long?>>) {
         for (entry in input) {
-            val service = cloudServiceManager[entry.key] ?: continue
+            val service = serviceManager[entry.key] ?: continue
             val usageMemory = entry.value.first ?: continue
             val maxMemory = entry.value.second ?: continue
 
@@ -40,17 +40,17 @@ class MemoryUsageRule(
             if(percent >= 80 || group.serviceLimit < group.servicesCount) {
                 CloudLogger.info("Service ${service.name} use 80% of memory. Starting new instance...")
                 val createdService = group.create()
-                group.groupWrapper?.executableFor(service)?.let { createdService.start(it) }
+                group.wrapper?.executableFor(service)?.let { createdService.start(it) }
                 lastUsage = System.currentTimeMillis()
             }
         }
     }
 
-    private fun CloudService.getMemoryUsage(): Long? {
+    private fun Service.getMemoryUsage(): Long? {
         return this.persistentDataContainer[JVMBridge.serviceUsedMemory, PersistentDataType.LONG]?.div(1000000)
     }
 
-    private fun CloudService.getMaxMemory(): Long? {
+    private fun Service.getMaxMemory(): Long? {
         return this.persistentDataContainer[JVMBridge.serviceMaxMemory, PersistentDataType.LONG]?.div(1000000)
     }
 }

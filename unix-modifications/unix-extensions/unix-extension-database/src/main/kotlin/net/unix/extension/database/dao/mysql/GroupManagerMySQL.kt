@@ -1,6 +1,6 @@
 package net.unix.extension.database.dao.mysql
 
-import net.unix.api.group.GroupWrapper
+import net.unix.api.group.wrapper.GroupWrapper
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.extension.database.dao.GroupManagerDao
 import net.unix.extension.database.dao.argument.GroupWrapperArgumentFactory
@@ -54,7 +54,6 @@ interface GroupManagerMySQL : GroupManagerDao {
         @Bind("UUID") uuid: UUID,
         @Bind("NAME") name: String,
         @Bind("LIMIT") serviceLimit: Int,
-        @Bind("EXECUTABLE_FILE") executableFile: String,
         @Bind("PERSISTENT") persistent: PersistentDataContainer,
         @Bind("PROPERTIES") properties: List<String>,
         @Bind("WRAPPER") wrapper: GroupWrapper?,

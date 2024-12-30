@@ -1,9 +1,9 @@
 package net.unix.api
 
 import java.io.File
-import net.unix.api.group.CloudGroup
-import net.unix.api.service.CloudService
-import net.unix.api.template.CloudTemplate
+import net.unix.api.group.Group
+import net.unix.api.service.Service
+import net.unix.api.template.Template
 import net.unix.api.modification.module.Module
 import net.unix.api.remote.RemoteAccessible
 import java.rmi.RemoteException
@@ -39,19 +39,19 @@ interface LocationSpace : RemoteAccessible {
     val module: File
 
     /**
-     * Directory for [CloudGroup]'s.
+     * Directory for [Group]'s.
      */
     @get:Throws(RemoteException::class)
     val group: File
 
     /**
-     * Directory for [CloudService]'s.
+     * Directory for [Service]'s.
      */
     @get:Throws(RemoteException::class)
     val service: File
 
     /**
-     * Directory for [CloudTemplate]'s.
+     * Directory for [Template]'s.
      */
     @get:Throws(RemoteException::class)
     val template: File

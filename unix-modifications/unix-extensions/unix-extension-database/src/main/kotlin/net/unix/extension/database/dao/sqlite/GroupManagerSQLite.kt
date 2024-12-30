@@ -1,6 +1,6 @@
 package net.unix.extension.database.dao.sqlite
 
-import net.unix.api.group.GroupWrapper
+import net.unix.api.group.wrapper.GroupWrapper
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.extension.database.dao.GroupManagerDao
 import net.unix.extension.database.dao.argument.GroupWrapperArgumentFactory
@@ -55,7 +55,6 @@ interface GroupManagerSQLite : GroupManagerDao {
         @Bind("UUID") uuid: UUID,
         @Bind("NAME") name: String,
         @Bind("SERVICE_LIMIT") serviceLimit: Int,
-        @Bind("EXECUTABLE_FILE") executableFile: String,
         @Bind("PERSISTENT") persistent: PersistentDataContainer,
         @Bind("PROPERTIES") properties: List<String>,
         @Bind("GROUP_WRAPPER") wrapper: GroupWrapper?,

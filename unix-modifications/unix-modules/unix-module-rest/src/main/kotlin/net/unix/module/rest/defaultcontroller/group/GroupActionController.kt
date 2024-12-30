@@ -1,7 +1,7 @@
 package net.unix.module.rest.defaultcontroller.group
 
-import net.unix.api.group.CloudGroupManager
-import net.unix.api.service.CloudService
+import net.unix.api.group.GroupManager
+import net.unix.api.service.Service
 import net.unix.module.rest.annotation.RequestMapping
 import net.unix.module.rest.annotation.RequestPathParam
 import net.unix.module.rest.annotation.RequestType
@@ -16,11 +16,11 @@ import java.util.*
 @RestController("cloud/action/group/")
 class GroupActionController : Controller, KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
+    private val groupManager: GroupManager by inject(named("default"))
 
     @RequestMapping(RequestType.POST, "uuid/:uuid/startService", "web.cloud.action.group.startservice")
-    fun handleStartNewService(@RequestPathParam("uuid") uuid: String): CloudService {
-        val group = cloudGroupManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
+    fun handleStartNewService(@RequestPathParam("uuid") uuid: String): Service {
+        val group = groupManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
 
         return group.create()
     }

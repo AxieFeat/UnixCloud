@@ -2,32 +2,32 @@
 
 package net.unix.extension.test
 
-import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceManager
+import net.unix.api.service.Service
+import net.unix.api.service.ServiceManager
 import net.unix.node.logging.CloudLogger
 import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
-object CustomServiceManager : CloudServiceManager  {
+object CustomServiceManager : ServiceManager  {
 
     private fun readResolve(): Any = CustomServiceManager
 
-    val cachedServices = mutableMapOf<UUID, CloudService>()
+    val cachedServices = mutableMapOf<UUID, Service>()
 
-    override val services: Set<CloudService>
+    override val services: Set<Service>
         get() = cachedServices.values.toSet()
 
-    override fun register(service: CloudService) {
-        cachedServices[service.uuid] = service
-        CloudLogger.info("Registered ${service.name} service!")
+    override fun register(value: Service) {
+        cachedServices[value.uuid] = value
+        CloudLogger.info("Registered ${value.name} service!")
     }
 
-    override fun unregister(service: CloudService) {
-        cachedServices.remove(service.uuid)
+    override fun unregister(value: Service) {
+        cachedServices.remove(value.uuid)
     }
 
-    override fun get(name: String): List<CloudService> = cachedServices.values.filter { it.clearName == name }
+    override fun get(name: String): List<Service> = cachedServices.values.filter { it.clearName == name }
 
-    override fun get(uuid: UUID): CloudService? = cachedServices[uuid]
+    override fun get(uuid: UUID): Service? = cachedServices[uuid]
 
 }

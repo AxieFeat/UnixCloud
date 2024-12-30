@@ -3,8 +3,8 @@ package net.unix.node
 import net.unix.api.LocationSpace
 import net.unix.api.ShutdownHandler
 import net.unix.api.bridge.CloudBridge
-import net.unix.api.group.CloudGroupManager
-import net.unix.api.group.SaveableCloudGroupManager
+import net.unix.api.group.GroupManager
+import net.unix.api.group.SaveableGroupManager
 import net.unix.api.i18n.I18nService
 import net.unix.api.i18n.SaveableLocaleManager
 import net.unix.api.modification.extension.ExtensionManager
@@ -14,20 +14,18 @@ import net.unix.api.node.NodeManager
 import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.remote.RemoteService
-import net.unix.api.service.CloudServiceManager
-import net.unix.api.template.CloudTemplateManager
-import net.unix.api.template.SaveableCloudTemplateManager
+import net.unix.api.service.ServiceManager
+import net.unix.api.template.TemplateManager
+import net.unix.api.template.SaveableTemplateManager
 import net.unix.api.terminal.Terminal
 import net.unix.command.CommandDispatcher
 import net.unix.node.command.CloudCommandDispatcher
 import net.unix.node.configuration.UnixConfiguration
 import net.unix.node.event.callEvent
 import net.unix.node.event.cloud.CloudStartEvent
-import net.unix.node.group.GroupJVMWrapper
 import net.unix.node.group.rule.CloudRuleHandler
 import net.unix.node.logging.CloudLogger
 import net.unix.node.modification.extension.CloudExtensionManager
-import net.unix.node.node.ThisNode
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
@@ -44,9 +42,9 @@ class CloudInstance : KoinComponent, Startable {
     private val i18nService: I18nService by inject(named("default"))
     private val saveableLocaleManager: SaveableLocaleManager by inject(named("default"))
 
-    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
-    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
-    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
+    private val templateManager: TemplateManager by inject(named("default"))
+    private val groupManager: GroupManager by inject(named("default"))
+    private val serviceManager: ServiceManager by inject(named("default"))
 
     private val moduleManager: ModuleManager by inject(named("default"))
     private val extensionManager: ExtensionManager by inject(named("default"))
@@ -90,14 +88,13 @@ class CloudInstance : KoinComponent, Startable {
         configureRMI(remoteService)
         remoteService.start()
 
-        GroupJVMWrapper.register()
         CloudRuleHandler.start()
 
         (commandDispatcher as? CloudCommandDispatcher)?.registerCommands()
 
-        (cloudTemplateManager as? SaveableCloudTemplateManager)?.loadAllTemplates()
+        (templateManager as? SaveableTemplateManager)?.loadAllTemplates()
 
-        (cloudGroupManager as? SaveableCloudGroupManager)?.loadAllGroups()
+        (groupManager as? SaveableGroupManager)?.loadAllGroups()
 
     }
 
@@ -106,9 +103,9 @@ class CloudInstance : KoinComponent, Startable {
         remoteService.register(ExtensionManager::class, extensionManager)
 
         remoteService.register(LocationSpace::class, locationSpace)
-        remoteService.register(CloudTemplateManager::class, cloudTemplateManager)
-        remoteService.register(CloudGroupManager::class, cloudGroupManager)
-        remoteService.register(CloudServiceManager::class, cloudServiceManager)
+        remoteService.register(TemplateManager::class, templateManager)
+        remoteService.register(GroupManager::class, groupManager)
+        remoteService.register(ServiceManager::class, serviceManager)
 
         remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.LONG, "LONG")
         remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.BYTE_ARRAY, "BYTE_ARRAY")

@@ -1,6 +1,6 @@
 package net.unix.extension.database.dao.argument
 
-import net.unix.api.group.GroupWrapper
+import net.unix.api.group.wrapper.GroupWrapper
 import org.jdbi.v3.core.argument.AbstractArgumentFactory
 import org.jdbi.v3.core.argument.Argument
 import org.jdbi.v3.core.config.ConfigRegistry

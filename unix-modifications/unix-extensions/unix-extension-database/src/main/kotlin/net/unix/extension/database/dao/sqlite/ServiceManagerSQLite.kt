@@ -1,7 +1,7 @@
 package net.unix.extension.database.dao.sqlite
 
 import net.unix.api.persistence.PersistentDataContainer
-import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.ServiceStatus
 import net.unix.extension.database.dao.ServiceManagerDao
 import net.unix.extension.database.dao.argument.PersistentDataContainerArgumentFactory
 import net.unix.extension.database.dao.argument.ServiceStatusArgumentFactory
@@ -53,7 +53,7 @@ interface ServiceManagerSQLite : ServiceManagerDao {
         @Bind("STATIC") static: Boolean,
         @Bind("PERSISTENT") persistent: PersistentDataContainer,
         @Bind("CREATED") created: Long,
-        @Bind("STATUS") status: CloudServiceStatus?
+        @Bind("STATUS") status: ServiceStatus?
     )
 
     @SqlUpdate("DELETE FROM `services` WHERE `node` = :NODE AND `uuid` = :UUID")
@@ -86,5 +86,5 @@ interface ServiceManagerSQLite : ServiceManagerDao {
     override fun setServiceCreateDate(@Bind("NODE") node: String, @Bind("UUID") uuid: UUID, @Bind("CREATE") create: Long)
 
     @SqlUpdate("UPDATE `services` SET `status` = :STATUS WHERE `node` = :NODE and `uuid` = :UUID")
-    override fun setServiceStatus(@Bind("NODE") node: String, @Bind("UUID") uuid: UUID, @Bind("STATUS") status: CloudServiceStatus)
+    override fun setServiceStatus(@Bind("NODE") node: String, @Bind("UUID") uuid: UUID, @Bind("STATUS") status: ServiceStatus)
 }

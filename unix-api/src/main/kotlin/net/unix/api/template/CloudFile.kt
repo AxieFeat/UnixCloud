@@ -6,7 +6,7 @@ import java.rmi.RemoteException
 import kotlin.jvm.Throws
 
 /**
- * File copy param's for [CloudTemplate].
+ * File copy param's for [Template].
  */
 data class CloudFile(
     /**

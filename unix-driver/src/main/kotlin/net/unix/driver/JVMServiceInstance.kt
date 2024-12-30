@@ -5,17 +5,17 @@ package net.unix.driver
 import net.unix.api.network.client.Client
 import net.unix.api.network.universe.Packet
 import net.unix.api.LocationSpace
-import net.unix.api.group.CloudGroupManager
-import net.unix.api.group.SaveableCloudGroupManager
+import net.unix.api.group.GroupManager
+import net.unix.api.group.SaveableGroupManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
-import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceInfo
-import net.unix.api.service.CloudServiceManager
-import net.unix.api.template.CloudTemplateManager
+import net.unix.api.service.Service
+import net.unix.api.service.ServiceInfo
+import net.unix.api.service.ServiceManager
+import net.unix.api.template.TemplateManager
 import net.unix.driver.persistence.RemotePersistenceDataType
 import net.unix.node.CloudExtension.readJson
-import net.unix.node.service.CloudJVMServiceInfo
+import net.unix.node.service.JVMServiceInfo
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
 import org.koin.core.context.startKoin
@@ -38,24 +38,24 @@ object JVMServiceInstance {
         return@run file
     }
 
-    val info: CloudServiceInfo = run {
+    val info: ServiceInfo = run {
         val file = File(dataFolder, "service.info")
 
         if(!file.exists()) throw IllegalArgumentException("Can not find info file in service!")
 
-        return@run CloudJVMServiceInfo.deserialize(file.readJson())
+        return@run JVMServiceInfo.deserialize(file.readJson())
     }
 
-    lateinit var service: CloudService
+    lateinit var service: Service
 
     fun install(port: Int = 9191, rmiPort: Int = 1099) {
         println("Service instance installing...")
 
         val registry = LocateRegistry.getRegistry("localhost", rmiPort)
         val locationSpace = registry.find<LocationSpace>()
-        val cloudTemplateManager = registry.find<CloudTemplateManager>()
-        val cloudGroupManager = registry.find<SaveableCloudGroupManager>()
-        val cloudServiceManager = registry.find<CloudServiceManager>()
+        val templateManager = registry.find<TemplateManager>()
+        val cloudGroupManager = registry.find<SaveableGroupManager>()
+        val serviceManager = registry.find<ServiceManager>()
         val moduleManager = registry.find<ModuleManager>()
         val extensionManager = registry.find<ExtensionManager>()
 
@@ -63,9 +63,9 @@ object JVMServiceInstance {
             val module = module {
                 single<Registry> { registry }
                 single<LocationSpace> { locationSpace }
-                single<CloudTemplateManager> { cloudTemplateManager }
-                single<CloudGroupManager> { cloudGroupManager }
-                single<CloudServiceManager> { cloudServiceManager }
+                single<TemplateManager> { templateManager }
+                single<GroupManager> { cloudGroupManager }
+                single<ServiceManager> { serviceManager }
                 single<RemotePersistenceDataType> { RemotePersistenceDataType }
                 single<ModuleManager> { moduleManager }
                 single<ExtensionManager> { extensionManager }
@@ -74,7 +74,7 @@ object JVMServiceInstance {
             modules(module)
         }
 
-        this.service = cloudServiceManager[info.uuid] ?: throw IllegalArgumentException("Cant find current CloudService instance!")
+        this.service = serviceManager[info.uuid] ?: throw IllegalArgumentException("Cant find current CloudService instance!")
 
         val client = Client()
         client.connect("0.0.0.0", port)

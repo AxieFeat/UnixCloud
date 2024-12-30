@@ -1,12 +1,11 @@
 package net.unix.extension.database.dao.entity
 
-import net.unix.api.group.CloudGroup
-import net.unix.api.template.CloudTemplateManager
+import net.unix.api.group.Group
+import net.unix.api.template.TemplateManager
 import net.unix.node.CloudExtension.readJson
 import net.unix.extension.database.dao.Database
 import net.unix.extension.database.dao.GroupManagerDao
-import net.unix.node.group.AbstractCloudGroupWrapper
-import net.unix.node.group.CloudJVMGroup
+import net.unix.node.group.JVMGroup
 import net.unix.node.node.ThisNode
 import net.unix.node.persistence.CloudPersistentDataContainer
 import org.koin.core.component.KoinComponent
@@ -38,7 +37,7 @@ class JVMGroupEntry @ConstructorProperties(
     templates: String
 ) : KoinComponent {
 
-    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
+    private val templateManager: TemplateManager by inject(named("default"))
 
     val uuid = UUID.fromString(uuid)
 
@@ -117,17 +116,15 @@ class JVMGroupEntry @ConstructorProperties(
             }
         }
 
-    fun toCloudGroup(): CloudGroup? {
+    fun toCloudGroup(): Group? {
         if(ThisNode.name != node) return null
 
-        return CloudJVMGroup(
+        return JVMGroup(
             uuid,
             name,
             serviceLimit,
-            executableFile,
-            properties,
-            templates.mapNotNull { cloudTemplateManager[it] }.toMutableList(),
-            groupWrapper = AbstractCloudGroupWrapper[groupWrapper]
+            templates.mapNotNull { templateManager[it] }.toMutableList(),
+            wrapper = TODO("Group wrapper add")
         )
     }
 }

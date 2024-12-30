@@ -3,19 +3,16 @@
 package net.unix.node.command
 
 import com.mojang.brigadier.ParseResults
-import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import com.mojang.brigadier.suggestion.Suggestions
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.unix.api.group.CloudGroup
-import net.unix.api.group.CloudGroupManager
-import net.unix.api.group.GroupWrapper
-import net.unix.api.group.SaveableCloudGroup
-import net.unix.api.group.exception.CloudGroupLimitException
+import net.unix.api.group.Group
+import net.unix.api.group.GroupManager
+import net.unix.api.group.wrapper.GroupWrapper
+import net.unix.api.group.SaveableGroup
+import net.unix.api.group.exception.GroupLimitException
+import net.unix.api.group.wrapper.GroupWrapperFactory
 import net.unix.api.modification.extension.Extension
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.Module
@@ -24,19 +21,18 @@ import net.unix.api.node.Node
 import net.unix.api.node.NodeManager
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.*
-import net.unix.api.service.exception.CloudServiceModificationException
-import net.unix.api.service.wrapper.ConsoleCloudServiceWrapper
-import net.unix.api.template.CloudTemplate
-import net.unix.api.template.CloudTemplateManager
+import net.unix.api.service.exception.ServiceModificationException
+import net.unix.api.service.wrapper.ConsoleServiceWrapper
+import net.unix.api.template.Template
+import net.unix.api.template.TemplateManager
 import net.unix.api.terminal.Terminal
-import net.unix.command.CommandArgument
 import net.unix.command.CommandDispatcher
+import net.unix.command.question.NextQuestion
 import net.unix.command.sender.CommandSender
 import net.unix.node.CloudExtension.or
 import net.unix.node.CloudExtension.rem
 import net.unix.node.CloudExtension.uniqueUUID
 import net.unix.node.bridge.JVMBridge
-import net.unix.node.command.aether.SyntaxExceptionBuilder
 import net.unix.node.command.aether.argument.*
 import net.unix.node.command.aether.command
 import net.unix.node.command.aether.get
@@ -46,13 +42,13 @@ import net.unix.node.command.question.argument.primitive.QuestionNumberArgument
 import net.unix.node.command.question.argument.primitive.QuestionStringArgument
 import net.unix.node.command.question.question
 import net.unix.node.logging.CloudLogger
+import net.unix.node.persistence.CloudPersistentDataContainer
 import net.unix.scheduler.impl.scheduler
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.concurrent.CompletableFuture
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
@@ -64,9 +60,9 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
     private val extensionManager: ExtensionManager by inject(named("default"))
     private val moduleManager: ModuleManager by inject(named("default"))
     private val terminal: Terminal by inject(named("default"))
-    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
-    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
-    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
+    private val serviceManager: ServiceManager by inject(named("default"))
+    private val groupManager: GroupManager by inject(named("default"))
+    private val templateManager: TemplateManager by inject(named("default"))
     private val nodeManager: NodeManager by inject(named("default"))
 
     @Throws(CommandSyntaxException::class)
@@ -312,9 +308,9 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             literal("list") {
                 execute {
-                    val services = cloudServiceManager.services
-                        .filter { it.wrapper is ConsoleCloudServiceWrapper }
-                        .filter { (it.wrapper as ConsoleCloudServiceWrapper).viewConsole }
+                    val services = serviceManager.services
+                        .filter { it.wrapper is ConsoleServiceWrapper }
+                        .filter { (it.wrapper as ConsoleServiceWrapper).viewConsole }
 
                     CloudLogger.info("Console view enabled for ${services.size} services")
                     services.forEach {
@@ -326,14 +322,14 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("switch") {
                 argument("service", CloudServiceArgument()) {
                     execute {
-                        val service: CloudService = it["service"]
+                        val service: Service = it["service"]
                         val executable = service.wrapper
 
-                        if (executable !is ConsoleCloudServiceWrapper) {
+                        if (executable !is ConsoleServiceWrapper) {
                             CloudLogger.info("Service ${service.name} is not support command sending")
                             return@execute
                         }
-                        terminal.selectedExecutable = service.wrapper as ConsoleCloudServiceWrapper
+                        terminal.selectedExecutable = service.wrapper as ConsoleServiceWrapper
 
                         CloudLogger.info("You are selected ${service.name} for command sending")
                     }
@@ -343,10 +339,10 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("toggle") {
                 argument("service", CloudServiceArgument()) {
                     execute {
-                        val service: CloudService = it["service"]
+                        val service: Service = it["service"]
                         val executable = service.wrapper
 
-                        if (executable is ConsoleCloudServiceWrapper) {
+                        if (executable is ConsoleServiceWrapper) {
                             executable.viewConsole = !executable.viewConsole
                             CloudLogger.info("Toggled viewing of ${service.name} console")
                             return@execute
@@ -361,11 +357,11 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                 argument("service", CloudServiceArgument()) {
                     argument("command", StringArgumentType.greedyString()) {
                         execute {
-                            val service: CloudService = it["service"]
+                            val service: Service = it["service"]
                             val command: String = it["command"]
                             val executable = service.wrapper
 
-                            if (executable is ConsoleCloudServiceWrapper) {
+                            if (executable is ConsoleServiceWrapper) {
                                 executable.command(command)
                                 CloudLogger.info("Command successfully sent to ${service.name}")
                                 return@execute
@@ -399,7 +395,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             literal("list") {
                 execute {
-                    val templates = cloudTemplateManager.templates
+                    val templates = templateManager.templates
 
                     CloudLogger.info("List of templates(${templates.size}):")
                     templates.forEach {
@@ -415,10 +411,13 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
                         CloudLogger.info("Created template $name")
 
-                        cloudTemplateManager.newInstance(
-                            name,
-                            mutableListOf(),
-                            mutableListOf()
+                        templateManager.register(
+                            templateManager.factory.create(
+                                name,
+                                CloudPersistentDataContainer(),
+                                mutableListOf(),
+                                mutableListOf()
+                            )
                         )
                     }
                 }
@@ -427,7 +426,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("delete") {
                 argument("template", CloudTemplateArgument()) {
                     execute {
-                        val template: CloudTemplate = it["template"]
+                        val template: Template = it["template"]
 
                         template.delete()
 
@@ -439,7 +438,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("info") {
                 argument("template", CloudTemplateArgument()) {
                     execute {
-                        val template: CloudTemplate = it["template"]
+                        val template: Template = it["template"]
 
                         CloudLogger.info("Info about ${template.name}:")
                         CloudLogger.info(" - Files:")
@@ -477,7 +476,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             literal("list") {
                 execute {
-                    val services = cloudServiceManager.services
+                    val services = serviceManager.services
 
                     CloudLogger.info("List of services(${services.size}):")
                     services.forEach {
@@ -489,7 +488,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("info") {
                 argument("service", CloudServiceArgument()) {
                     execute {
-                        val service: CloudService = it["service"]
+                        val service: Service = it["service"]
 
                         val format = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
 
@@ -507,9 +506,9 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                             } MB"
                         )
                         CloudLogger.info(" - Create date: ${format.format(service.created)}")
-                        if (service.status == CloudServiceStatus.STARTED)
+                        if (service.status == ServiceStatus.STARTED)
                             CloudLogger.info(" - Uptime: ${formatSeconds(service.uptime / 1000)}")
-                        if (service is StaticCloudService)
+                        if (service is StaticService)
                             CloudLogger.info(" - Static: ${service.static}")
                     }
                 }
@@ -519,11 +518,11 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                 argument("group", CloudGroupArgument()) {
 
                     execute {
-                        val group: CloudGroup = it["group"]
+                        val group: Group = it["group"]
 
                         val service = try {
                             group.create()
-                        } catch (e: CloudGroupLimitException) {
+                        } catch (e: GroupLimitException) {
                             CloudLogger.info("Can not create service of group ${group.name}! Limit is ${group.serviceLimit}.")
                             return@execute
                         }
@@ -533,12 +532,12 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
                     argument("count", IntegerArgumentType.integer(1, Int.MAX_VALUE)) {
                         execute {
-                            val group: CloudGroup = it["group"]
+                            val group: Group = it["group"]
                             val count: Int = it["count"]
 
                             val services = try {
                                 group.create(count)
-                            } catch (e: CloudGroupLimitException) {
+                            } catch (e: GroupLimitException) {
                                 CloudLogger.info("Can not create service of group ${group.name}! Limit is ${group.serviceLimit}.")
                                 return@execute
                             }
@@ -554,10 +553,10 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("start") {
                 argument("service", CloudServiceArgument()) {
 
-                    fun start(service: CloudService, executable: GroupWrapper, overwrite: Boolean = true) {
+                    fun start(service: Service, executable: GroupWrapper, overwrite: Boolean = true) {
                         try {
                             service.start(executable.executableFor(service), overwrite)
-                        } catch (e: CloudServiceModificationException) {
+                        } catch (e: ServiceModificationException) {
                             CloudLogger.info("Service ${service.name} deleted!")
                         } catch (e: IllegalArgumentException) {
                             CloudLogger.info("Service ${service.name} already started!")
@@ -565,8 +564,8 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                     }
 
                     execute {
-                        val service: CloudService = it["service"]
-                        val executable = service.group.groupWrapper ?: run {
+                        val service: Service = it["service"]
+                        val executable = service.group.wrapper ?: run {
                             CloudLogger.severe("Cant start ${service.name}, executable not found!")
                             return@execute
                         }
@@ -574,9 +573,9 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                         start(service, executable, false)
                     }
 
-                    argument("wrapper", GroupWrapperArgument()) {
+                    argument("wrapper", GroupWrapperFactoryArgument()) {
                         execute {
-                            val service: CloudService = it["service"]
+                            val service: Service = it["service"]
                             val executable: GroupWrapper = it["wrapper"]
 
                             start(service, executable)
@@ -584,7 +583,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
                         argument("overwrite", BoolArgumentType.bool()) {
                             execute {
-                                val service: CloudService = it["service"]
+                                val service: Service = it["service"]
                                 val executable: GroupWrapper = it["trapper"]
                                 val overwrite: Boolean = it["overwrite"]
 
@@ -598,11 +597,11 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("kill") {
                 argument("service", CloudServiceArgument()) {
                     execute {
-                        val service: CloudService = it["service"]
+                        val service: Service = it["service"]
 
                         try {
                             service.kill(false)
-                        } catch (e: CloudServiceModificationException) {
+                        } catch (e: ServiceModificationException) {
                             CloudLogger.info("Service ${service.name} deleted!")
                         } catch (e: IllegalArgumentException) {
                             CloudLogger.info("Service ${service.name} started, stop it before!")
@@ -614,11 +613,11 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("delete") {
                 argument("service", CloudServiceArgument()) {
                     execute {
-                        val service: CloudService = it["service"]
+                        val service: Service = it["service"]
 
                         try {
                             service.delete()
-                        } catch (e: CloudServiceModificationException) {
+                        } catch (e: ServiceModificationException) {
                             CloudLogger.info("Service ${service.name} already deleted!")
                         } catch (e: IllegalArgumentException) {
                             CloudLogger.info("Stop ${service.name} before delete!")
@@ -648,7 +647,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             literal("list") {
                 execute {
-                    val groups = cloudGroupManager.groups
+                    val groups = groupManager.groups
 
                     CloudLogger.info("List of groups(${groups.size}):")
                     groups.forEach {
@@ -667,9 +666,9 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("delete") {
                 argument("group", CloudGroupArgument()) {
                     execute {
-                        val group: CloudGroup = it["group"]
+                        val group: Group = it["group"]
 
-                        if (group is SaveableCloudGroup) group.delete()
+                        if (group is SaveableGroup) group.delete()
 
                         CloudLogger.info("Group ${group.uuid} deleted!")
                     }
@@ -679,13 +678,12 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
             literal("info") {
                 argument("group", CloudGroupArgument()) {
                     execute { context ->
-                        val group: CloudGroup = context["group"]
+                        val group: Group = context["group"]
 
                         CloudLogger.info("Info about ${group.name}:")
                         CloudLogger.info(" - UUID: ${group.uuid}")
-                        CloudLogger.info(" - Group executable: ${group.groupWrapper?.name ?: "NONE"}")
+                        CloudLogger.info(" - Group wrapper: ${group.wrapper?.name ?: "-"}")
                         CloudLogger.info(" - Services limit: ${group.serviceLimit}")
-                        CloudLogger.info(" - Executable file: ${group.executableFile}")
                         CloudLogger.info(" - Templates(${group.templates.size}):")
 
                         group.templates.forEach {
@@ -709,7 +707,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                             CloudLogger.info("    - ${service.name}, ${service.status}${
                                 run {
 
-                                    if (service.status != CloudServiceStatus.STARTED) {
+                                    if (service.status != ServiceStatus.STARTED) {
                                         return@run ""
                                     }
 
@@ -733,20 +731,18 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
             var name: String? = null
             var limit: Int? = null
-            var templates: MutableSet<CloudTemplate>? = null
-            var executableFile: String? = null
+            var templates: MutableSet<Template>? = null
             var groupWrapper: GroupWrapper? = null
 
             fun sendMainMessage() {
                 CloudLogger.info("You in group create mode.")
                 CloudLogger.info("#################################")
                 CloudLogger.info("	Current group settings:")
-                CloudLogger.info("	 [1] Name: ${name ?: "-"}")
-                CloudLogger.info("	 [2] Service limit: ${limit ?: "-"}")
-                CloudLogger.info("	 [3] Templates: ${templates?.map { it.name } ?: "-"}")
-                CloudLogger.info("	 [4] Executable file: ${executableFile ?: "-"}")
-                CloudLogger.info("	 [5] Wrapper: ${groupWrapper?.name ?: "-"}")
-                CloudLogger.info("	 [6] Save and exit")
+                CloudLogger.info("	 [1] Name: <green>${name ?: "<red>-</red>"}")
+                CloudLogger.info("	 [2] Service limit: <green>${limit ?: "<red>-</red>"}")
+                CloudLogger.info("	 [3] Templates: <green>${templates?.map { it.name } ?: "<red>-</red>"}")
+                CloudLogger.info("	 [4] Setting wrapper (${(groupWrapper?.name == null) % "<red>Not configured</red>" or "<green>Configured</green>"})")
+                CloudLogger.info("	 [5] Save and exit")
                 CloudLogger.info("#################################")
             }
 
@@ -794,40 +790,128 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                         }
                     }.start()
 
-                    4 -> next(QuestionStringArgument()) {
+                    4 -> next(QuestionNumberArgument.int(1, 4)) {
+
+                        var wrapperFactory: GroupWrapperFactory? = null
+                        var executableFile: String? = null
+                        var stopCommand: String? = null
+
                         create {
                             CloudLogger.info("You in group create mode.")
-                            CloudLogger.info("Set executable file name")
+                            CloudLogger.info("Configuring wrapper of group.")
+                            CloudLogger.info("#################################")
+                            CloudLogger.info("	Current wrapper settings:")
+                            CloudLogger.info("	 [1] Wrapper name: <green>${wrapperFactory?.name ?: "<red>-</red>"}")
+                            CloudLogger.info("	 [2] Executable file: <green>${executableFile ?: "<red>-</red>"}")
+                            CloudLogger.info("	 [3] Stop command: <green>${stopCommand ?: "<red>-</red>"}")
+                            CloudLogger.info("	 [4] Save and return")
+                            CloudLogger.info("#################################")
                         }
                         answer { answer ->
-                            executableFile = answer
-                            close()
-                            previous.start()
+
+                            when(answer) {
+                                1 -> {
+                                    next(QuestionGroupWrapperArgument()) {
+                                        create {
+                                            CloudLogger.info("You in group create mode.")
+                                            CloudLogger.info("Configuring wrapper of group.")
+                                            CloudLogger.info("Set wrapper factory")
+                                        }
+
+                                        answer { factory ->
+                                            wrapperFactory = factory
+                                            close()
+                                            previous.start()
+                                        }
+                                    }.start()
+                                }
+                                2 -> {
+                                    next(QuestionStringArgument()) {
+                                        create {
+                                            CloudLogger.info("You in group create mode.")
+                                            CloudLogger.info("Configuring wrapper of group.")
+                                            CloudLogger.info("Set executable file path")
+                                        }
+
+                                        answer { name ->
+                                            executableFile = name
+                                            close()
+                                            previous.start()
+                                        }
+                                    }.start()
+                                }
+                                3 -> {
+                                    next(QuestionStringArgument()) {
+                                        create {
+                                            CloudLogger.info("You in group create mode.")
+                                            CloudLogger.info("Configuring wrapper of group.")
+                                            CloudLogger.info("Set stop command")
+                                        }
+
+                                        answer { command ->
+                                            stopCommand = command
+                                            close()
+                                            previous.start()
+                                        }
+                                    }.start()
+                                }
+
+                                4 -> {
+                                    next(QuestionNumberArgument.int(1, 2)) {
+                                        create {
+                                            CloudLogger.info("You in group create mode.")
+                                            CloudLogger.info("Configuring wrapper of group.")
+                                            CloudLogger.info("Do you want exit from configuring wrapper of group?")
+                                            CloudLogger.info("  [1] - Yes")
+                                            CloudLogger.info("  [2] - No")
+                                            if (executableFile == null || wrapperFactory == null) {
+                                                CloudLogger.warning("<yellow>Attention! You no set one of this required params:")
+                                                CloudLogger.warning("<yellow> - Wrapper name")
+                                                CloudLogger.warning("<yellow> - Executable file")
+                                                CloudLogger.warning("<yellow>If you exit - settings will not be applied!")
+                                            }
+                                        }
+
+                                        answer { result ->
+                                            when(result) {
+                                                1 -> {
+                                                    if(executableFile == null || wrapperFactory == null) {
+                                                        CloudLogger.info("You are exit from configuring wrapper.")
+                                                        close()
+                                                        (previous as NextQuestion).previous.start()
+                                                        return@answer
+                                                    }
+                                                    groupWrapper = wrapperFactory!!.createBySerialized(
+                                                        mapOf(
+                                                            "name" to wrapperFactory!!.name,
+                                                            "executable-file" to executableFile!!,
+                                                            "stop-command" to (stopCommand ?: "stop")
+                                                        )
+                                                    )
+                                                    close()
+                                                    (previous as NextQuestion).previous.start()
+                                                }
+                                                2 -> {
+                                                    close()
+                                                    previous.start()
+                                                }
+                                            }
+                                        }
+                                    }.start()
+                                }
+                            }
                         }
                     }.start()
 
-                    5 -> next(QuestionGroupWrapperArgument()) {
-                        create {
-                            CloudLogger.info("You in group create mode.")
-                            CloudLogger.info("Set group wrapper")
-                        }
-                        answer { answer ->
-                            groupWrapper = answer
-                            close()
-                            previous.start()
-                        }
-                    }.start()
-
-                    6 -> next(QuestionNumberArgument.int(1, 2)) {
+                    5 -> next(QuestionNumberArgument.int(1, 2)) {
                         create {
                             CloudLogger.info("You in group create mode.")
                             CloudLogger.info("Do you want exit?")
                             CloudLogger.info("  [1] - Yes")
                             CloudLogger.info("  [2] - No")
-                            if (name == null || groupWrapper == null) {
+                            if (name == null) {
                                 CloudLogger.warning("<yellow>Attention! You no set one of this required params:")
                                 CloudLogger.warning("<yellow> - Name")
-                                CloudLogger.warning("<yellow> - Executable file")
                                 CloudLogger.warning("<yellow>If you exit - group will not be created!")
                             }
                         }
@@ -841,13 +925,14 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
                                     return@answer
                                 }
 
-                                cloudGroupManager.newInstance(
-                                    uniqueUUID(),
-                                    name!!,
-                                    limit ?: 1,
-                                    executableFile!!,
-                                    templates?.toMutableList() ?: mutableListOf(),
-                                    groupWrapper
+                                groupManager.register(
+                                    groupManager.factory.create(
+                                        uuid = uniqueUUID(),
+                                        name = name!!,
+                                        serviceLimit = limit ?: 1,
+                                        templates?.toMutableList() ?: mutableListOf(),
+                                        groupWrapper
+                                    )
                                 )
 
                                 CloudLogger.info("You are created group $name!")

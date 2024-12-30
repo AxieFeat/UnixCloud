@@ -1,7 +1,7 @@
 package net.unix.extension.database.dao
 
 import net.unix.api.persistence.PersistentDataContainer
-import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.ServiceStatus
 import net.unix.extension.database.dao.entity.JVMServiceEntry
 import net.unix.node.persistence.CloudPersistentDataContainer
 import java.util.*
@@ -49,7 +49,7 @@ interface ServiceManagerDao {
         static: Boolean = false,
         persistent: PersistentDataContainer = CloudPersistentDataContainer(),
         created: Long = System.currentTimeMillis(),
-        status: CloudServiceStatus? = null
+        status: ServiceStatus? = null
     )
 
     /**
@@ -142,5 +142,5 @@ interface ServiceManagerDao {
      * @param uuid UUID of service.
      * @param status New status of service. Null for reset.
      */
-    fun setServiceStatus(node: String, uuid: UUID, status: CloudServiceStatus)
+    fun setServiceStatus(node: String, uuid: UUID, status: ServiceStatus)
 }

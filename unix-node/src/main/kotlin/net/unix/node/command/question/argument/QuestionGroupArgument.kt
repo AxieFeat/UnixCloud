@@ -3,8 +3,8 @@ package net.unix.node.command.question.argument
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.unix.api.group.CloudGroup
-import net.unix.api.group.CloudGroupManager
+import net.unix.api.group.Group
+import net.unix.api.group.GroupManager
 import net.unix.command.question.QuestionArgument
 import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
@@ -15,11 +15,11 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Suppress("unused")
-class QuestionGroupArgument : QuestionArgument<CloudGroup>, KoinComponent {
+class QuestionGroupArgument : QuestionArgument<Group>, KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
+    private val groupManager: GroupManager by inject(named("default"))
 
-    override fun parse(reader: StringReader): CloudGroup {
+    override fun parse(reader: StringReader): Group {
         val rawName = reader.readString()
 
         val uuid = if(rawName.contains(" ")) {
@@ -29,17 +29,17 @@ class QuestionGroupArgument : QuestionArgument<CloudGroup>, KoinComponent {
                     .replace(")", "")
             )
         } else {
-            cloudGroupManager[rawName].first().uuid
+            groupManager[rawName].first().uuid
         }
 
-        val service = cloudGroupManager[uuid]
+        val service = groupManager[uuid]
             ?: throw QuestionParseException("<red>CloudGroup not found")
 
         return service
     }
 
     override fun suggestion(sender: CommandSender, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
-        cloudGroupManager.groups.forEach {
+        groupManager.groups.forEach {
             builder.suggest(it.name)
         }
 

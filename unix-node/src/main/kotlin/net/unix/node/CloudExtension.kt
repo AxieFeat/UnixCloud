@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.unix.api.service.CloudService
+import net.unix.api.service.Service
 import net.unix.node.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
 import net.unix.node.logging.CloudLogger
@@ -208,7 +208,7 @@ object CloudExtension {
     }
 
     /**
-     * Generate unique UUID for [CloudService]. It'll be unique by current session.
+     * Generate unique UUID for [Service]. It'll be unique by current session.
      *
      * @return Unique UUID.
      */

@@ -1,6 +1,6 @@
 package net.unix.extension.database.dao.entity
 
-import net.unix.api.service.CloudServiceStatus
+import net.unix.api.service.ServiceStatus
 import net.unix.node.CloudExtension.readJson
 import net.unix.extension.database.dao.Database
 import net.unix.extension.database.dao.ServiceManagerDao
@@ -85,7 +85,7 @@ class JVMServiceEntry @ConstructorProperties(
             }
         }
 
-    var status = CloudServiceStatus.valueOf(status)
+    var status = ServiceStatus.valueOf(status)
         set(value) {
             field = value
 
@@ -98,7 +98,7 @@ class JVMServiceEntry @ConstructorProperties(
 
     val uptime: Long
         get() {
-            if(status != CloudServiceStatus.STARTED) return 0
+            if(status != ServiceStatus.STARTED) return 0
 
             return System.currentTimeMillis() - created
         }

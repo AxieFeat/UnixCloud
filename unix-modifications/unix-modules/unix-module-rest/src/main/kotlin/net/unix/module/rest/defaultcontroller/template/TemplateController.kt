@@ -1,10 +1,10 @@
 package net.unix.module.rest.defaultcontroller.template
 
-import net.unix.api.template.CloudTemplate
-import net.unix.api.template.CloudTemplateManager
+import net.unix.api.template.Template
+import net.unix.api.template.TemplateManager
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
-import net.unix.node.template.BasicCloudTemplate
+import net.unix.node.template.BasicTemplate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -12,37 +12,37 @@ import org.koin.core.component.inject
 @RestController("cloud/template/")
 class TemplateController : Controller, KoinComponent {
 
-    private val cloudTemplateManager: CloudTemplateManager by inject()
+    private val templateManager: TemplateManager by inject()
 
     @RequestMapping(RequestType.GET, "", "web.cloud.template.get.all")
-    fun handleGetAllTemplates(): Set<CloudTemplate> {
-        return cloudTemplateManager.templates
+    fun handleGetAllTemplates(): Set<Template> {
+        return templateManager.templates
     }
 
     @RequestMapping(RequestType.GET, "name/:name/", "web.cloud.template.get.one")
-    fun handleGetOneTemplates(@RequestPathParam("name") name: String): CloudTemplate {
-        return cloudTemplateManager[name] ?: throwNoSuchElement()
+    fun handleGetOneTemplates(@RequestPathParam("name") name: String): Template {
+        return templateManager[name] ?: throwNoSuchElement()
     }
 
     @RequestMapping(RequestType.POST, "", "web.cloud.template.create")
-    fun handleCreateTemplate(@RequestBody template: BasicCloudTemplate): CloudTemplate {
+    fun handleCreateTemplate(@RequestBody template: BasicTemplate): Template {
         if (doesTemplateExist(template.name)) throwElementAlreadyExist()
 
-        cloudTemplateManager.register(template)
+        templateManager.register(template)
 
         return template
     }
 
     @RequestMapping(RequestType.DELETE, "name/:name", "web.cloud.template.delete")
-    fun handleDeleteTemplate(@RequestPathParam("name") name: String): CloudTemplate {
+    fun handleDeleteTemplate(@RequestPathParam("name") name: String): Template {
         if (!doesTemplateExist(name)) throwNoSuchElement()
-        val template = cloudTemplateManager[name]!!
-        cloudTemplateManager.delete(template)
+        val template = templateManager[name]!!
+        templateManager.delete(template)
         return template
     }
 
     private fun doesTemplateExist(name: String): Boolean {
-        return cloudTemplateManager.templates.any { it.name == name }
+        return templateManager.templates.any { it.name == name }
     }
 
 
