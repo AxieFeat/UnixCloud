@@ -7,13 +7,14 @@ import net.unix.node.logging.CloudLogger
 import java.rmi.Naming
 import java.rmi.registry.LocateRegistry
 import java.rmi.server.UnicastRemoteObject
+import kotlin.reflect.KClass
 
 object CloudRemoteService : RemoteService {
 
     private val toRegister = mutableMapOf<String, RemoteAccessible>()
 
-    override fun register(remoteAccessible: RemoteAccessible, additional: String) {
-        toRegister["${remoteAccessible.javaClass.name}${if(additional != "") "-$additional" else ""}"] = remoteAccessible
+    override fun register(type: KClass<*>, remoteAccessible: RemoteAccessible, additional: String) {
+        toRegister["${type.simpleName}${if(additional != "") "-$additional" else ""}"] = remoteAccessible
     }
 
     override fun start() {
@@ -25,7 +26,7 @@ object CloudRemoteService : RemoteService {
             Naming.rebind("//localhost/${remoteAccessible.key}", UnicastRemoteObject.exportObject(remoteAccessible.value, 0))
         }
 
-        CloudLogger.info("RMI server started with ${toRegister.size} objects in $port")
+        CloudLogger.info("RMI server started with ${toRegister.size} objects in port $port")
         toRegister.forEach {
             CloudLogger.debug(" - ${it.key}")
         }

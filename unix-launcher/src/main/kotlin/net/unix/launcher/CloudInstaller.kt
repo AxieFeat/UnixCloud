@@ -35,6 +35,8 @@ import net.unix.node.remote.CloudRemoteService
 import net.unix.node.service.CloudJVMServiceManager
 import net.unix.node.template.BasicCloudTemplateManager
 import net.unix.node.terminal.CloudJLineTerminal
+import net.unix.node.terminal.unixStartTime
+import net.unix.node.terminal.unixUptime
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -81,6 +83,8 @@ fun main(args: Array<String>) {
 
 fun launchCloudInstance() {
     println("Starting ${CloudInstance::class.java.name}...")
+
+    unixUptime // Just init uptime for correct data.
 
     System.setProperty("file.encoding", UnixConfiguration.fileEncoding)
 

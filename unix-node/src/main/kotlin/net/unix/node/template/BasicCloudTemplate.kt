@@ -46,6 +46,7 @@ open class BasicCloudTemplate(
         val serialized = mutableMapOf<String, Any>()
 
         serialized["name"] = name
+        serialized["persistent"] = persistentDataContainer.serialize()
         serialized["files"] = files.map { it.serialize() }
         serialized["back-files"] = files.map { it.serialize() }
 
@@ -74,7 +75,7 @@ open class BasicCloudTemplate(
         fun deserialize(serialized: Map<String, Any>): BasicCloudTemplate {
             val name = serialized["name"].toString()
 
-            val persistent = CloudPersistentDataContainer.deserialize((serialized["files"] as Map<String, Any>))
+            val persistent = CloudPersistentDataContainer.deserialize((serialized["persistent"] as Map<String, Any>))
 
             val files = (serialized["files"] as List<Map<String, Any>>).map {
                 CloudFile.deserialize(it)

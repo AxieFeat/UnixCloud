@@ -27,6 +27,7 @@ import net.unix.node.group.GroupJVMWrapper
 import net.unix.node.group.rule.CloudRuleHandler
 import net.unix.node.logging.CloudLogger
 import net.unix.node.modification.extension.CloudExtensionManager
+import net.unix.node.node.ThisNode
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
@@ -57,8 +58,8 @@ class CloudInstance : KoinComponent, Startable {
     private val nodeManager: NodeManager by inject(named("default"))
 
     override fun start() {
-        terminal.start()
 
+        terminal.start()
 
         CloudStartEvent().callEvent()
 
@@ -101,25 +102,25 @@ class CloudInstance : KoinComponent, Startable {
     }
 
     private fun configureRMI(remoteService: RemoteService) {
-        remoteService.register(moduleManager)
-        remoteService.register(extensionManager)
+        remoteService.register(ModuleManager::class, moduleManager)
+        remoteService.register(ExtensionManager::class, extensionManager)
 
-        remoteService.register(locationSpace)
-        remoteService.register(cloudTemplateManager)
-        remoteService.register(cloudGroupManager)
-        remoteService.register(cloudServiceManager)
+        remoteService.register(LocationSpace::class, locationSpace)
+        remoteService.register(CloudTemplateManager::class, cloudTemplateManager)
+        remoteService.register(CloudGroupManager::class, cloudGroupManager)
+        remoteService.register(CloudServiceManager::class, cloudServiceManager)
 
-        remoteService.register(PersistentDataType.LONG, "LONG")
-        remoteService.register(PersistentDataType.BYTE_ARRAY, "BYTE_ARRAY")
-        remoteService.register(PersistentDataType.BYTE, "BYTE")
-        remoteService.register(PersistentDataType.DOUBLE, "DOUBLE")
-        remoteService.register(PersistentDataType.STRING, "STRING")
-        remoteService.register(PersistentDataType.FLOAT, "FLOAT")
-        remoteService.register(PersistentDataType.INTEGER, "INTEGER")
-        remoteService.register(PersistentDataType.INTEGER_ARRAY, "INTEGER_ARRAY")
-        remoteService.register(PersistentDataType.LONG_ARRAY, "LONG_ARRAY")
-        remoteService.register(PersistentDataType.SHORT, "SHORT")
-        remoteService.register(PersistentDataType.TAG_CONTAINER, "TAG_CONTAINER")
-        remoteService.register(PersistentDataType.TAG_CONTAINER_ARRAY, "TAG_CONTAINER_ARRAY")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.LONG, "LONG")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.BYTE_ARRAY, "BYTE_ARRAY")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.BYTE, "BYTE")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.DOUBLE, "DOUBLE")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.STRING, "STRING")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.FLOAT, "FLOAT")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.INTEGER, "INTEGER")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.INTEGER_ARRAY, "INTEGER_ARRAY")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.LONG_ARRAY, "LONG_ARRAY")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.SHORT, "SHORT")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.TAG_CONTAINER, "TAG_CONTAINER")
+        remoteService.register(PersistentDataType.PrimitivePersistentDataType::class, PersistentDataType.TAG_CONTAINER_ARRAY, "TAG_CONTAINER_ARRAY")
     }
 }

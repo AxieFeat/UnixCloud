@@ -25,6 +25,7 @@ object CloudNodeManager : NodeManager {
             client.connect(UnixConfiguration.node.host, 8181)
         } catch (e: IOException) {
             CloudLogger.severe("Can not connect to Center of nodes.")
+            cachedNodes.add(ThisNode)
             return
         }
 

@@ -42,9 +42,9 @@ open class CloudJVMGroup(
         if(name.contains(" ")) throw IllegalArgumentException("Name of group can not contain spaces!")
     }
 
-    private val cloudGroupManager: CloudGroupManager by inject()
-    private val cloudServiceManager: CloudServiceManager by inject()
-    private val locationSpace: LocationSpace by inject()
+    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
+    private val locationSpace: LocationSpace by inject(named("default"))
 
     override val clearName: String = name
 

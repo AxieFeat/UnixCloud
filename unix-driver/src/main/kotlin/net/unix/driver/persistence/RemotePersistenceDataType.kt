@@ -14,7 +14,7 @@ object RemotePersistenceDataType : KoinComponent {
 
     private val registry: Registry by inject(named("default"))
 
-    private const val KEY = "net.unix.api.persistence.PersistentDataType\$PrimitivePersistentDataType"
+    private val KEY = PersistentDataType.PrimitivePersistentDataType::class.simpleName
 
     val BYTE: PersistentDataType<Byte, Byte> =
         registry.lookup("$KEY-BYTE") as PersistentDataType<Byte, Byte>

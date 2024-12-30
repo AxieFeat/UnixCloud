@@ -52,12 +52,12 @@ object JVMServiceInstance {
         println("Service instance installing...")
 
         val registry = LocateRegistry.getRegistry("localhost", rmiPort)
-        val locationSpace = registry.lookup("net.unix.node.CloudLocationSpace") as LocationSpace
-        val cloudTemplateManager = registry.lookup("net.unix.node.template.BasicCloudTemplateManager") as CloudTemplateManager
-        val cloudGroupManager = registry.lookup("net.unix.node.group.CloudJVMGroupManager") as SaveableCloudGroupManager
-        val cloudServiceManager = registry.lookup("net.unix.node.service.CloudJVMServiceManager") as CloudServiceManager
-        val moduleManager = registry.lookup("net.unix.node.modification.module.CloudModuleManager") as ModuleManager
-        val extensionManager = registry.lookup("net.unix.node.modification.extension.CloudExtensionManager") as ExtensionManager
+        val locationSpace = registry.find<LocationSpace>()
+        val cloudTemplateManager = registry.find<CloudTemplateManager>()
+        val cloudGroupManager = registry.find<SaveableCloudGroupManager>()
+        val cloudServiceManager = registry.find<CloudServiceManager>()
+        val moduleManager = registry.find<ModuleManager>()
+        val extensionManager = registry.find<ExtensionManager>()
 
         startKoin {
             val module = module {
@@ -117,6 +117,10 @@ object JVMServiceInstance {
                 }
             }
         }
+    }
+
+    private inline fun <reified T> Registry.find(): T {
+        return this.lookup(T::class.simpleName) as T
     }
 
 }
