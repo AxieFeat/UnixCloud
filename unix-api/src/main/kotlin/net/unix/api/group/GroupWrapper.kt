@@ -4,7 +4,7 @@ import net.unix.api.pattern.Serializable
 import net.unix.api.pattern.Nameable
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.CloudService
-import net.unix.api.service.CloudServiceWrapper
+import net.unix.api.service.wrapper.CloudServiceWrapper
 import java.rmi.RemoteException
 
 /**

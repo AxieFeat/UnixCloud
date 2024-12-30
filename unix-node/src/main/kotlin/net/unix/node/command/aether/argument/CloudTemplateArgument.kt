@@ -10,6 +10,7 @@ import net.unix.api.template.CloudTemplateManager
 import net.unix.command.CommandArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletableFuture
 @Suppress("unused")
 class CloudTemplateArgument : CommandArgument<CloudTemplate>(), KoinComponent {
 
-    private val cloudTemplateManager: CloudTemplateManager by inject()
+    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
     private var notFoundMessage = "CloudTemplate not found"
 
     companion object {

@@ -9,6 +9,7 @@ import net.unix.node.bridge.JVMBridge
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.UUID
 
 @Suppress("unused")
@@ -18,7 +19,7 @@ class MemoryUsageRule(
 
 
     private var lastUsage: Long = 0
-    private val cloudServiceManager: CloudServiceManager by inject()
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
 
     override fun get(): Map<UUID, Pair<Long?, Long?>> {
         return group.services.associateBy { it.uuid }.mapValues {

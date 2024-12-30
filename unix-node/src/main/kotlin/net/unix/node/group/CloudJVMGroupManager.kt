@@ -5,13 +5,13 @@ import net.unix.api.group.*
 import net.unix.api.group.rule.CloudGroupRule
 import net.unix.api.template.CloudTemplate
 import net.unix.node.CloudExtension.readJson
-import net.unix.node.database.DatabaseConfiguration
 import net.unix.node.event.callEvent
 import net.unix.node.event.cloud.group.GroupCreateEvent
 import net.unix.node.group.rule.CloudRuleHandler
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 import java.rmi.RemoteException
 import java.util.*
@@ -21,18 +21,13 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
 
     private fun readResolve(): Any = CloudJVMGroupManager
 
-    private val locationSpace: LocationSpace by inject()
+    private val locationSpace: LocationSpace by inject(named("default"))
 
     val cachedGroups = mutableMapOf<UUID, CloudGroup>()
 
     @get:Throws(RemoteException::class)
     override val groups: Set<CloudGroup>
         get() = cachedGroups.values.toSet()
-
-    init {
-        GroupJVMWrapper.register()
-        CloudRuleHandler.start()
-    }
 
     @Throws(RemoteException::class)
     override fun register(group: CloudGroup) {
@@ -99,10 +94,8 @@ object CloudJVMGroupManager : SaveableCloudGroupManager, KoinComponent {
 
     @Throws(RemoteException::class)
     override fun loadAllGroups() {
-        if(!DatabaseConfiguration.useDatabase) {
-            locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
-                loadGroup(it)
-            }
+        locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
+            loadGroup(it)
         }
 
         CloudLogger.info("Loaded ${groups.size} groups:")

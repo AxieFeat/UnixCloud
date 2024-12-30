@@ -6,6 +6,7 @@ import net.unix.api.pattern.Nameable
 import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.exception.CloudServiceModificationException
+import net.unix.api.service.wrapper.CloudServiceWrapper
 import java.io.File
 import java.rmi.RemoteException
 import java.util.*
@@ -16,13 +17,13 @@ import java.util.*
  * The service is some kind of executable program that is controlled by UnixCloud.
  * You can run almost anything using [CloudServiceWrapper].
  */
-interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccessible {
+interface CloudService : CloudServiceInfo, PersistentDataHolder, Nameable, Deletable, RemoteAccessible {
 
     /**
      * Unique service id.
      */
     @get:Throws(RemoteException::class)
-    val uuid: UUID
+    override val uuid: UUID
 
     /**
      * Service name. Can be repeated by other services.
@@ -34,7 +35,7 @@ interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccess
      * Name of service without any formatting.
      */
     @get:Throws(RemoteException::class)
-    val clearName: String
+    override val clearName: String
 
     /**
      * Service group.
@@ -42,13 +43,13 @@ interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccess
      * @throws CloudServiceModificationException If [status] is [CloudServiceStatus.DELETED].
      */
     @get:Throws(CloudServiceModificationException::class, RemoteException::class)
-    val group: CloudGroup
+    override val group: CloudGroup
 
     /**
      * Time of creation this service in milliseconds.
      */
     @get:Throws(RemoteException::class)
-    val created: Long
+    override val created: Long
 
     /**
      * Service folder.
@@ -56,7 +57,7 @@ interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccess
      * This is where all the runtime files of the service are stored.
      */
     @get:Throws(RemoteException::class)
-    val dataFolder: File
+    override val dataFolder: File
 
     /**
      * Service status.
@@ -65,7 +66,7 @@ interface CloudService : PersistentDataHolder, Nameable, Deletable, RemoteAccess
      */
     @get:Throws(RemoteException::class)
     @set:Throws(RemoteException::class)
-    var status: CloudServiceStatus
+    override var status: CloudServiceStatus
 
     /**
      * Uptime of service in milliseconds.

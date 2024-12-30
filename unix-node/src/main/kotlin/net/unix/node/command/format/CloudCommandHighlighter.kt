@@ -17,6 +17,7 @@ import org.jline.utils.AttributedStringBuilder
 import org.jline.utils.AttributedStyle
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.regex.Pattern
 import kotlin.math.min
 
@@ -25,7 +26,7 @@ open class CloudCommandHighlighter(
     private val sender: CommandSender
 ) : Highlighter, KoinComponent {
 
-    private val dispatcher: CommandDispatcher by inject()
+    private val dispatcher: CommandDispatcher by inject(named("default"))
 
     override fun highlight(reader: LineReader, buffer: String): AttributedString {
 

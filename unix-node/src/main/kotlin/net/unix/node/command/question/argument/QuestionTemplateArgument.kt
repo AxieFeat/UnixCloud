@@ -10,11 +10,12 @@ import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.concurrent.CompletableFuture
 
 class QuestionTemplateArgument : QuestionArgument<CloudTemplate>, KoinComponent {
 
-    private val cloudTemplateManager: CloudTemplateManager by inject()
+    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
 
     override fun parse(reader: StringReader): CloudTemplate {
         val template = cloudTemplateManager[reader.readString()]

@@ -11,23 +11,25 @@ import net.unix.node.event.cloud.template.TemplateCreateEvent
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 
 object BasicCloudTemplateManager : SaveableCloudTemplateManager, KoinComponent {
 
     private fun readResolve(): Any = BasicCloudTemplateManager
 
-    private val locationSpace: LocationSpace by inject()
+    private val locationSpace: LocationSpace by inject(named("default"))
 
     private val cachedTemplates = mutableMapOf<String, CloudTemplate>()
 
     override val templates: Set<CloudTemplate>
         get() = cachedTemplates.values.toSet()
 
-    override fun newInstance(name: String, files: MutableList<CloudFile>): CloudTemplate {
+    override fun newInstance(name: String, files: MutableList<CloudFile>, backFiles: MutableList<CloudFile>): CloudTemplate {
         val template = BasicCloudTemplate(
             name,
-            files
+            files = files,
+            backFiles = backFiles
         )
 
         TemplateCreateEvent(template).callEvent()

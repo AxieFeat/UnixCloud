@@ -5,8 +5,8 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-group = "net.unix.cloud"
-version = "1.0"
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()

@@ -7,14 +7,15 @@ import net.unix.api.i18n.SaveableLocaleManager
 import net.unix.node.CloudExtension.deserializeComponent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
 @Suppress("UNCHECKED_CAST")
 class CloudSaveableLocaleManager : SaveableLocaleManager, KoinComponent {
 
-    private val locationSpace: LocationSpace by inject()
-    private val i18nService: I18nService by inject()
+    private val locationSpace: LocationSpace by inject(named("default"))
+    private val i18nService: I18nService by inject(named("default"))
 
     override fun loadAll() {
         locationSpace.language.listFiles()?.filter {

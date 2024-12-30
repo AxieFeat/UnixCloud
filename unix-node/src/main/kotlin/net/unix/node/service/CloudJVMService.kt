@@ -5,6 +5,7 @@ import net.unix.api.group.CloudGroup
 import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
+import net.unix.api.service.wrapper.CloudServiceWrapper
 import net.unix.node.CloudExtension.toJson
 import net.unix.node.CloudExtension.uniqueUUID
 import net.unix.node.event.callEvent
@@ -14,6 +15,7 @@ import net.unix.node.mainDirectory
 import net.unix.node.persistence.CloudPersistentDataContainer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 import java.util.*
 import kotlin.jvm.Throws
@@ -26,16 +28,14 @@ open class CloudJVMService(
     override var static: Boolean = false
 ) : StaticCloudService, KoinComponent {
 
-    private val cloudServiceManager: CloudServiceManager by inject()
-    private val locationSpace: LocationSpace by inject()
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
+    private val locationSpace: LocationSpace by inject(named("default"))
 
     override val clearName: String = name
 
     override val name: String
         get() {
-            val any = cloudServiceManager[clearName].any { it != this }
-
-            if (any) {
+            if (cloudServiceManager.duplicates(clearName)) {
                 return "$clearName ($uuid)"
             }
 
@@ -82,11 +82,7 @@ open class CloudJVMService(
 
         if (!infoFile.exists()) infoFile.createNewFile()
 
-        CloudServiceInfo(
-            this.name,
-            this.uuid
-        ).serialize().toJson(infoFile)
-
+        this.serialize().toJson(infoFile)
     }
 
     @Throws(CloudServiceModificationException::class, IllegalArgumentException::class)
@@ -136,6 +132,20 @@ open class CloudJVMService(
         }
 
         dataFolder.deleteRecursively()
+    }
+
+    override fun serialize(): Map<String, Any> {
+        val serialized = mutableMapOf<String, Any>()
+
+        serialized["uuid"] = uuid.toString()
+        serialized["clearName"] = clearName
+        serialized["group"] = group.uuid
+        serialized["created"] = created
+        serialized["data-folder"] = dataFolder.path
+        serialized["status"] = status.name
+        serialized["static"] = static
+
+        return serialized
     }
 
     companion object {

@@ -13,7 +13,6 @@ import net.unix.node.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
 import net.unix.node.logging.CloudLogger
 import java.io.File
-import java.security.MessageDigest
 import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -28,8 +27,6 @@ object CloudExtension {
         .setPrettyPrinting()
         .create()
 
-    private val sha256 = MessageDigest.getInstance("SHA-256")
-    private val md5 = MessageDigest.getInstance("MD5")
     private val miniMessage = MiniMessage.builder().build()
     private val ansiSerializer = ANSIComponentSerializer.builder().build()
     private val legacySerializer = LegacyComponentSerializer.builder().character('&').hexColors().build()

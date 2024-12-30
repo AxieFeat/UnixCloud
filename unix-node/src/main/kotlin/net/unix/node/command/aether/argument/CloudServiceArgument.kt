@@ -10,6 +10,7 @@ import net.unix.api.service.CloudServiceManager
 import net.unix.command.CommandArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture
 @Suppress("unused")
 class CloudServiceArgument : CommandArgument<CloudService>(), KoinComponent {
 
-    private val cloudServiceManager: CloudServiceManager by inject()
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
     private var notFoundMessage = "CloudService not found"
 
     companion object {

@@ -6,12 +6,13 @@ import net.unix.api.persistence.PersistentDataContainer
 import net.unix.api.persistence.PersistentDataType
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.rmi.registry.Registry
 
 @Suppress("UNCHECKED_CAST")
 object RemotePersistenceDataType : KoinComponent {
 
-    private val registry: Registry by inject()
+    private val registry: Registry by inject(named("default"))
 
     private const val KEY = "net.unix.api.persistence.PersistentDataType\$PrimitivePersistentDataType"
 

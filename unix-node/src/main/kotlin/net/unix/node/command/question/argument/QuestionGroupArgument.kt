@@ -10,13 +10,14 @@ import net.unix.command.question.exception.QuestionParseException
 import net.unix.command.sender.CommandSender
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Suppress("unused")
 class QuestionGroupArgument : QuestionArgument<CloudGroup>, KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject()
+    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
 
     override fun parse(reader: StringReader): CloudGroup {
         val rawName = reader.readString()

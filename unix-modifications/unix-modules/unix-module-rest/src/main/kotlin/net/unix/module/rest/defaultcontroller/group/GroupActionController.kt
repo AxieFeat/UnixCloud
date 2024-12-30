@@ -9,13 +9,14 @@ import net.unix.module.rest.annotation.RestController
 import net.unix.module.rest.controller.Controller
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 
 @Suppress("unused")
 @RestController("cloud/action/group/")
 class GroupActionController : Controller, KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject()
+    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
 
     @RequestMapping(RequestType.POST, "uuid/:uuid/startService", "web.cloud.action.group.startservice")
     fun handleStartNewService(@RequestPathParam("uuid") uuid: String): CloudService {

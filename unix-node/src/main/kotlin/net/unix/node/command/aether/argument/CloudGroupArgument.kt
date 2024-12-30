@@ -10,6 +10,7 @@ import net.unix.api.group.CloudGroupManager
 import net.unix.command.CommandArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture
 @Suppress("unused")
 class CloudGroupArgument : CommandArgument<CloudGroup>(), KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject()
+    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
     private var notFoundMessage = "CloudGroup not found"
 
     companion object {

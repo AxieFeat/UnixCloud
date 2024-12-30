@@ -8,13 +8,14 @@ import net.unix.module.rest.controller.Controller
 import net.unix.node.CloudExtension.uniqueUUID
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 
 @Suppress("unused")
 @RestController("cloud/group/")
 class GroupController : Controller, KoinComponent {
 
-    private val cloudGroupManager: CloudGroupManager by inject()
+    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
 
     @RequestMapping(RequestType.GET, "", "web.cloud.group.get.all")
     fun handleGetAllGroups(): Set<CloudGroup> {

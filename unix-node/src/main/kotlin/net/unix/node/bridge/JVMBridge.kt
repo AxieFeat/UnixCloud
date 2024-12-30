@@ -10,13 +10,14 @@ import net.unix.node.NamespacedKey
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.UUID
 
 object JVMBridge : CloudBridge, KoinComponent {
 
     private fun readResolve(): Any = JVMBridge
 
-    private val serviceManager: CloudServiceManager by inject()
+    private val serviceManager: CloudServiceManager by inject(named("default"))
 
     private val cachedClients = mutableMapOf<Int, UUID>()
     override val clients: Map<Int, UUID>

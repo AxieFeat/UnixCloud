@@ -7,7 +7,7 @@ import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.CloudService
 import net.unix.api.template.CloudTemplate
-import net.unix.api.service.CloudServiceWrapper
+import net.unix.api.service.wrapper.CloudServiceWrapper
 import org.jetbrains.annotations.Range
 import java.rmi.RemoteException
 import java.util.UUID
@@ -17,13 +17,13 @@ import java.util.UUID
  *
  * The group defines the general behavior for [CloudService]'s, their settings, files, and so on.
  */
-interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAccessible {
+interface CloudGroup : CloudGroupInfo, PersistentDataHolder, Serializable, Nameable, RemoteAccessible {
 
     /**
      * The unique id of [CloudGroup].
      */
     @get:Throws(RemoteException::class)
-    val uuid: UUID
+    override val uuid: UUID
 
     /**
      * Cloud group name. Can be repeated by other groups.
@@ -35,7 +35,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
      * Name of group without any formatting. Can not contain spaces.
      */
     @get:Throws(RemoteException::class)
-    val clearName: String
+    override val clearName: String
 
     /**
      * The wrapper of group.
@@ -46,7 +46,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
      * If null - type is not set.
      */
     @get:Throws(RemoteException::class)
-    val groupWrapper: GroupWrapper?
+    override val groupWrapper: GroupWrapper?
 
     /**
      * [CloudTemplate]'s of group.
@@ -54,7 +54,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
      * If you change list elements, that will be applied only for new [CloudService]'s.
      */
     @get:Throws(RemoteException::class)
-    val templates: MutableList<CloudTemplate>
+    override val templates: MutableList<CloudTemplate>
 
     /**
      * Set of services of this group.
@@ -72,7 +72,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
      * Path to executable file in prepared service. It will be started via [CloudServiceWrapper].
      */
     @get:Throws(RemoteException::class)
-    val executableFile: String
+    override val executableFile: String
 
     /**
      * Max [CloudService]'s count of this group.
@@ -81,7 +81,7 @@ interface CloudGroup : PersistentDataHolder, Serializable, Nameable, RemoteAcces
      */
     @set:Throws(CloudGroupLimitException::class, RemoteException::class)
     @get:Throws(RemoteException::class)
-    var serviceLimit: Int
+    override var serviceLimit: Int
 
     /**
      * Create some [CloudService]'s count.

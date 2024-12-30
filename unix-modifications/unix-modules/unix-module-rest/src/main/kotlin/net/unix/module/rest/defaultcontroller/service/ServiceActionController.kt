@@ -2,19 +2,20 @@ package net.unix.module.rest.defaultcontroller.service
 
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.ConsoleCloudServiceWrapper
+import net.unix.api.service.wrapper.ConsoleCloudServiceWrapper
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
 import net.unix.module.rest.defaultcontroller.dto.CommandDto
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 
 @Suppress("unused")
 @RestController("cloud/action/service/")
 class ServiceActionController : Controller, KoinComponent {
 
-    private val cloudServiceManager: CloudServiceManager by inject()
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
 
     @RequestMapping(RequestType.POST, "name/:uuid/kill/:delete", "web.cloud.action.service.kill")
     fun handleServiceKill(@RequestPathParam("uuid") uuid: String, @RequestPathParam("delete") delete: Boolean): CloudService {

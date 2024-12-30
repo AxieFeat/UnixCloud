@@ -1,0 +1,6 @@
+{
+  "name": "unix-database",
+  "version": "1.0",
+  "main": "net.unix.extension.database.DatabaseExtension",
+  "authors": ["AxieFeat"]
+}

@@ -21,14 +21,16 @@ interface CloudTemplateManager : RemoteAccessible {
      * Create new instance of [CloudTemplate]. It will be registered via [register].
      *
      * @param name Name of template.
-     * @param files Files of template,
+     * @param files Files of template.
+     * @param backFiles Back files of template.
      *
      * @return New instance of [CloudTemplate].
      */
     @Throws(RemoteException::class)
     fun newInstance(
         name: String,
-        files: MutableList<CloudFile>
+        files: MutableList<CloudFile>,
+        backFiles: MutableList<CloudFile>
     ): CloudTemplate
 
     /**

@@ -2,18 +2,19 @@ package net.unix.module.rest.defaultcontroller.service
 
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceManager
-import net.unix.api.service.ConsoleCloudServiceWrapper
+import net.unix.api.service.wrapper.ConsoleCloudServiceWrapper
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 
 @Suppress("unused")
 @RestController("cloud/service/")
 class ServiceController : Controller, KoinComponent {
 
-    private val cloudServiceManager: CloudServiceManager by inject()
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
 
     @RequestMapping(RequestType.GET, "", "web.cloud.service.get.all")
     fun handleGetAllServices(): Set<CloudService> {

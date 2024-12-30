@@ -10,6 +10,7 @@ import net.unix.node.command.aether.SyntaxExceptionBuilder
 import net.unix.command.CommandArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletableFuture
 @Suppress("unused")
 class CloudModuleArgument : CommandArgument<Module>(), KoinComponent {
 
-    private val moduleManager: ModuleManager by inject()
+    private val moduleManager: ModuleManager by inject(named("default"))
     private var notFoundMessage = "Module not found"
 
     companion object {

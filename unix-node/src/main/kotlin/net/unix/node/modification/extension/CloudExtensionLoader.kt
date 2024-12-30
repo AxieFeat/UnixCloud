@@ -11,6 +11,7 @@ import java.net.URLClassLoader
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
+@Suppress("DEPRECATION")
 class CloudExtensionLoader(
     override val file: File
 ) : ExtensionClassLoader, URLClassLoader(arrayOf(file.toURI().toURL())) {
@@ -44,7 +45,8 @@ class CloudExtensionLoader(
     private fun CloudExtension.init(info: ExtensionInfo) {
         this.loader = this@CloudExtensionLoader
         this.info = info
-        this.folder = File(CloudExtensionManager.folder, "")
+        this.folder = File(CloudExtensionManager.folder, info.name)
+        if(!this.folder.exists()) this.folder.mkdirs()
         this.executable = file
 
         cachedExtension = this

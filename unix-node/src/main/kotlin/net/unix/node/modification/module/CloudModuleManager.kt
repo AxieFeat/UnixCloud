@@ -13,13 +13,14 @@ import net.unix.node.event.modification.module.ModuleUnloadEvent
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 
 object CloudModuleManager : ModuleManager, KoinComponent {
 
     private fun readResolve(): Any = CloudModuleManager
 
-    private val locationSpace: LocationSpace by inject()
+    private val locationSpace: LocationSpace by inject(named("default"))
 
     private val cachedModules = mutableMapOf<String, Module>()
 

@@ -3,8 +3,8 @@ CREATE TABLE if not exists `templates` (
   `node` varchar(255) NOT NULL,
   `name` varchar(4096) NOT NULL,
   `persistent` varchar(4096) NOT NULL DEFAULT '{}',
-  `files` varchar(4096) NOT NULL DEFAULT '{}',
-  `back_files` varchar(4096) NOT NULL DEFAULT '{}',
+  `files` varchar(4096) NOT NULL DEFAULT '[]',
+  `back_files` varchar(4096) NOT NULL DEFAULT '[]',
   PRIMARY KEY (`node`, `name`));
 
 CREATE TABLE if not exists `groups` (
@@ -16,7 +16,7 @@ CREATE TABLE if not exists `groups` (
   `persistent` varchar(4096) NOT NULL DEFAULT '{}',
   `properties` varchar(4096) NOT NULL,
   `group_wrapper` varchar(4096),
-  `templates` varchar(4096) NOT NULL DEFAULT '{}',
+  `templates` varchar(4096) NOT NULL DEFAULT '[]',
   PRIMARY KEY (`node`, `uuid`));
 
 CREATE TABLE if not exists `services` (

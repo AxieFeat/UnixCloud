@@ -12,6 +12,7 @@ import net.unix.node.CloudExtension.strip
 import net.unix.node.configuration.UnixConfiguration
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -25,8 +26,8 @@ import java.util.logging.SimpleFormatter
 
 object CloudLogger : Logger("UnixCloudLogger", null), KoinComponent {
 
-    private val locationSpace: LocationSpace by inject()
-    private val terminal: Terminal by inject()
+    private val locationSpace: LocationSpace by inject(named("default"))
+    private val terminal: Terminal by inject(named("default"))
 
     var debug = false
 

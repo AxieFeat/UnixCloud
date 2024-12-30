@@ -10,16 +10,18 @@ import net.unix.node.CloudExtension.deserializeJson
 import net.unix.node.event.CloudEventManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 import java.net.URLClassLoader
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
+@Suppress("DEPRECATION")
 class CloudModuleLoader(
     override val file: File
 ) : ModuleClassLoader, URLClassLoader(arrayOf(file.toURI().toURL())), KoinComponent {
 
-    private val cloudModuleManager: ModuleManager by inject()
+    private val cloudModuleManager: ModuleManager by inject(named("default"))
 
     private val entries = mutableListOf<JarEntry>().also { list ->
         JarFile(file).also {
@@ -50,7 +52,8 @@ class CloudModuleLoader(
     private fun CloudModule.init(info: ModuleInfo) {
         this.loader = this@CloudModuleLoader
         this.info = info
-        this.folder = File(CloudModuleManager.folder, "")
+        this.folder = File(CloudModuleManager.folder, info.name)
+        if(!this.folder.exists()) this.folder.mkdirs()
         this.executable = file
 
         cachedModule = this

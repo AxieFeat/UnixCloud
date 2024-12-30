@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.unix.api.pattern.Closeable
 import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataHolder
-import net.unix.api.service.ConsoleCloudServiceWrapper
+import net.unix.api.service.wrapper.ConsoleCloudServiceWrapper
 import net.unix.command.sender.CommandSender
 
 /**

@@ -22,6 +22,7 @@ import net.unix.node.persistence.CloudPersistentDataContainer
 import net.unix.node.service.CloudJVMService
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 import java.util.*
 
@@ -49,9 +50,7 @@ open class CloudJVMGroup(
 
     override val name: String
         get() {
-            val any = cloudGroupManager[clearName].any { it != this }
-
-            if (any) {
+            if (cloudGroupManager.duplicates(clearName)) {
                 return "$clearName ($uuid)"
             }
 
@@ -160,7 +159,7 @@ open class CloudJVMGroup(
 
     companion object : KoinComponent {
 
-        private val cloudTemplateManager: CloudTemplateManager by inject()
+        private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
 
         @JvmStatic
         private val serialVersionUID = 9068729559091433172L

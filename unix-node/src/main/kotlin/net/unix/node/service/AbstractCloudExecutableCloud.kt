@@ -2,7 +2,7 @@ package net.unix.node.service
 
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceStatus
-import net.unix.api.service.CloudServiceWrapper
+import net.unix.api.service.wrapper.CloudServiceWrapper
 import java.io.File
 
 abstract class AbstractCloudExecutableCloud(

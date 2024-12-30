@@ -2,7 +2,7 @@ package net.unix.node.service
 
 import net.unix.api.service.CloudService
 import net.unix.api.service.CloudServiceStatus
-import net.unix.api.service.ConsoleCloudServiceWrapper
+import net.unix.api.service.wrapper.ConsoleCloudServiceWrapper
 import net.unix.node.group.CloudJVMGroup
 import net.unix.node.logging.CloudLogger
 import net.unix.scheduler.SchedulerType

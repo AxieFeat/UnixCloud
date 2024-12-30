@@ -13,6 +13,7 @@ import net.unix.command.CommandExecutor
 import net.unix.command.sender.CommandSender
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.function.Predicate
 
 /**
@@ -40,7 +41,7 @@ class AetherCommandBuilder(
     }
 
     companion object : KoinComponent {
-        private val unixDispatcher: CommandDispatcher by inject()
+        private val unixDispatcher: CommandDispatcher by inject(named("default"))
 
         val dispatcher = unixDispatcher.dispatcher
     }

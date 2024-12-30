@@ -15,6 +15,7 @@ import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 
 val unixStartTime = System.currentTimeMillis()
 
@@ -25,7 +26,7 @@ class JLineTerminalRunner(
     val terminal: CloudJLineTerminal
 ) : Thread(), KoinComponent {
 
-    private val dispatcher: CommandDispatcher by inject()
+    private val dispatcher: CommandDispatcher by inject(named("default"))
 
     private var strippedPrompt = terminal.currentPrompt.strip()
     private var ansiPrompt = terminal.currentPrompt.serializeAnsi()

@@ -7,6 +7,7 @@ import net.unix.command.question.QuestionAnswer
 import net.unix.command.question.QuestionArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.concurrent.Callable
 
 @Suppress("UNCHECKED_CAST")
@@ -14,7 +15,8 @@ class NextQuestionBuilder<T>(
     override val previous: Question<*>,
     override val argument: QuestionArgument<T>
 ) : NextQuestion<T>, KoinComponent {
-    private val terminal: Terminal by inject()
+
+    private val terminal: Terminal by inject(named("default"))
 
     private lateinit var create: Callable<Unit>
     private lateinit var questionAnswer: QuestionAnswer<T>

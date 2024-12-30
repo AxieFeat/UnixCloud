@@ -15,15 +15,16 @@ import org.jline.reader.LineReader
 import org.jline.reader.ParsedLine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 
 open class CloudCommandCompleter(
     private val sender: CommandSender
-) : Completer {
+) : Completer, KoinComponent {
 
-    private val terminal: Terminal by inject()
-    private val dispatcher: net.unix.command.CommandDispatcher by inject()
+    private val terminal: Terminal by inject(named("default"))
+    private val dispatcher: net.unix.command.CommandDispatcher by inject(named("default"))
 
-    companion object : KoinComponent {
+    companion object {
         fun prepareStringReader(line: String): StringReader {
             val stringReader = StringReader(line)
 

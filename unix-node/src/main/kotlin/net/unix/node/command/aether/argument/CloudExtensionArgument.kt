@@ -10,6 +10,7 @@ import net.unix.node.command.aether.SyntaxExceptionBuilder
 import net.unix.command.CommandArgument
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture
 @Suppress("unused")
 class CloudExtensionArgument : CommandArgument<Extension>(), KoinComponent {
 
-    private val extensionsManager: ExtensionManager by inject()
+    private val extensionsManager: ExtensionManager by inject(named("default"))
     private var notFoundMessage = "Extensions not found"
 
     companion object {

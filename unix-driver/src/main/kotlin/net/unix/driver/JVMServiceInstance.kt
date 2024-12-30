@@ -15,6 +15,7 @@ import net.unix.api.service.CloudServiceManager
 import net.unix.api.template.CloudTemplateManager
 import net.unix.driver.persistence.RemotePersistenceDataType
 import net.unix.node.CloudExtension.readJson
+import net.unix.node.service.CloudJVMServiceInfo
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
 import org.koin.core.context.startKoin
@@ -42,7 +43,7 @@ object JVMServiceInstance {
 
         if(!file.exists()) throw IllegalArgumentException("Can not find info file in service!")
 
-        return@run CloudServiceInfo.deserialize(file.readJson())
+        return@run CloudJVMServiceInfo.deserialize(file.readJson())
     }
 
     lateinit var service: CloudService

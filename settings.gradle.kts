@@ -20,3 +20,5 @@ include("unix-launcher")
 include("unix-manager")
 include("unix-modifications:unix-modules:unix-module-rest")
 findProject(":unix-modifications:unix-modules:unix-module-rest")?.name = "unix-module-rest"
+include("unix-modifications:unix-extensions:unix-extension-database")
+findProject(":unix-modifications:unix-extensions:unix-extension-database")?.name = "unix-extension-database"

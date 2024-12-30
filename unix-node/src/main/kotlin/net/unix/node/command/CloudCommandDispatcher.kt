@@ -3,10 +3,14 @@
 package net.unix.node.command
 
 import com.mojang.brigadier.ParseResults
+import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException
+import com.mojang.brigadier.suggestion.Suggestions
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.unix.api.group.CloudGroup
 import net.unix.api.group.CloudGroupManager
 import net.unix.api.group.GroupWrapper
@@ -21,15 +25,18 @@ import net.unix.api.node.NodeManager
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.*
 import net.unix.api.service.exception.CloudServiceModificationException
+import net.unix.api.service.wrapper.ConsoleCloudServiceWrapper
 import net.unix.api.template.CloudTemplate
 import net.unix.api.template.CloudTemplateManager
 import net.unix.api.terminal.Terminal
+import net.unix.command.CommandArgument
 import net.unix.command.CommandDispatcher
 import net.unix.command.sender.CommandSender
 import net.unix.node.CloudExtension.or
 import net.unix.node.CloudExtension.rem
 import net.unix.node.CloudExtension.uniqueUUID
 import net.unix.node.bridge.JVMBridge
+import net.unix.node.command.aether.SyntaxExceptionBuilder
 import net.unix.node.command.aether.argument.*
 import net.unix.node.command.aether.command
 import net.unix.node.command.aether.get
@@ -42,8 +49,10 @@ import net.unix.node.logging.CloudLogger
 import net.unix.scheduler.impl.scheduler
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.concurrent.CompletableFuture
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
@@ -52,13 +61,13 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
     override val dispatcher: com.mojang.brigadier.CommandDispatcher<CommandSender> =
         com.mojang.brigadier.CommandDispatcher<CommandSender>()
 
-    private val extensionManager: ExtensionManager by inject()
-    private val moduleManager: ModuleManager by inject()
-    private val terminal: Terminal by inject()
-    private val cloudServiceManager: CloudServiceManager by inject()
-    private val cloudGroupManager: CloudGroupManager by inject()
-    private val cloudTemplateManager: CloudTemplateManager by inject()
-    private val nodeManager: NodeManager by inject()
+    private val extensionManager: ExtensionManager by inject(named("default"))
+    private val moduleManager: ModuleManager by inject(named("default"))
+    private val terminal: Terminal by inject(named("default"))
+    private val cloudServiceManager: CloudServiceManager by inject(named("default"))
+    private val cloudGroupManager: CloudGroupManager by inject(named("default"))
+    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
+    private val nodeManager: NodeManager by inject(named("default"))
 
     @Throws(CommandSyntaxException::class)
     override fun dispatchCommand(sender: CommandSender, command: String): Int {
@@ -408,6 +417,7 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
 
                         cloudTemplateManager.newInstance(
                             name,
+                            mutableListOf(),
                             mutableListOf()
                         )
                     }

@@ -11,17 +11,19 @@ import net.unix.node.event.cloud.template.TemplateDeleteEvent
 import net.unix.node.persistence.CloudPersistentDataContainer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 import java.io.File
 
 @Suppress("UNCHECKED_CAST")
 open class BasicCloudTemplate(
     override var name: String,
+    override val persistentDataContainer: PersistentDataContainer = CloudPersistentDataContainer(),
     override val files: MutableList<CloudFile> = mutableListOf(),
     override val backFiles: MutableList<CloudFile> = mutableListOf()
 ) : SaveableCloudTemplate, KoinComponent {
 
-    private val locationSpace: LocationSpace by inject()
-    private val cloudTemplateManager: CloudTemplateManager by inject()
+    private val locationSpace: LocationSpace by inject(named("default"))
+    private val cloudTemplateManager: CloudTemplateManager by inject(named("default"))
 
     override val folder: File = run {
         val file = File(locationSpace.template, name)
@@ -30,8 +32,6 @@ open class BasicCloudTemplate(
 
         return@run file
     }
-
-    override val persistentDataContainer: PersistentDataContainer = CloudPersistentDataContainer()
 
     /**
      * Save template properties to file in JSON format.
@@ -74,6 +74,8 @@ open class BasicCloudTemplate(
         fun deserialize(serialized: Map<String, Any>): BasicCloudTemplate {
             val name = serialized["name"].toString()
 
+            val persistent = CloudPersistentDataContainer.deserialize((serialized["files"] as Map<String, Any>))
+
             val files = (serialized["files"] as List<Map<String, Any>>).map {
                 CloudFile.deserialize(it)
             }.toMutableList()
@@ -82,7 +84,7 @@ open class BasicCloudTemplate(
                 CloudFile.deserialize(it)
             }.toMutableList()
 
-            return BasicCloudTemplate(name, files, backFiles)
+            return BasicCloudTemplate(name, persistent, files, backFiles)
         }
     }
 
