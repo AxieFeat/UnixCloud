@@ -8,11 +8,12 @@ dependencies {
     implementation(project(":unix-event-system"))
     implementation(project(":unix-command-api"))
 
-    implementation("org.fusesource.jansi:jansi:2.4.1")
-
     implementation("org.yaml:snakeyaml:2.2")
 
+    implementation("org.fusesource.jansi:jansi:2.4.1")
     implementation("org.jline:jline:3.26.1")
+
+    implementation("com.mojang:brigadier:1.0.18")
 
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
@@ -20,6 +21,10 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-ansi:4.17.0")
 
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.guava:guava:33.2.1-jre")
+
+    implementation("kryonet:kryonet:2.21")
+    implementation("com.esotericsoftware:kryo:5.6.0")
 
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("org.slf4j:slf4j-simple:1.8.0-beta4")

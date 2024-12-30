@@ -12,6 +12,8 @@ dependencies {
     implementation(project(":unix-command-api"))
     implementation(project(":unix-node"))
     implementation(project(":unix-manager"))
+
+    implementation("net.kyori:adventure-api:4.17.0")
 }
 
 tasks.withType<ShadowJar> {
