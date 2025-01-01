@@ -9,6 +9,8 @@ import net.unix.node.event.cloud.template.TemplateCreateEvent
 
 object CloudTemplateFactory : TemplateFactory {
 
+    private fun readResolve(): Any = CloudTemplateFactory
+
     override fun create(
         name: String,
         persistent: PersistentDataContainer,

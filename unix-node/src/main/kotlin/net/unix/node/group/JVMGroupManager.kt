@@ -8,7 +8,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.io.File
-import java.rmi.RemoteException
 import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -20,13 +19,11 @@ object JVMGroupManager : SaveableGroupManager, KoinComponent {
 
     val cachedGroups = mutableMapOf<UUID, Group>()
 
-    @get:Throws(RemoteException::class)
     override val groups: Set<Group>
         get() = cachedGroups.values.toSet()
 
     override var factory: GroupFactory = JVMGroupFactory
 
-    @Throws(RemoteException::class)
     override fun register(value: Group) {
         cachedGroups[value.uuid] = value
 
@@ -39,7 +36,6 @@ object JVMGroupManager : SaveableGroupManager, KoinComponent {
         }
     }
 
-    @Throws(RemoteException::class)
     override fun unregister(value: Group) {
         cachedGroups.remove(value.uuid)
 
@@ -50,7 +46,6 @@ object JVMGroupManager : SaveableGroupManager, KoinComponent {
         }
     }
 
-    @Throws(RemoteException::class)
     override fun loadAllGroups() {
         locationSpace.group.listFiles()?.filter { it.name.endsWith(".json") }?.forEach {
             loadGroup(it)
@@ -62,13 +57,10 @@ object JVMGroupManager : SaveableGroupManager, KoinComponent {
         }
     }
 
-    @Throws(RemoteException::class)
     override fun get(name: String): List<Group> = groups.filter { it.clearName == name }
 
-    @Throws(RemoteException::class)
     override fun get(uuid: UUID): Group? = cachedGroups[uuid]
 
-    @Throws(RemoteException::class)
     override fun loadGroup(file: File): SaveableGroup {
         val group = JVMGroup.deserialize(file.readJson<Map<String, Any>>())
 
@@ -79,6 +71,5 @@ object JVMGroupManager : SaveableGroupManager, KoinComponent {
         return group
     }
 
-    @Throws(RemoteException::class)
     override fun delete(group: SaveableGroup) = group.delete()
 }

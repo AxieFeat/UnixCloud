@@ -1,11 +1,14 @@
 package net.unix.api.template
 
 import net.unix.api.persistence.PersistentDataContainer
+import net.unix.api.remote.RemoteAccessible
+import java.rmi.RemoteException
+import kotlin.jvm.Throws
 
 /**
  * This interface represents a simple factory of [Template]'s.
  */
-interface TemplateFactory {
+interface TemplateFactory : RemoteAccessible {
 
     /**
      * Create new instance of [Template].
@@ -17,6 +20,7 @@ interface TemplateFactory {
      *
      * @return New instance of [Template].
      */
+    @Throws(RemoteException::class)
     fun create(
         name: String,
         persistent: PersistentDataContainer,

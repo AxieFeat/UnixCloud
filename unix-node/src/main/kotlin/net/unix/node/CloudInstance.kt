@@ -67,7 +67,6 @@ class CloudInstance : KoinComponent, Startable {
      * Just start the instance.
      */
     override fun start() {
-
         terminal.start()
 
         CloudStartEvent().callEvent()
@@ -86,6 +85,7 @@ class CloudInstance : KoinComponent, Startable {
         }
 
         CloudLogger.info(translatable("start.built", CloudExtensionManager.extensions.size))
+
         CloudExtensionManager.extensions.forEach {
             CloudLogger.info("- ${it.info.name} v${it.info.version}")
         }

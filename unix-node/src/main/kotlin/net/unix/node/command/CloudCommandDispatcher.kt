@@ -6,7 +6,6 @@ import com.mojang.brigadier.ParseResults
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.exceptions.CommandSyntaxException
 import net.unix.api.group.Group
 import net.unix.api.group.GroupManager
 import net.unix.api.group.wrapper.GroupWrapper
@@ -65,7 +64,6 @@ object CloudCommandDispatcher : CommandDispatcher, KoinComponent {
     private val templateManager: TemplateManager by inject(named("default"))
     private val nodeManager: NodeManager by inject(named("default"))
 
-    @Throws(CommandSyntaxException::class)
     override fun dispatchCommand(sender: CommandSender, command: String): Int {
         return dispatcher.execute(command, sender)
     }

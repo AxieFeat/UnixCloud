@@ -2,6 +2,7 @@ package net.unix.api.group
 
 import net.unix.api.group.rule.GroupRule
 import net.unix.api.group.wrapper.GroupWrapper
+import net.unix.api.remote.RemoteAccessible
 import net.unix.api.template.Template
 import java.rmi.RemoteException
 import java.util.*
@@ -9,7 +10,7 @@ import java.util.*
 /**
  * This interface represents a simple factory of [Group]'s.
  */
-interface GroupFactory {
+interface GroupFactory : RemoteAccessible {
 
     /**
      * Create new instance of [Group].

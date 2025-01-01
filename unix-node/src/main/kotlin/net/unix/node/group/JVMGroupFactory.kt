@@ -12,6 +12,9 @@ import java.util.*
  * It's simple factory of [JVMGroup]'s.
  */
 object JVMGroupFactory : GroupFactory {
+
+    private fun readResolve(): Any = JVMGroupFactory
+
     override fun create(
         uuid: UUID,
         name: String,

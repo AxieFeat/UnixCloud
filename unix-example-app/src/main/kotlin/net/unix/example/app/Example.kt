@@ -6,16 +6,18 @@ import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.service.ServiceManager
 import net.unix.api.template.TemplateManager
-import net.unix.driver.JVMServiceInstance
+import net.unix.driver.DriverServiceInstance
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.util.*
 
 fun main() {
-    JVMServiceInstance.install()
+    val instance = DriverServiceInstance()
 
-    ExampleService().start()
+    instance.install()
+
+    ExampleService().start(instance)
 }
 
 @Suppress("unused")
@@ -28,8 +30,9 @@ class ExampleService : KoinComponent {
     private val extensionManager: ExtensionManager by inject(named("default"))
     private val moduleManager: ModuleManager by inject(named("default"))
 
-    fun start() {
-        val instance = JVMServiceInstance
+    fun start(instance: DriverServiceInstance) {
+
+        println("I am ${instance.service}")
 
         val scanner = Scanner(System.`in`)
 
@@ -37,14 +40,6 @@ class ExampleService : KoinComponent {
             val line = scanner.nextLine()
 
             println("Your write: $line")
-        }
-
-        println(" ")
-        println(" ")
-        println(" ")
-
-        templateManager.templates.forEach {
-            println(it.serialize())
         }
     }
 }
