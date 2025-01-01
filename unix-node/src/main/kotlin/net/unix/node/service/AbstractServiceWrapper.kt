@@ -10,11 +10,11 @@ abstract class AbstractServiceWrapper(
     override val executableFile: File = File(service.dataFolder, service.group.wrapper?.executableFile ?: "service.jar")
 ) : ServiceWrapper {
 
-    override var started: Boolean = false
+    override var running: Boolean = false
         set(value) {
             field = value
 
-            if (value) service.status = ServiceStatus.STARTED
+            if (value) service.status = ServiceStatus.STARTING
             else service.status = ServiceStatus.PREPARED
         }
 

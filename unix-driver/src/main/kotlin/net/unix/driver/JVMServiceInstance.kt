@@ -6,12 +6,13 @@ import net.unix.api.network.client.Client
 import net.unix.api.network.universe.Packet
 import net.unix.api.LocationSpace
 import net.unix.api.group.GroupManager
-import net.unix.api.group.SaveableGroupManager
+import net.unix.api.group.wrapper.GroupWrapperFactoryManager
 import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.service.Service
 import net.unix.api.service.ServiceInfo
 import net.unix.api.service.ServiceManager
+import net.unix.api.service.ServiceStatus
 import net.unix.api.template.TemplateManager
 import net.unix.driver.persistence.RemotePersistenceDataType
 import net.unix.node.CloudExtension.readJson
@@ -19,6 +20,7 @@ import net.unix.node.service.JVMServiceInfo
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
 import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.io.File
 import java.rmi.registry.LocateRegistry
@@ -38,13 +40,7 @@ object JVMServiceInstance {
         return@run file
     }
 
-    val info: ServiceInfo = run {
-        val file = File(dataFolder, "service.info")
-
-        if(!file.exists()) throw IllegalArgumentException("Can not find info file in service!")
-
-        return@run JVMServiceInfo.deserialize(file.readJson())
-    }
+    lateinit var info: ServiceInfo
 
     lateinit var service: Service
 
@@ -54,27 +50,36 @@ object JVMServiceInstance {
         val registry = LocateRegistry.getRegistry("localhost", rmiPort)
         val locationSpace = registry.find<LocationSpace>()
         val templateManager = registry.find<TemplateManager>()
-        val cloudGroupManager = registry.find<SaveableGroupManager>()
+        val groupWrapperFactoryManager = registry.find<GroupWrapperFactoryManager>()
+        val groupManager = registry.find<GroupManager>()
         val serviceManager = registry.find<ServiceManager>()
         val moduleManager = registry.find<ModuleManager>()
         val extensionManager = registry.find<ExtensionManager>()
 
         startKoin {
             val module = module {
-                single<Registry> { registry }
-                single<LocationSpace> { locationSpace }
-                single<TemplateManager> { templateManager }
-                single<GroupManager> { cloudGroupManager }
-                single<ServiceManager> { serviceManager }
-                single<RemotePersistenceDataType> { RemotePersistenceDataType }
-                single<ModuleManager> { moduleManager }
-                single<ExtensionManager> { extensionManager }
+                single<Registry>(named("default")) { registry }
+                single<LocationSpace>(named("default")) { locationSpace }
+                single<TemplateManager>(named("default")) { templateManager }
+                single<GroupManager>(named("default")) { groupManager }
+                single<GroupWrapperFactoryManager>(named("default")) { groupWrapperFactoryManager }
+                single<ServiceManager>(named("default")) { serviceManager }
+                single<RemotePersistenceDataType>(named("default")) { RemotePersistenceDataType }
+                single<ModuleManager>(named("default")) { moduleManager }
+                single<ExtensionManager>(named("default")) { extensionManager }
             }
 
             modules(module)
         }
 
+        val file = File(dataFolder, "service.info")
+
+        if(!file.exists()) throw IllegalArgumentException("Can not find info file in service!")
+
+        this.info = JVMServiceInfo.deserialize(file.readJson())
         this.service = serviceManager[info.uuid] ?: throw IllegalArgumentException("Cant find current CloudService instance!")
+
+        this.service.status = ServiceStatus.STARTED
 
         val client = Client()
         client.connect("0.0.0.0", port)

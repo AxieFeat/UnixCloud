@@ -28,6 +28,9 @@ import org.koin.core.qualifier.named
 import java.io.File
 import java.util.*
 
+/**
+ * This class represents a very basic realisation of [SaveableGroup] for JVM applications.
+ */
 @Suppress("UNCHECKED_CAST")
 open class JVMGroup(
     override val uuid: UUID = uniqueUUID(),
@@ -160,6 +163,7 @@ open class JVMGroup(
         private val templateManager: TemplateManager by inject(named("default"))
         private val groupWrapperFactoryManager: GroupWrapperFactoryManager by inject(named("default"))
 
+        // Need for RMI server.
         @JvmStatic
         private val serialVersionUID = 9068729559091433172L
 

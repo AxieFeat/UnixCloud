@@ -31,7 +31,7 @@ interface ServiceWrapper : Killable, Startable, RemoteAccessible {
      */
     @get:Throws(RemoteException::class)
     @set:Throws(RemoteException::class)
-    var started: Boolean
+    var running: Boolean
 
     /**
      * Start [Service].

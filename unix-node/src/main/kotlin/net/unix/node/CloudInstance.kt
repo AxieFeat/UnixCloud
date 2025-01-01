@@ -5,6 +5,7 @@ import net.unix.api.ShutdownHandler
 import net.unix.api.bridge.CloudBridge
 import net.unix.api.group.GroupManager
 import net.unix.api.group.SaveableGroupManager
+import net.unix.api.group.wrapper.GroupWrapperFactoryManager
 import net.unix.api.i18n.I18nService
 import net.unix.api.i18n.SaveableLocaleManager
 import net.unix.api.modification.extension.ExtensionManager
@@ -24,12 +25,18 @@ import net.unix.node.configuration.UnixConfiguration
 import net.unix.node.event.callEvent
 import net.unix.node.event.cloud.CloudStartEvent
 import net.unix.node.group.rule.CloudRuleHandler
+import net.unix.node.i18n.translatable
 import net.unix.node.logging.CloudLogger
 import net.unix.node.modification.extension.CloudExtensionManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 
+/**
+ * This class represents the instance of UnixCloud.
+ *
+ * In general - you can create multiple instances, but don't expect this to work with standard implementations.
+ */
 class CloudInstance : KoinComponent, Startable {
 
     private val shutdownHandler: ShutdownHandler by inject(named("default"))
@@ -43,6 +50,7 @@ class CloudInstance : KoinComponent, Startable {
     private val saveableLocaleManager: SaveableLocaleManager by inject(named("default"))
 
     private val templateManager: TemplateManager by inject(named("default"))
+    private val groupWrapperFactoryManager: GroupWrapperFactoryManager by inject(named("default"))
     private val groupManager: GroupManager by inject(named("default"))
     private val serviceManager: ServiceManager by inject(named("default"))
 
@@ -55,6 +63,9 @@ class CloudInstance : KoinComponent, Startable {
 
     private val nodeManager: NodeManager by inject(named("default"))
 
+    /**
+     * Just start the instance.
+     */
     override fun start() {
 
         terminal.start()
@@ -74,7 +85,7 @@ class CloudInstance : KoinComponent, Startable {
             i18nService.locale = selectedLocale
         }
 
-        CloudLogger.info("UnixCloud successfully built with ${CloudExtensionManager.extensions.size} extensions")
+        CloudLogger.info(translatable("start.built", CloudExtensionManager.extensions.size))
         CloudExtensionManager.extensions.forEach {
             CloudLogger.info("- ${it.info.name} v${it.info.version}")
         }
@@ -98,12 +109,16 @@ class CloudInstance : KoinComponent, Startable {
 
     }
 
+    /**
+     * Configuring RMI server.
+     */
     private fun configureRMI(remoteService: RemoteService) {
         remoteService.register(ModuleManager::class, moduleManager)
         remoteService.register(ExtensionManager::class, extensionManager)
 
         remoteService.register(LocationSpace::class, locationSpace)
         remoteService.register(TemplateManager::class, templateManager)
+        remoteService.register(GroupWrapperFactoryManager::class, groupWrapperFactoryManager)
         remoteService.register(GroupManager::class, groupManager)
         remoteService.register(ServiceManager::class, serviceManager)
 

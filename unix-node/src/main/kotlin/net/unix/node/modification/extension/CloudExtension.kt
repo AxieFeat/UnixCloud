@@ -11,6 +11,7 @@ import java.io.File
  * Create an inheritor of this class to create extension.
  *
  * Extensions are loaded BEFORE UnixCloud is initialized, keep this in mind!
+ * For example, you won't be able to use CloudLogger because it hasn't been initiated yet.
  *
  * Also don't forget that to create extension, you must create extension.json file.
  */

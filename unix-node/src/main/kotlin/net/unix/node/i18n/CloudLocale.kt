@@ -3,9 +3,12 @@ package net.unix.node.i18n
 import net.kyori.adventure.text.Component
 import net.unix.api.i18n.MutableLocale
 import net.unix.api.i18n.SaveableLocale
+import net.unix.node.CloudExtension.deserializeComponent
 import net.unix.node.CloudExtension.serialize
+import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
+
 
 @Suppress("UNCHECKED_CAST")
 open class CloudLocale(
@@ -22,6 +25,10 @@ open class CloudLocale(
         cachedElements[key] = component
     }
 
+    override fun set(key: String, component: String) {
+        return set(key, component.deserializeComponent())
+    }
+
     override fun get(key: String): Component? = cachedElements[key]
 
     override fun serialize(): Map<String, Any> = cachedElements.mapValues {
@@ -30,14 +37,14 @@ open class CloudLocale(
 
     override fun save(file: File) {
         file.writeText(
-            Yaml().dump(flatten(cachedElements.mapValues { it.value.serialize() }))
+            serialize(cachedElements.mapValues { it.value.serialize() }.flatten())
         )
     }
 
-    private fun flatten(flatMap: Map<String, String>): Map<String, Any> {
+    private fun Map<String, String>.flatten(): Map<String, Any> {
         val result = mutableMapOf<String, Any>()
 
-        flatMap.forEach { (key, value) ->
+        this.forEach { (key, value) ->
             var currentMap: MutableMap<String, Any> = result
 
             val keyParts = key.split(".")
@@ -56,6 +63,17 @@ open class CloudLocale(
         }
 
         return result
+    }
+
+    private fun serialize(map: Map<String, Any>): String {
+        val options = DumperOptions()
+        options.indent = 2
+        options.isPrettyFlow = true
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+
+        val yaml = Yaml(options)
+
+        return yaml.dump(map)
     }
 
 }

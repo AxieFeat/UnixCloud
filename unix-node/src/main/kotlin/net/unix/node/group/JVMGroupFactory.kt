@@ -8,6 +8,9 @@ import net.unix.api.group.wrapper.GroupWrapper
 import net.unix.api.template.Template
 import java.util.*
 
+/**
+ * It's simple factory of [JVMGroup]'s.
+ */
 object JVMGroupFactory : GroupFactory {
     override fun create(
         uuid: UUID,

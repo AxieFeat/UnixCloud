@@ -14,6 +14,9 @@ import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.io.File
 
+/**
+ * This class represents a very basic realisation of [SaveableTemplate].
+ */
 @Suppress("UNCHECKED_CAST")
 open class BasicTemplate(
     override var name: String,

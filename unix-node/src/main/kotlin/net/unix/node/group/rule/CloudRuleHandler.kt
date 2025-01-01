@@ -9,6 +9,11 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 
+/**
+ * It's rule handler for [AutoGroup]'s.
+ *
+ * All the rules are updated here every second
+ */
 object CloudRuleHandler : Startable, KoinComponent {
 
     @delegate:Transient
@@ -17,8 +22,10 @@ object CloudRuleHandler : Startable, KoinComponent {
     override fun start() {
         scheduler {
             execute(0, 1000) {
+                // Find AutoGroup instances.
                 groupManager.groups.filterIsInstance<AutoGroup>().forEach {
 
+                    // Update all rules of group.
                     it.rules.forEach { rule ->
                         rule.update(rule.get())
                     }

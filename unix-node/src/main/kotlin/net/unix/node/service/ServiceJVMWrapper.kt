@@ -58,7 +58,7 @@ open class ServiceJVMWrapper(
             execute {
                 CloudLogger.info("Trying to start ${service.name}...")
                 process = processBuilder.start()
-                started = true
+                running = true
 
                 startLogging()
             }
@@ -68,7 +68,7 @@ open class ServiceJVMWrapper(
     override fun kill() {
         CloudLogger.info("Service ${service.name} killed")
         service.status = ServiceStatus.PREPARED
-        started = false
+        running = false
         process.destroy()
     }
 

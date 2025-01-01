@@ -5,6 +5,9 @@ import net.unix.node.configuration.UnixConfiguration
 import java.io.File
 import java.io.Serializable
 
+/**
+ * Main directory of Unix (root directory).
+ */
 val mainDirectory: File = run {
     val file = File(
         CloudExtension::class.java.getProtectionDomain().codeSource.location.toURI()

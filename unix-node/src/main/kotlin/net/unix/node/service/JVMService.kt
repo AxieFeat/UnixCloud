@@ -20,6 +20,9 @@ import java.io.File
 import java.util.*
 import kotlin.jvm.Throws
 
+/**
+ * This class represents a very basic realisation of [StaticService] for JVM applications.
+ */
 @Suppress("LeakingThis")
 open class JVMService(
     override val group: Group,
@@ -52,12 +55,17 @@ open class JVMService(
         return@run file
     }
     override var status: ServiceStatus = ServiceStatus.PREPARED
+        set(value) {
+            field = value
+
+            CloudLogger.info("Service $name marked as ${status.name.lowercase()}.")
+        }
 
     override var wrapper: ServiceWrapper? = group.wrapper?.executableFor(this)
 
     override val uptime: Long
         get() {
-            if(status != ServiceStatus.STARTED) return 0
+            if(status != ServiceStatus.STARTED || status != ServiceStatus.STARTING) return 0
 
             return System.currentTimeMillis() - created
         }
@@ -65,6 +73,7 @@ open class JVMService(
     override val created: Long = System.currentTimeMillis()
 
     init {
+        // Just copy files from template to work directory.
         val templates = group.templates
 
         templates.forEach { template ->
@@ -78,6 +87,7 @@ open class JVMService(
             }
         }
 
+        // Create info file for unix-driver
         val infoFile = File(dataFolder, "service.info")
 
         if (!infoFile.exists()) infoFile.createNewFile()
@@ -88,7 +98,7 @@ open class JVMService(
     @Throws(ServiceModificationException::class, IllegalArgumentException::class)
     override fun start(executable: ServiceWrapper, overwrite: Boolean) {
         if (status == ServiceStatus.DELETED) throw ServiceModificationException("You cannot run deleted CloudService!")
-        if (status == ServiceStatus.STARTED) throw IllegalArgumentException("CloudService already started!")
+        if (status == ServiceStatus.STARTED || status == ServiceStatus.STARTING) throw IllegalArgumentException("CloudService already started!")
 
         val groupExecutable = group.wrapper
 
@@ -110,7 +120,7 @@ open class JVMService(
     @Throws(ServiceModificationException::class, IllegalArgumentException::class)
     override fun delete() {
         if (status == ServiceStatus.DELETED) throw ServiceModificationException("CloudService already deleted!")
-        if (status == ServiceStatus.STARTED) throw IllegalArgumentException("Could not delete CloudService, at first stop it!")
+        if (status == ServiceStatus.STARTED || status == ServiceStatus.STARTING) throw IllegalArgumentException("Could not delete CloudService, at first stop it!")
 
         CloudLogger.info("Trying to delete $name...")
 
@@ -149,6 +159,7 @@ open class JVMService(
     }
 
     companion object {
+        // Need for RMI server.
         @JvmStatic
         private val serialVersionUID = 8068719449091445131L
     }

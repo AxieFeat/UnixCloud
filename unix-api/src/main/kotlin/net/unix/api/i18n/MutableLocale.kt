@@ -14,4 +14,13 @@ interface MutableLocale : Locale {
      * @param component New element.
      */
     operator fun set(key: String, component: Component)
+
+    /**
+     * Set value in [elements] by key.
+     *
+     * @param key Key.
+     * @param component MiniMessage serialized component.
+     */
+    operator fun set(key: String, component: String)
+
 }

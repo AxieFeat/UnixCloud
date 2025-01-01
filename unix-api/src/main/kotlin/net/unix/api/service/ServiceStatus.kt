@@ -13,6 +13,11 @@ enum class ServiceStatus : RemoteAccessible {
     PREPARED,
 
     /**
+     * Service in starting.
+     */
+    STARTING,
+
+    /**
      * Service is running.
      */
     STARTED,

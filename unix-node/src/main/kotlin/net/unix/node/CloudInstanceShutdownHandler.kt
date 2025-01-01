@@ -12,6 +12,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 
+/**
+ * Just shutdown handler.
+ */
 class CloudInstanceShutdownHandler : KoinComponent, ShutdownHandler {
 
     private val serviceManager: ServiceManager by inject(named("default"))

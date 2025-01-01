@@ -4,6 +4,7 @@ import net.unix.api.group.wrapper.GroupWrapperFactory
 import net.unix.api.group.wrapper.GroupWrapperFactoryManager
 
 object CloudGroupWrapperFactoryManager : GroupWrapperFactoryManager {
+    private fun readResolve(): Any = CloudGroupWrapperFactoryManager
 
     private val cachedFactories = mutableMapOf<String, GroupWrapperFactory>()
 

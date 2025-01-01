@@ -16,8 +16,11 @@ import org.jline.terminal.TerminalBuilder
 import org.jline.utils.InfoCmp
 import java.nio.charset.StandardCharsets
 
+/**
+ * This class represents a JLine terminal.
+ */
 @Suppress("LeakingThis", "MemberVisibilityCanBePrivate")
-open class CloudJLineTerminal(
+open class JLineTerminal(
     override val defaultPrompt: Component = UnixConfiguration.terminal.prompt.deserializeComponent()
 ) : net.unix.api.terminal.Terminal {
 

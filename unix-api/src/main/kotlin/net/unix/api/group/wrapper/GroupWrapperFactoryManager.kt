@@ -1,15 +1,19 @@
 package net.unix.api.group.wrapper
 
 import net.unix.api.pattern.manager.Manager
+import net.unix.api.remote.RemoteAccessible
+import java.rmi.RemoteException
+import kotlin.jvm.Throws
 
 /**
  * This interface represents the manager of [GroupWrapperFactory]'s.
  */
-interface GroupWrapperFactoryManager : Manager<GroupWrapperFactory> {
+interface GroupWrapperFactoryManager : Manager<GroupWrapperFactory>, RemoteAccessible {
 
     /**
      * Set of all wrappers.
      */
+    @get:Throws(RemoteException::class)
     val factories: Set<GroupWrapperFactory>
 
     /**
@@ -17,6 +21,7 @@ interface GroupWrapperFactoryManager : Manager<GroupWrapperFactory> {
      *
      * @param value Wrapper factory to register.
      */
+    @Throws(RemoteException::class)
     override fun register(value: GroupWrapperFactory)
 
     /**
@@ -24,6 +29,7 @@ interface GroupWrapperFactoryManager : Manager<GroupWrapperFactory> {
      *
      * @param value Wrapper factory to unregister.
      */
+    @Throws(RemoteException::class)
     override fun unregister(value: GroupWrapperFactory)
 
     /**
@@ -33,5 +39,6 @@ interface GroupWrapperFactoryManager : Manager<GroupWrapperFactory> {
      *
      * @return Instance of [GroupWrapperFactory] or null if not found.
      */
+    @Throws(RemoteException::class)
     override fun get(name: String): GroupWrapperFactory?
 }

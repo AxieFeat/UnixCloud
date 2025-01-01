@@ -6,6 +6,7 @@ import net.unix.api.bridge.CloudBridge
 import net.unix.api.network.server.Server
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.ServiceManager
+import net.unix.api.service.Service
 import net.unix.node.NamespacedKey
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
@@ -13,6 +14,11 @@ import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.util.UUID
 
+/**
+ * It's basic bridge between [Service]'s.
+ *
+ * This bridge supports basic [Service] authentication and RAM information updates.
+ */
 object JVMBridge : CloudBridge, KoinComponent {
 
     private fun readResolve(): Any = JVMBridge

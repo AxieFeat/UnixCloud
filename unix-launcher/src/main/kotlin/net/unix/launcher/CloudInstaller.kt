@@ -36,7 +36,8 @@ import net.unix.node.node.CloudNodeManager
 import net.unix.node.remote.CloudRemoteService
 import net.unix.node.service.JVMServiceManager
 import net.unix.node.template.CloudTemplateManager
-import net.unix.node.terminal.CloudJLineTerminal
+import net.unix.node.terminal.DefaultTerminal
+import net.unix.node.terminal.JLineTerminal
 import net.unix.node.terminal.unixUptime
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.qualifier.named
@@ -59,6 +60,18 @@ fun main(args: Array<String>) {
         }
 
         if(started) return
+    }
+
+    when(System.getProperty("start.mode")) {
+        "NODE" -> {
+            launchCloudInstance()
+            return
+        }
+
+        "MANAGER" -> {
+            NodeHandler.start(8181)
+            return
+        }
     }
 
     println("Select start mode: NODE, MANAGER")
@@ -87,9 +100,12 @@ fun launchCloudInstance() {
 
     unixUptime // Just init uptime for correct data.
 
-    System.setProperty("file.encoding", UnixConfiguration.fileEncoding)
+    System.setProperty("file.encoding", UnixConfiguration.fileEncoding) // Set encoding property from configuration.
 
-    CloudExtensionManager.loadAll(false)
+    CloudExtensionManager.loadAll(false) // Load all extensions.
+
+    // Use JLine terminal?
+    val useJLine = System.getProperty("terminal.jline", "true").toBoolean()
 
     startKoin {
         allowOverride(true)
@@ -98,7 +114,13 @@ fun launchCloudInstance() {
         val module = module {
             single<ShutdownHandler>(named("default")) { CloudInstanceShutdownHandler() }
             single<LocationSpace>(named("default")) { CloudLocationSpace }
-            single<Terminal>(named("default")) { CloudJLineTerminal() }
+
+            if(useJLine) {
+                single<Terminal>(named("default")) { JLineTerminal() }
+            } else {
+                single<Terminal>(named("default")) { DefaultTerminal() }
+            }
+
             single<I18nService>(named("default")) { CloudI18nService }
             single<SaveableLocaleManager>(named("default")) { CloudSaveableLocaleManager() }
             single<CommandDispatcher>(named("default")) { CloudCommandDispatcher }
@@ -119,5 +141,6 @@ fun launchCloudInstance() {
         if(!event.cancelled) modules(event.modules)
     }
 
+    // Start new instance of UnixCloud.
     CloudInstance().start()
 }

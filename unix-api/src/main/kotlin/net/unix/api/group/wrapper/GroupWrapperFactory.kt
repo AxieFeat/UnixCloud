@@ -1,12 +1,13 @@
 package net.unix.api.group.wrapper
 
 import net.unix.api.pattern.Nameable
+import net.unix.api.remote.RemoteAccessible
 import java.rmi.RemoteException
 
 /**
  * This interface represents a factory of [GroupWrapper]'s.
  */
-interface GroupWrapperFactory : Nameable {
+interface GroupWrapperFactory : Nameable, RemoteAccessible {
 
     /**
      * For what wrapper this factory.
@@ -21,6 +22,7 @@ interface GroupWrapperFactory : Nameable {
      *
      * @return Instance of [GroupWrapper].
      */
+    @Throws(RemoteException::class)
     fun createBySerialized(serialized: Map<String, Any>): GroupWrapper
 
 }

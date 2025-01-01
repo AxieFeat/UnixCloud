@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":unix-api"))
     implementation(project(":unix-node"))
     implementation(project(":unix-command-api"))
-    implementation(project(":unix-modifications:unix-modules:unix-module-test"))
 }
 
 tasks.withType<ShadowJar> {
