@@ -8,7 +8,6 @@ import net.unix.node.configuration.UnixConfiguration
 import net.unix.command.CommandDispatcher
 import net.unix.command.question.exception.QuestionParseException
 import net.unix.node.CloudExtension.serializeAnsi
-import net.unix.node.CloudExtension.strip
 import net.unix.node.logging.CloudLogger
 import net.unix.scheduler.impl.scheduler
 import org.jline.reader.EndOfFileException
@@ -28,11 +27,9 @@ class JLineTerminalRunner(
 
     private val dispatcher: CommandDispatcher by inject(named("default"))
 
-    private var strippedPrompt = terminal.currentPrompt.strip()
     private var ansiPrompt = terminal.currentPrompt.serializeAnsi()
 
     fun updatePrompt() {
-        strippedPrompt = terminal.currentPrompt.strip()
         ansiPrompt = terminal.currentPrompt.serializeAnsi()
     }
 

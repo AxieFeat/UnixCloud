@@ -17,7 +17,6 @@ class MemoryUsageRule(
     override val group: Group
 ) : GroupRule<Map<UUID, Pair<Long?, Long?>>>, KoinComponent {
 
-
     private var lastUsage: Long = 0
     private val serviceManager: ServiceManager by inject(named("default"))
 
@@ -40,7 +39,7 @@ class MemoryUsageRule(
             if(percent >= 80 || group.serviceLimit < group.servicesCount) {
                 CloudLogger.info("Service ${service.name} use 80% of memory. Starting new instance...")
                 val createdService = group.create()
-                group.wrapper?.executableFor(service)?.let { createdService.start(it) }
+                group.wrapper.wrapperFor(service).let { createdService.start(it) }
                 lastUsage = System.currentTimeMillis()
             }
         }

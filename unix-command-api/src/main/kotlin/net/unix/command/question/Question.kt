@@ -5,7 +5,7 @@ import java.util.concurrent.Callable
 /**
  * This interface represents question-based command.
  */
-interface Question<T>{
+interface Question<T> {
 
     /**
      * Type of answer for this question.

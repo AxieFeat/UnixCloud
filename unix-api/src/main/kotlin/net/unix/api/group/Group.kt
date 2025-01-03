@@ -40,13 +40,10 @@ interface Group : GroupInfo, PersistentDataHolder, Serializable, Nameable, Remot
     /**
      * The wrapper of group.
      *
-     * If you set wrapper of group - all services will be
-     * started with this wrapper properties.
-     *
-     * If null - type is not set.
+     * All services will be started with this wrapper properties (If not overwrite).
      */
     @get:Throws(RemoteException::class)
-    override val wrapper: GroupWrapper?
+    override val wrapper: GroupWrapper
 
     /**
      * [Template]'s of group.

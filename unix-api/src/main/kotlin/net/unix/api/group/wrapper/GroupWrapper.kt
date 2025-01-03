@@ -34,6 +34,6 @@ interface GroupWrapper : RemoteAccessible, Serializable, Nameable {
      * @return Instance of [ServiceWrapper].
      */
     @Throws(RemoteException::class)
-    fun executableFor(service: Service): ServiceWrapper
+    fun wrapperFor(service: Service): ServiceWrapper
 
 }

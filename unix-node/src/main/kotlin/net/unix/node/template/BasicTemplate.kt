@@ -51,7 +51,7 @@ open class BasicTemplate(
         serialized["name"] = name
         serialized["persistent"] = persistentDataContainer.serialize()
         serialized["files"] = files.map { it.serialize() }
-        serialized["back-files"] = files.map { it.serialize() }
+        serialized["back-files"] = backFiles.map { it.serialize() }
 
         return serialized
     }

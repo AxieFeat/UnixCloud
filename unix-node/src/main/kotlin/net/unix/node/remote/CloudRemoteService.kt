@@ -23,7 +23,7 @@ object CloudRemoteService : RemoteService {
         LocateRegistry.createRegistry(port)
 
         toRegister.forEach { remoteAccessible ->
-            Naming.rebind("//localhost/${remoteAccessible.key}", UnicastRemoteObject.exportObject(remoteAccessible.value, 0))
+            Naming.rebind(remoteAccessible.key, UnicastRemoteObject.exportObject(remoteAccessible.value, 0))
         }
 
         CloudLogger.info("RMI server started with ${toRegister.size} objects in port $port")

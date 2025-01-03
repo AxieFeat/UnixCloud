@@ -7,6 +7,7 @@ import net.unix.api.network.server.Server
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.service.ServiceManager
 import net.unix.api.service.Service
+import net.unix.api.service.ServiceStatus
 import net.unix.node.NamespacedKey
 import net.unix.node.logging.CloudLogger
 import org.koin.core.component.KoinComponent
@@ -47,6 +48,7 @@ object JVMBridge : CloudBridge, KoinComponent {
                 return@createListener
             }
 
+            service.status = ServiceStatus.STARTED
             CloudLogger.info("Service ${service.name} started!")
         }
 

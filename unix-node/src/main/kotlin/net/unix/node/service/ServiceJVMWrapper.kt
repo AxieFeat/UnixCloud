@@ -8,6 +8,7 @@ import net.unix.node.logging.CloudLogger
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
 import java.io.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Executor for JVM executable files.
@@ -16,6 +17,7 @@ import java.io.*
 open class ServiceJVMWrapper(
     override val service: Service,
     override val executableFile: File,
+    override val startedLine: String,
     override val stopCommand: String,
     val properties: List<String> =
         if(service.group.wrapper is GroupJVMWrapper)
@@ -66,10 +68,28 @@ open class ServiceJVMWrapper(
     }
 
     override fun kill() {
-        CloudLogger.info("Service ${service.name} killed")
-        service.status = ServiceStatus.PREPARED
-        running = false
         process.destroy()
+        running = false
+        CloudLogger.info("Service ${service.name} killed")
+    }
+
+    override fun stop(): CompletableFuture<Unit> {
+        val future = CompletableFuture<Unit>()
+
+        CloudLogger.info("Trying to stop ${service.name}...")
+        command(stopCommand)
+
+        scheduler {
+            execute {
+                process.onExit().get()
+                running = false
+                CloudLogger.info("Service ${service.name} stopped")
+                future.complete(Unit)
+
+            }
+        }
+
+        return future
     }
 
     /**
@@ -93,13 +113,21 @@ open class ServiceJVMWrapper(
             execute {
                 val reader = BufferedReader(InputStreamReader(process.inputStream, "UTF-8"))
 
-                var line: String?
+                var line: String
 
                 while ((reader.readLine().also { line = it }) != null) {
-                    logs.add(line!!)
-                    if(viewConsole) CloudLogger.service(line!!)
+                    logs.add(line)
+                    if(viewConsole) CloudLogger.service(line)
+                    if(line.contains(startedLine)) {
+                        service.status = ServiceStatus.STARTED
+                    }
                 }
             }
         }
+    }
+
+    companion object {
+        @JvmStatic
+        private val serialVersionUID = 1049193751045838910L
     }
 }

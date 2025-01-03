@@ -7,7 +7,7 @@ import java.io.File
 
 abstract class AbstractServiceWrapper(
     override val service: Service,
-    override val executableFile: File = File(service.dataFolder, service.group.wrapper?.executableFile ?: "service.jar")
+    override val executableFile: File = File(service.dataFolder, service.group.wrapper.executableFile)
 ) : ServiceWrapper {
 
     override var running: Boolean = false

@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":unix-network"))
     implementation(project(":unix-scheduler"))
     implementation(project(":unix-api"))
-    implementation(project(":unix-node"))
+    //implementation(project(":unix-node"))
     implementation(project(":unix-command-api"))
 }
 

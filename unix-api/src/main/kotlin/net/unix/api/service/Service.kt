@@ -7,9 +7,12 @@ import net.unix.api.persistence.PersistentDataHolder
 import net.unix.api.remote.RemoteAccessible
 import net.unix.api.service.exception.ServiceModificationException
 import net.unix.api.service.wrapper.ServiceWrapper
+import net.unix.api.service.wrapper.ConsoleServiceWrapper
+import net.unix.api.template.Template
 import java.io.File
 import java.rmi.RemoteException
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * [Service]'s allow to start instances of [Group].
@@ -79,7 +82,15 @@ interface Service : ServiceInfo, PersistentDataHolder, Nameable, Deletable, Remo
      */
     @get:Throws(RemoteException::class)
     @set:Throws(RemoteException::class)
-    var wrapper: ServiceWrapper?
+    var wrapper: ServiceWrapper
+
+    /**
+     * Update service templates. Copies [Template.backFiles] back to the [Template] instance.
+     *
+     * @return Complete future value after done.
+     */
+    @Throws(RemoteException::class)
+    fun updateTemplate(): CompletableFuture<Unit>
 
     /**
      * Start [Service] with some executable properties.
@@ -100,16 +111,26 @@ interface Service : ServiceInfo, PersistentDataHolder, Nameable, Deletable, Remo
      * @param delete Delete [Service] files after stop?
      *
      * @throws [ServiceModificationException] If [status] is [ServiceStatus.DELETED].
-     * @throws IllegalArgumentException If [status] is not [ServiceStatus.STARTED].
+     * @throws IllegalArgumentException If [status] is not [ServiceStatus.STARTED] or [ServiceStatus.STARTING].
      */
     @Throws(ServiceModificationException::class, IllegalArgumentException::class, RemoteException::class)
-    fun kill(delete: Boolean = true)
+    fun kill(delete: Boolean = false)
+
+    /**
+     * Try to stop [Service]. Only if [wrapper] is [ConsoleServiceWrapper]
+     *
+     * @param delete Delete [Service] files after stop?
+     *
+     * @throws [ServiceModificationException] If [status] is [ServiceStatus.DELETED].
+     * @throws IllegalArgumentException If [status] is not [ServiceStatus.STARTED] or [ServiceStatus.STARTING].
+     */
+    fun stop(delete: Boolean = false)
 
     /**
      * Delete [Service]. It also unregister via [ServiceManager.unregister]
      *
      * @throws ServiceModificationException If [status] is [ServiceStatus.DELETED].
-     * @throws IllegalArgumentException If [status] is [ServiceStatus.STARTED].
+     * @throws IllegalArgumentException If [status] is [ServiceStatus.STARTED] or [ServiceStatus.STARTING].
      */
     @Throws(ServiceModificationException::class, IllegalArgumentException::class, RemoteException::class)
     override fun delete()

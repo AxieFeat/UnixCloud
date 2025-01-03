@@ -16,6 +16,12 @@ interface ConsoleGroupWrapper : GroupWrapper {
     val stopCommand: String
 
     /**
+     * Trigger-string, the occurrence of which will consider the service started
+     */
+    @get:Throws(RemoteException::class)
+    val startedLine: String
+
+    /**
      * Create console wrapper for service.
      *
      * @param service Service.
@@ -23,6 +29,6 @@ interface ConsoleGroupWrapper : GroupWrapper {
      * @return Instance of [ConsoleServiceWrapper].
      */
     @Throws(RemoteException::class)
-    override fun executableFor(service: Service): ConsoleServiceWrapper
+    override fun wrapperFor(service: Service): ConsoleServiceWrapper
 
 }

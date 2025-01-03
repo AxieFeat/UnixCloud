@@ -38,7 +38,7 @@ open class JVMGroup(
     serviceLimit: Int = 1,
     override val templates: MutableList<Template> = mutableListOf(),
     override val rules: MutableSet<GroupRule<Any>> = mutableSetOf(),
-    override val wrapper: GroupWrapper?,
+    override val wrapper: GroupWrapper,
 ) : SaveableGroup, AutoGroup {
 
     init {
@@ -122,7 +122,7 @@ open class JVMGroup(
         serialized["name"] = clearName
         serialized["uuid"] = uuid
         serialized["service-limit"] = serviceLimit
-        if(wrapper != null) serialized["wrapper"] = wrapper!!.serialize()
+        serialized["wrapper"] = wrapper.serialize()
         serialized["templates"] = templates.map { it.name }
 
         return serialized
@@ -198,7 +198,7 @@ open class JVMGroup(
                 name,
                 serviceLimit,
                 templates,
-                wrapper = wrapperFactory?.createBySerialized(serializedWrapper)
+                wrapper = wrapperFactory!!.createBySerialized(serializedWrapper)
             )
         }
     }

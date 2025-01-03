@@ -20,7 +20,7 @@ object JVMGroupFactory : GroupFactory {
         name: String,
         serviceLimit: Int,
         templates: MutableList<Template>,
-        wrapper: GroupWrapper?
+        wrapper: GroupWrapper
     ): Group {
         return create(uuid, name, serviceLimit, templates, wrapper, mutableSetOf())
     }
@@ -30,7 +30,7 @@ object JVMGroupFactory : GroupFactory {
         name: String,
         serviceLimit: Int,
         templates: MutableList<Template>,
-        wrapper: GroupWrapper?,
+        wrapper: GroupWrapper,
         rules: MutableSet<GroupRule<Any>>
     ): AutoGroup {
         return JVMGroup(

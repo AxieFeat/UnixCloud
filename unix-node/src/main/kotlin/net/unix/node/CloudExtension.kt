@@ -11,7 +11,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.unix.api.service.Service
 import net.unix.node.CloudExtension.rem
 import net.unix.api.terminal.Color.Companion.stripColor
-import net.unix.node.CloudExtension.print
 import net.unix.node.logging.CloudLogger
 import java.io.File
 import java.util.*

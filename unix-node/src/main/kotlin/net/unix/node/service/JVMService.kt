@@ -3,8 +3,11 @@ package net.unix.node.service
 import net.unix.api.LocationSpace
 import net.unix.api.group.Group
 import net.unix.api.persistence.PersistentDataContainer
-import net.unix.api.service.*
+import net.unix.api.service.ServiceManager
+import net.unix.api.service.ServiceStatus
+import net.unix.api.service.StaticService
 import net.unix.api.service.exception.ServiceModificationException
+import net.unix.api.service.wrapper.ConsoleServiceWrapper
 import net.unix.api.service.wrapper.ServiceWrapper
 import net.unix.node.CloudExtension.toJson
 import net.unix.node.CloudExtension.uniqueUUID
@@ -13,11 +16,13 @@ import net.unix.node.event.cloud.service.ServiceDeleteEvent
 import net.unix.node.logging.CloudLogger
 import net.unix.node.mainDirectory
 import net.unix.node.persistence.CloudPersistentDataContainer
+import net.unix.scheduler.impl.scheduler
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import java.io.File
-import java.util.*
+import java.util.UUID
+import java.util.concurrent.CompletableFuture
 import kotlin.jvm.Throws
 
 /**
@@ -61,7 +66,7 @@ open class JVMService(
             CloudLogger.info("Service $name marked as ${status.name.lowercase()}.")
         }
 
-    override var wrapper: ServiceWrapper? = group.wrapper?.executableFor(this)
+    override var wrapper: ServiceWrapper = group.wrapper.wrapperFor(this)
 
     override val uptime: Long
         get() {
@@ -95,26 +100,67 @@ open class JVMService(
         this.serialize().toJson(infoFile)
     }
 
+    override fun updateTemplate(): CompletableFuture<Unit> {
+        val future = CompletableFuture<Unit>()
+
+        scheduler {
+            execute {
+                val templates = group.templates
+
+                templates.forEach { template ->
+                    val files = template.backFiles
+
+                    files.forEach {
+                        val from = File(dataFolder, it.from)
+                        val to = File(mainDirectory, it.to)
+
+                        from.copyRecursively(to, overwrite = true)
+                    }
+                }
+
+                future.complete(Unit)
+            }
+        }
+
+        return future
+    }
+
     @Throws(ServiceModificationException::class, IllegalArgumentException::class)
     override fun start(executable: ServiceWrapper, overwrite: Boolean) {
         if (status == ServiceStatus.DELETED) throw ServiceModificationException("You cannot run deleted CloudService!")
         if (status == ServiceStatus.STARTED || status == ServiceStatus.STARTING) throw IllegalArgumentException("CloudService already started!")
 
-        val groupExecutable = group.wrapper
-
-        if (groupExecutable == null || overwrite) {
+        if (overwrite) {
             this.wrapper = executable
         }
 
-        this.wrapper?.start()
+        this.wrapper.start()
     }
 
     @Throws(ServiceModificationException::class, IllegalArgumentException::class)
     override fun kill(delete: Boolean) {
         if (status == ServiceStatus.DELETED) throw ServiceModificationException("You cannot stop deleted CloudService!")
+        if (status != ServiceStatus.STARTED && status != ServiceStatus.STARTING) throw IllegalArgumentException("Service is not started!")
 
-        wrapper?.kill()
-        if(delete) delete()
+        scheduler {
+            execute {
+                wrapper.kill()
+                if(delete) delete()
+            }
+        }
+    }
+
+    override fun stop(delete: Boolean) {
+        if (status == ServiceStatus.DELETED) throw ServiceModificationException("You cannot stop deleted CloudService!")
+        if (status != ServiceStatus.STARTED && status != ServiceStatus.STARTING) throw IllegalArgumentException("Service is not started!")
+
+        scheduler {
+            execute {
+                val completable = (wrapper as ConsoleServiceWrapper?)?.stop() ?: return@execute
+                completable.get()
+                if(delete) delete()
+            }
+        }
     }
 
     @Throws(ServiceModificationException::class, IllegalArgumentException::class)
@@ -128,20 +174,14 @@ open class JVMService(
 
         serviceManager.unregister(this)
 
-        val templates = group.templates
-
-        templates.forEach { template ->
-            val files = template.backFiles
-
-            files.forEach {
-                val from = File(dataFolder, it.from)
-                val to = File(mainDirectory, it.to)
-
-                from.copyRecursively(to, overwrite = true)
+        scheduler {
+            execute {
+                val future = updateTemplate()
+                future.get()
+                dataFolder.deleteRecursively()
+                CloudLogger.info("Service $name deleted")
             }
         }
-
-        dataFolder.deleteRecursively()
     }
 
     override fun serialize(): Map<String, Any> {

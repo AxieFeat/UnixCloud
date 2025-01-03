@@ -2,12 +2,11 @@
 
 package net.unix.driver
 
+import com.google.gson.GsonBuilder
 import net.unix.api.network.client.Client
 import net.unix.api.network.universe.Packet
 import net.unix.api.service.Service
 import net.unix.api.service.ServiceInfo
-import net.unix.api.service.ServiceStatus
-import net.unix.node.CloudExtension.readJson
 import net.unix.node.service.JVMServiceInfo
 import net.unix.scheduler.SchedulerType
 import net.unix.scheduler.impl.scheduler
@@ -30,39 +29,39 @@ class DriverServiceInstance(
     rmiPort: Int = 1099
 ) : DriverInstance(host, rmiPort) {
 
+    val gson = GsonBuilder().create()
+
     lateinit var info: ServiceInfo
     lateinit var service: Service
 
     override fun install() {
         super.install()
 
-        //startKoin {
-          //  val module = module {
+//        startKoin {
+//            val module = module {
 //                single<Registry>(named("default")) { registry }
-                //single<LocationSpace>(named("default")) { locationSpace }
-//                single<RemotePersistenceDataType>(named("default")) { RemotePersistenceDataType }
-//                single<TemplateManager>(named("default")) { templateManager }
+//                single<LocationSpace>(named("default")) { locationSpace }
+////                single<RemotePersistenceDataType>(named("default")) { RemotePersistenceDataType }
+////                single<TemplateManager>(named("default")) { templateManager }
 //                single<ServiceManager>(named("default")) { serviceManager }
-                //single<GroupManager>(named("default")) { groupManager }
-                //single<GroupWrapperFactoryManager>(named("default")) { groupWrapperFactoryManager }
-                //single<ModuleManager>(named("default")) { moduleManager }
-                //single<ExtensionManager>(named("default")) { extensionManager }
-           // }
-
-            //modules(module)
-       // }
+//                //single<GroupManager>(named("default")) { groupManager }
+//                //single<GroupWrapperFactoryManager>(named("default")) { groupWrapperFactoryManager }
+////                single<ModuleManager>(named("default")) { moduleManager }
+////                single<ExtensionManager>(named("default")) { extensionManager }
+//            }
+//
+//            modules(module)
+//        }
 
         val file = File(dataFolder, "service.info")
 
         if(!file.exists()) throw IllegalArgumentException("Can not find info file in service!")
 
-        this.info = JVMServiceInfo.deserialize(file.readJson())
+        this.info = JVMServiceInfo.deserialize(groupManager, file.readJson())
         this.service = serviceManager[info.uuid] ?: throw IllegalArgumentException("Cant find current Service instance!")
 
-        this.service.status = ServiceStatus.STARTED
-
         val client = Client()
-        client.connect("0.0.0.0", bridgePort)
+        client.connect("127.0.0.1", bridgePort)
 
         println("Driver connected to node!")
 
@@ -102,6 +101,32 @@ class DriverServiceInstance(
                 }
             }
         }
+    }
+
+    /**
+     * Read JSON from file.
+     *
+     * @param T Type of object.
+     *
+     * @return Deserialize result.
+     */
+    inline fun <reified T> File.readJson(): T {
+        val text = this.readText()
+
+        return text.readJson()
+    }
+
+    /**
+     * Read JSON from string.
+     *
+     * @param T Type of object.
+     *
+     * @return Deserialize result.
+     */
+    inline fun <reified T> String.readJson(): T {
+        val result = gson.fromJson(this, T::class.java)
+
+        return result
     }
 
 }

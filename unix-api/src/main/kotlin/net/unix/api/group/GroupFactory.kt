@@ -31,7 +31,7 @@ interface GroupFactory : RemoteAccessible {
         name: String,
         serviceLimit: Int,
         templates: MutableList<Template> = mutableListOf(),
-        wrapper: GroupWrapper? = null
+        wrapper: GroupWrapper
     ): Group
 
     /**
@@ -54,7 +54,7 @@ interface GroupFactory : RemoteAccessible {
         name: String,
         serviceLimit: Int,
         templates: MutableList<Template> = mutableListOf(),
-        wrapper: GroupWrapper? = null,
+        wrapper: GroupWrapper,
         rules: MutableSet<GroupRule<Any>>
     ): AutoGroup
 

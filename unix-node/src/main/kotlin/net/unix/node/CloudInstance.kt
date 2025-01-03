@@ -16,8 +16,8 @@ import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.remote.RemoteService
 import net.unix.api.service.ServiceManager
-import net.unix.api.template.TemplateManager
 import net.unix.api.template.SaveableTemplateManager
+import net.unix.api.template.TemplateManager
 import net.unix.api.terminal.Terminal
 import net.unix.command.CommandDispatcher
 import net.unix.node.command.CloudCommandDispatcher
@@ -106,7 +106,6 @@ class CloudInstance : KoinComponent, Startable {
         (templateManager as? SaveableTemplateManager)?.loadAllTemplates()
 
         (groupManager as? SaveableGroupManager)?.loadAllGroups()
-
     }
 
     /**
