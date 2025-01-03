@@ -28,6 +28,7 @@ import net.unix.node.group.rule.CloudRuleHandler
 import net.unix.node.i18n.translatable
 import net.unix.node.logging.CloudLogger
 import net.unix.node.modification.extension.CloudExtensionManager
+import net.unix.node.terminal.unixStartTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
@@ -106,6 +107,8 @@ class CloudInstance : KoinComponent, Startable {
         (templateManager as? SaveableTemplateManager)?.loadAllTemplates()
 
         (groupManager as? SaveableGroupManager)?.loadAllGroups()
+
+        CloudLogger.info("Started in ${(System.currentTimeMillis() - unixStartTime) / 1000.0} s.")
     }
 
     /**
