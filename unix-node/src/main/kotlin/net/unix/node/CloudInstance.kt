@@ -12,7 +12,6 @@ import net.unix.api.modification.extension.ExtensionManager
 import net.unix.api.modification.module.ModuleManager
 import net.unix.api.network.server.Server
 import net.unix.api.node.NodeManager
-import net.unix.api.pattern.Startable
 import net.unix.api.persistence.PersistentDataType
 import net.unix.api.remote.RemoteService
 import net.unix.api.service.ServiceManager
@@ -38,7 +37,7 @@ import org.koin.core.qualifier.named
  *
  * In general - you can create multiple instances, but don't expect this to work with standard implementations.
  */
-class CloudInstance : KoinComponent, Startable {
+class CloudInstance : KoinComponent, Thread() {
 
     private val shutdownHandler: ShutdownHandler by inject(named("default"))
 
@@ -64,10 +63,13 @@ class CloudInstance : KoinComponent, Startable {
 
     private val nodeManager: NodeManager by inject(named("default"))
 
-    /**
-     * Just start the instance.
-     */
-    override fun start() {
+    init {
+        isDaemon = false
+        name = "CloudInstance"
+        priority = 1
+    }
+    
+    override fun run() {
         terminal.start()
 
         CloudStartEvent().callEvent()

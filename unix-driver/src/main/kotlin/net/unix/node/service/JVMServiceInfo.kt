@@ -11,10 +11,11 @@ import java.util.*
 open class JVMServiceInfo(
     override val uuid: UUID,
     override val clearName: String,
+    override val ordinal: Int,
     override val group: Group,
     override val created: Long,
     override val dataFolder: File,
-    override var status: ServiceStatus,
+    override var status: ServiceStatus
 ) : ServiceInfo {
 
     override fun serialize(): Map<String, Any> {
@@ -22,6 +23,7 @@ open class JVMServiceInfo(
 
         serialized["uuid"] = uuid.toString()
         serialized["clearName"] = clearName
+        serialized["ordinal"] = ordinal
         serialized["group"] = group.uuid
         serialized["created"] = created
         serialized["data-folder"] = dataFolder.path
@@ -35,13 +37,14 @@ open class JVMServiceInfo(
         fun deserialize(manager: GroupManager, serialized: Map<String, Any>): JVMServiceInfo {
             val uuid = UUID.fromString(serialized["uuid"].toString())
             val clearName = serialized["clearName"].toString()
+            val ordinal = serialized["ordinal"].toString().toDouble().toInt()
             val group = manager[UUID.fromString(serialized["group"].toString())]!!
             val created = serialized["created"].toString().toDouble().toLong()
             val dataFolder = File(serialized["data-folder"].toString())
             val status = ServiceStatus.valueOf(serialized["status"].toString())
 
             return JVMServiceInfo(
-                uuid, clearName, group, created, dataFolder, status
+                uuid, clearName, ordinal, group, created, dataFolder, status
             )
         }
     }

@@ -41,6 +41,12 @@ interface Service : ServiceInfo, PersistentDataHolder, Nameable, Deletable, Remo
     override val clearName: String
 
     /**
+     * Ordinal number of this service.
+     */
+    @get:Throws(RemoteException::class)
+    override val ordinal: Int
+
+    /**
      * Service group.
      *
      * @throws ServiceModificationException If [status] is [ServiceStatus.DELETED].

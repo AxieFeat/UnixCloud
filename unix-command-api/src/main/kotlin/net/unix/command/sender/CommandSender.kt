@@ -1,11 +1,11 @@
 package net.unix.command.sender
 
-import net.kyori.adventure.text.Component
+import net.kyori.adventure.audience.Audience
 
 /**
  * General representation of the command sender.
  */
-interface CommandSender {
+interface CommandSender : Audience {
 
     /**
      * Sender name.
@@ -18,12 +18,5 @@ interface CommandSender {
      * @param message Message text.
      */
     fun sendMessage(message: String)
-
-    /**
-     * Send message to command sender.
-     *
-     * @param message Component to send.
-     */
-    fun sendMessage(message: Component)
 
 }

@@ -33,7 +33,8 @@ open class JVMService(
     override val group: Group,
     override val uuid: UUID = uniqueUUID(),
     name: String,
-    override var static: Boolean = false
+    override val ordinal: Int,
+    override var static: Boolean = false,
 ) : StaticService, KoinComponent {
 
     private val serviceManager: ServiceManager by inject(named("default"))
@@ -189,6 +190,7 @@ open class JVMService(
 
         serialized["uuid"] = uuid.toString()
         serialized["clearName"] = clearName
+        serialized["ordinal"] = ordinal
         serialized["group"] = group.uuid
         serialized["created"] = created
         serialized["data-folder"] = dataFolder.path

@@ -30,7 +30,6 @@ open class GroupJVMWrapper(
 
         serialized["name"] = name
         serialized["start-properties"] = startProperties
-        serialized["executable-file"] = executableFile
         serialized["started-line"] = startedLine
         serialized["stop-command"] = stopCommand
 
@@ -43,13 +42,13 @@ open class GroupJVMWrapper(
         private val serialVersionUID = 8519813570919194931L
 
         fun deserialize(serialized: Map<String, Any>): GroupJVMWrapper {
-            val startProperties = serialized["start-properties"] as? List<String>
-            val executableFile = serialized["executable-file"].toString()
+            val startProperties = serialized["start-properties"] as? List<String> ?: listOf("java", "-Xms100M", "-Xmx1G", "-jar", "service.jar")
+            val executableFile = startProperties[startProperties.indexOf("-jar") + 1]
             val startedLine = serialized["started-line"].toString()
             val stopCommand = serialized["stop-command"].toString()
 
             return GroupJVMWrapper(
-                startProperties ?: listOf("java", "-Xms100M", "-Xmx1G", "-jar"),
+                startProperties,
                 executableFile,
                 startedLine,
                 stopCommand

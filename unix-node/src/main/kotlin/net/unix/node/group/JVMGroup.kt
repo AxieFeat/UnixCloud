@@ -106,7 +106,8 @@ open class JVMGroup(
 
         val service = JVMService(
             this,
-            name = "$clearName-${servicesCount + 1}"
+            name = "$clearName-${servicesCount + 1}",
+            ordinal = servicesCount + 1
         )
 
         ServiceCreateEvent(service).callEvent()

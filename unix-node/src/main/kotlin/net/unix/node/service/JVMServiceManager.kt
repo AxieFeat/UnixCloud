@@ -4,12 +4,11 @@ import net.unix.api.service.Service
 import net.unix.api.service.ServiceManager
 import java.util.*
 
-@Suppress("MemberVisibilityCanBePrivate")
 object JVMServiceManager : ServiceManager {
 
     private fun readResolve(): Any = JVMServiceManager
 
-    val cachedServices = mutableMapOf<UUID, Service>()
+    private val cachedServices = mutableMapOf<UUID, Service>()
 
     override val services: Set<Service>
         get() = cachedServices.values.toSet()

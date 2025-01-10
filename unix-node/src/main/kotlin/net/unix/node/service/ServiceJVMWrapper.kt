@@ -21,7 +21,7 @@ open class ServiceJVMWrapper(
     override val stopCommand: String,
     val properties: List<String> =
         if(service.group.wrapper is GroupJVMWrapper)
-            (service.group.wrapper as GroupJVMWrapper).startProperties.plus(executableFile.path)
+            (service.group.wrapper as GroupJVMWrapper).startProperties
         else
             listOf("java", "-Xms100M", "-Xmx1G", "-jar", executableFile.path),
 ) : AbstractServiceWrapper(service, executableFile), ConsoleServiceWrapper {
@@ -31,7 +31,11 @@ open class ServiceJVMWrapper(
      */
     @Transient
     val processBuilder = run {
-        val process = ProcessBuilder(properties)
+        val parsed = properties.map {
+            it.replace("%SERVICE_ORDINAL%", "${service.ordinal}")
+        }
+
+        val process = ProcessBuilder(parsed)
 
         process.directory(service.dataFolder)
         process.redirectErrorStream(true)
@@ -43,10 +47,10 @@ open class ServiceJVMWrapper(
 
     override var viewConsole: Boolean = false
         set(value) {
-            field = value
-
-            if (value && !field)
+            if (value == !field && value)
                 logs.forEach { CloudLogger.service(it) }
+            
+            field = value
         }
 
     /**

@@ -14,7 +14,7 @@ open class ServiceJVMWrapper(
     override val stopCommand: String,
     val properties: List<String> =
         if(service.group.wrapper is GroupJVMWrapper)
-            (service.group.wrapper as GroupJVMWrapper).startProperties.plus(executableFile.path)
+            (service.group.wrapper as GroupJVMWrapper).startProperties
         else
             listOf("java", "-Xms100M", "-Xmx1G", "-jar", executableFile.path),
 ) : ConsoleServiceWrapper {

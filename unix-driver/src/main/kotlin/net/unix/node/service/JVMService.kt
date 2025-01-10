@@ -16,6 +16,7 @@ open class JVMService(
     override val group: Group,
     override val uuid: UUID = UUID.randomUUID(),
     name: String,
+    override val ordinal: Int,
     override var static: Boolean = false
 ) : StaticService {
 

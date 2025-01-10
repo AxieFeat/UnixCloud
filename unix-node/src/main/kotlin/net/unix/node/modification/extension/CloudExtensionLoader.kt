@@ -71,13 +71,13 @@ class CloudExtensionLoader(
         }.forEach {
 
             try {
-                val clazz = loadClass( it)
+                val clazz = loadClass(it)
 
                 if (clazz.name == info.main) {
                     val instance = try {
                         clazz.newInstance() as CloudExtension
                     } catch (ex: ClassCastException) {
-                        throw ModificationLoadException("Main class in extension \"${info.name}\" is not extends CloudExtension!")
+                        throw ModificationLoadException("Main class in extension \"${info.name}\" is not extends CloudExtension!", ex)
                     }
 
                     instance.init(info)

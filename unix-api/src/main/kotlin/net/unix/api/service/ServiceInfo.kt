@@ -21,6 +21,11 @@ interface ServiceInfo : Serializable {
     val clearName: String
 
     /**
+     * Ordinal number of this service.
+     */
+    val ordinal: Int
+
+    /**
      * Service group uuid.
      */
     val group: Group

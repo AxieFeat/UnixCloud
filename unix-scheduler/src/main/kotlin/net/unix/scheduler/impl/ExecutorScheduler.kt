@@ -23,8 +23,8 @@ open class ExecutorScheduler : AbstractScheduler() {
                     runBlocking {
                         task.invoke()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } catch (throwable: Throwable) {
+                    throw throwable
                 } finally {
                     unregisterTask(taskId)
                 }
@@ -41,8 +41,8 @@ open class ExecutorScheduler : AbstractScheduler() {
                     runBlocking {
                         task.invoke()
                     }
-                } catch (e: Throwable) {
-                    e.printStackTrace()
+                } catch (throwable: Throwable) {
+                    throw throwable
                 } finally {
                     unregisterTask(taskId)
                 }
@@ -58,8 +58,8 @@ open class ExecutorScheduler : AbstractScheduler() {
                 runBlocking {
                     task.invoke()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (throwable: Throwable) {
+                throw throwable
             } finally {
                 unregisterTask(taskId)
             }
