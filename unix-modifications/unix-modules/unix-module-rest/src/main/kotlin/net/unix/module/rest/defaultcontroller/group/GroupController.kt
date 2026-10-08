@@ -6,6 +6,7 @@ import net.unix.api.service.Service
 import net.unix.module.rest.annotation.*
 import net.unix.module.rest.controller.Controller
 import net.unix.node.CloudExtension.uniqueUUID
+import net.unix.node.group.wrapper.GroupJVMWrapper
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
@@ -22,27 +23,33 @@ class GroupController : Controller, KoinComponent {
         return groupManager.groups
     }
 
-    @RequestMapping(RequestType.GET, "uuid/:uuid", "web.cloud.group.get.one")
+    @RequestMapping(RequestType.GET, "uuid/{uuid}", "web.cloud.group.get.one")
     fun handleGetOneGroup(@RequestPathParam("uuid") uuid: String): Group {
         return groupManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
     }
 
-    @RequestMapping(RequestType.GET, "uuid/:uuid/services", "web.cloud.group.get.services")
+    @RequestMapping(RequestType.GET, "uuid/{uuid}/services", "web.cloud.group.get.services")
     fun handleGetServicesOfGroup(@RequestPathParam("uuid") uuid: String): Set<Service> {
         return groupManager[UUID.fromString(uuid)]?.services ?: throwNoSuchElement()
     }
 
-    @RequestMapping(RequestType.POST, "create/:name", "web.cloud.group.create")
+    @RequestMapping(RequestType.POST, "create/{name}", "web.cloud.group.create")
     fun handleCreateGroup(@RequestPathParam("name") name: String): Group {
         return groupManager.factory.create(
             uniqueUUID(),
             name,
-            1
+            1,
+            wrapper = GroupJVMWrapper(
+                startProperties = listOf("java", "-Xms100M", "-Xmx1G", "-jar", "service.jar"),
+                executableFile = "service.jar",
+                startedLine = "Started in",
+                stopCommand = "stop"
+            )
         )
     }
 
     //delete groups
-    @RequestMapping(RequestType.DELETE, "uuid/:uuid/delete", "web.cloud.group.delete")
+    @RequestMapping(RequestType.DELETE, "uuid/{uuid}/delete", "web.cloud.group.delete")
     fun handleDeleteServiceGroup(@RequestPathParam("uuid") uuid: String): Boolean {
         val groupUUID = UUID.fromString(uuid)
 

@@ -1,6 +1,5 @@
 package net.unix.module.rest.defaultcontroller.filemanager
 
-import io.javalin.core.util.FileUtil
 import io.javalin.http.Context
 import net.unix.module.rest.annotation.RequestMapping
 import net.unix.module.rest.annotation.RequestType
@@ -8,6 +7,8 @@ import net.unix.module.rest.annotation.RestController
 import net.unix.module.rest.controller.Controller
 import net.unix.node.logging.CloudLogger
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 @Suppress("unused")
 @RestController("filemanager/")
@@ -25,7 +26,7 @@ class FileManagerController : Controller {
             return directories.union(files).map { FileInfo(it.name, it.isDirectory, it.length()) }
         }
         if (ctx.queryParam("view") == null)
-            ctx.res.setHeader("Content-Disposition", "attachment; filename=${file.name}")
+            ctx.res().setHeader("Content-Disposition", "attachment; filename=${file.name}")
         ctx.result(file.readBytes())
         return emptyList()
     }
@@ -54,7 +55,9 @@ class FileManagerController : Controller {
         val uploadedFile = ctx.uploadedFile("file")
 
         if (uploadedFile != null) {
-            FileUtil.streamToFile(uploadedFile.content, file.absolutePath)
+            uploadedFile.content().use { input ->
+                Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
         } else {
             CloudLogger.info(ctx.body())
             if (ctx.body().isNotEmpty()) {
@@ -65,13 +68,13 @@ class FileManagerController : Controller {
     }
 
     private fun getFileFromRequest(ctx: Context): File {
-        val filepath = ctx.req.pathInfo.replace("/filemanager/", "")
+        val filepath = ctx.req().pathInfo.replace("/filemanager/", "")
         if (filepath.isBlank()) return File(".")
         return File(filepath)
     }
 
     private fun checkForSuspiciousPath(ctx: Context) {
-        if (ctx.req.pathInfo.contains("..") || ctx.req.pathInfo.contains("//"))
+        if (ctx.req().pathInfo.contains("..") || ctx.req().pathInfo.contains("//"))
             throw InvalidPathException("Invalid file path")
     }
 

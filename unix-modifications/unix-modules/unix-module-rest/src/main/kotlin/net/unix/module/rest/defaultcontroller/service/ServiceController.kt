@@ -21,17 +21,17 @@ class ServiceController : Controller, KoinComponent {
         return serviceManager.services
     }
 
-    @RequestMapping(RequestType.GET, "name/:name", "web.cloud.service.get-name.one")
+    @RequestMapping(RequestType.GET, "name/{name}", "web.cloud.service.get-name.one")
     fun handleGetOneServiceByName(@RequestPathParam("name") name: String): List<Service> {
         return serviceManager[name]
     }
 
-    @RequestMapping(RequestType.GET, "name/:name", "web.cloud.service.get-uuid.one")
+    @RequestMapping(RequestType.GET, "uuid/{uuid}", "web.cloud.service.get-uuid.one")
     fun handleGetOneServiceByUuid(@RequestPathParam("uuid") uuid: String): Service {
         return serviceManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
     }
 
-    @RequestMapping(RequestType.GET, "logs/:name", "web.cloud.service.logs")
+    @RequestMapping(RequestType.GET, "logs/{uuid}", "web.cloud.service.logs")
     fun handleGetServiceLogs(@RequestPathParam("uuid") uuid: String): List<String> {
         val serviceUuid = UUID.fromString(uuid)
 

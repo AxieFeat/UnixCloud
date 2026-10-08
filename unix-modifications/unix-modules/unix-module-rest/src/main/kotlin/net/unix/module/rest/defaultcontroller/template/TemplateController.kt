@@ -19,7 +19,7 @@ class TemplateController : Controller, KoinComponent {
         return templateManager.templates
     }
 
-    @RequestMapping(RequestType.GET, "name/:name/", "web.cloud.template.get.one")
+    @RequestMapping(RequestType.GET, "name/{name}/", "web.cloud.template.get.one")
     fun handleGetOneTemplates(@RequestPathParam("name") name: String): Template {
         return templateManager[name] ?: throwNoSuchElement()
     }
@@ -33,7 +33,7 @@ class TemplateController : Controller, KoinComponent {
         return template
     }
 
-    @RequestMapping(RequestType.DELETE, "name/:name", "web.cloud.template.delete")
+    @RequestMapping(RequestType.DELETE, "name/{name}", "web.cloud.template.delete")
     fun handleDeleteTemplate(@RequestPathParam("name") name: String): Template {
         if (!doesTemplateExist(name)) throwNoSuchElement()
         val template = templateManager[name]!!

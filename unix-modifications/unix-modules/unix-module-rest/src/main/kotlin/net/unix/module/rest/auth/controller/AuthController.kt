@@ -1,7 +1,6 @@
 package net.unix.module.rest.auth.controller
 
 import io.javalin.http.Context
-import javalinjwt.examples.JWTResponse
 import net.unix.module.rest.annotation.RequestBody
 import net.unix.module.rest.annotation.RequestMapping
 import net.unix.module.rest.annotation.RequestType
@@ -22,7 +21,7 @@ class AuthController(
             context.status(401)
             context.result("Username or password wrong!")
         } else {
-            context.json(JWTResponse(token))
+            context.json(mapOf("token" to token))
         }
     }
 

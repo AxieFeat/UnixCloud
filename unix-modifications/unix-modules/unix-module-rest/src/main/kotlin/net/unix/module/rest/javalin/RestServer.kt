@@ -3,10 +3,10 @@
 package net.unix.module.rest.javalin
 
 import io.javalin.Javalin
-import io.javalin.core.security.SecurityUtil
-import io.javalin.http.HandlerType
+import io.javalin.util.legacy.legacyAccessManager
 import javalinjwt.JWTAccessManager
 import javalinjwt.JavalinJWT
+import net.unix.module.rest.annotation.RequestType
 import net.unix.module.rest.annotation.WebExclude
 import net.unix.module.rest.auth.AuthService
 import net.unix.module.rest.auth.JwtProvider
@@ -36,20 +36,23 @@ object RestServer {
 
     fun start(port: Int) {
 
-        app = Javalin.create().start(port)
-
-        app.config.accessManager(JWTAccessManager("role", createRolesMapping(), Roles.ANYONE))
-        app.before(JavalinJWT.createHeaderDecodeHandler(JwtProvider.instance.provider))
-        app.before { ctx ->
-            ctx.header("Access-Control-Allow-Headers", "*")
-            ctx.header("Access-Control-Allow-Origin", "*")
-            ctx.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS")
-            ctx.header("Content-Type", "application/json; charset=utf-8")
+        app = Javalin.create { config ->
+            config.routes.before(JavalinJWT.createHeaderDecodeHandler(JwtProvider.instance.provider))
+            config.routes.before { ctx ->
+                ctx.header("Access-Control-Allow-Headers", "*")
+                ctx.header("Access-Control-Allow-Origin", "*")
+                ctx.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS")
+                ctx.header("Content-Type", "application/json; charset=utf-8")
+            }
+            config.routes.options("/*", {
+                it.status(200)
+            }, Roles.ANYONE)
         }
-
-        app.options("/*", {
-            it.status(200)
-        }, SecurityUtil.roles(Roles.ANYONE))
+        val accessManager = JWTAccessManager("role", createRolesMapping(), Roles.ANYONE)
+        app.legacyAccessManager { handler, ctx, _ ->
+            accessManager.handle(ctx)
+            handler.handle(ctx)
+        }
 
         controllerHandler.registerController(AuthController(this.authService))
         controllerHandler.registerController(UserController(this.authService))
@@ -59,6 +62,8 @@ object RestServer {
         controllerHandler.registerController(ServiceController())
         controllerHandler.registerController(ServiceActionController())
         controllerHandler.registerController(FileManagerController())
+
+        app.start(port)
     }
 
     fun registerRequestMethod(requestMethodData: RequestMethodData) {
@@ -68,12 +73,18 @@ object RestServer {
 
     private fun addToJavalin(requestHandler: JavalinRequestHandler) {
         val requestMethodData = requestHandler.requestMethodData
-        app.addHandler(
-            HandlerType.valueOf(requestMethodData.requestType.name),
-            requestMethodData.path,
-            requestHandler,
-            setOf(Roles.ANYONE)
-        )
+        with(app.unsafe.routes) {
+            when (requestMethodData.requestType) {
+                RequestType.GET ->
+                    get(requestMethodData.path, requestHandler, Roles.ANYONE)
+                RequestType.PUT ->
+                    put(requestMethodData.path, requestHandler, Roles.ANYONE)
+                RequestType.POST ->
+                    post(requestMethodData.path, requestHandler, Roles.ANYONE)
+                RequestType.DELETE ->
+                    delete(requestMethodData.path, requestHandler, Roles.ANYONE)
+            }
+        }
     }
 
     fun shutdown() {

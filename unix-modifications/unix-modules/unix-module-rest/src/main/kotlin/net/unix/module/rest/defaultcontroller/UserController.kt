@@ -21,7 +21,7 @@ class UserController(
         return user
     }
 
-    @RequestMapping(RequestType.GET, "name/:name", "web.user.get.one")
+    @RequestMapping(RequestType.GET, "name/{name}", "web.user.get.one")
     fun handleGetOneUsers(@RequestPathParam("name") username: String): User {
         return authService.handleUserGet(username) ?: throwNoSuchElement()
     }

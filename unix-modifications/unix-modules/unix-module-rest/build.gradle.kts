@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 group = rootProject.group
@@ -13,6 +13,11 @@ dependencies {
     compileOnly(project(":unix-network"))
     compileOnly(project(":unix-scheduler"))
     compileOnly(project(":unix-event-system"))
+
+    implementation("io.javalin:javalin:7.2.3")
+    implementation("com.github.kmehrunes:javalin-jwt:6.0.0")
+    implementation("org.apache.commons:commons-lang3:3.21.0")
+    implementation("com.google.code.gson:gson:2.14.0")
 }
 
 tasks.withType<ShadowJar> {

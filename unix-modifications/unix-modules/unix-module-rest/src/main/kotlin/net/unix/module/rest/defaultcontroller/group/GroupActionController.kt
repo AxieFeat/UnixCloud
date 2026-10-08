@@ -18,7 +18,7 @@ class GroupActionController : Controller, KoinComponent {
 
     private val groupManager: GroupManager by inject(named("default"))
 
-    @RequestMapping(RequestType.POST, "uuid/:uuid/startService", "web.cloud.action.group.startservice")
+    @RequestMapping(RequestType.POST, "uuid/{uuid}/startService", "web.cloud.action.group.startservice")
     fun handleStartNewService(@RequestPathParam("uuid") uuid: String): Service {
         val group = groupManager[UUID.fromString(uuid)] ?: throwNoSuchElement()
 
